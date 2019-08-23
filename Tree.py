@@ -102,58 +102,74 @@ class Tree(object):
                     partial_subtrees.append(None)
 
 
-    def add_partial_results(self, partial_results_dict, result_index, result_part_index, child_index, outcome):
+    # def get_results(self, partial_results_dict, result_index, outcome, outcome_stage):
+    #     # save results for later usage
+    #     if result_index in partial_results_dict:
+    #         # if result_part_index in partial_results_dict[result_index]:
+    #         #     # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
+    #         #     partial_results_dict[result_index][stage] = self.add_results_part(partial_results_dict[result_index][result_part_index], outcome)
+    #         # else:
+    #         #     partial_results_dict[result_index][result_part_index] = outcome
+    #         for stage in range(outcome_stage - 1, 0, -1):
+    #             # if previous stage exists extend that data
+    #             if stage - 1 in partial_results_dict[result_index]:
+    #                 partial_results_dict[result_index][stage] = self.merge_results(partial_results_dict[result_index][stage - 1], outcome)
+    #
+    #         # extend one word layer with output
+    #         partial_results_dict[result_index][0].extend(outcome)
+    #     else:
+    #         partial_results_dict[result_index] = {0: outcome}
+    #
+    #     if outcome_stage - 1 in partial_results_dict[result_index]:
+    #         return partial_results_dict[result_index].pop(outcome_stage - 1)
+    #     return []
+
+
+    def get_results(self, partial_results_dict, result_index, stage, outcome, outcome_stage):
         # save results for later usage
-        # if result_index in partial_results_dict:
-        #     if result_part_index in partial_results_dict[result_index]:
-        #         # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
-        #         partial_results_dict[result_index][result_part_index] = self.add_results_part(partial_results_dict[result_index][result_part_index], outcome)
-        #     else:
-        #         partial_results_dict[result_index][result_part_index] = outcome
-        # else:
-        #     partial_results_dict[result_index] = {result_part_index: outcome}
 
+        # if result index already in and element 0 exists (otherwise error)
+        if result_index in partial_results_dict and 0 in partial_results_dict[result_index]:
+            # if result_part_index in partial_results_dict[result_index]:
+            #     # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
+            #     partial_results_dict[result_index][stage] = self.add_results_part(partial_results_dict[result_index][result_part_index], outcome)
+            # else:
+            #     partial_results_dict[result_index][result_part_index] = outcome
 
+            # if previous stage exists extend that data
+            if stage - 1 in partial_results_dict[result_index]:
+                if stage in partial_results_dict[result_index]:
+                    partial_results_dict[result_index][stage].extend(self.merge_results(partial_results_dict[result_index][stage - 1], outcome))
+                else:
+                    partial_results_dict[result_index][stage] = self.merge_results(partial_results_dict[result_index][stage - 1], outcome)
 
-        if result_index in partial_results_dict:
-            if result_part_index in partial_results_dict[result_index]:
-                # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
-                partial_results_dict[result_index][result_part_index] = self.add_results_part(partial_results_dict[result_index][result_part_index], self.create_tuple_from_output(outcome, []))
+            # extend one word layer with output
             else:
-                partial_results_dict[result_index][result_part_index] = self.create_tuple_from_output(outcome, [])
+                partial_results_dict[result_index][0].extend(outcome)
         else:
-            partial_results_dict[result_index] = {result_part_index: self.create_tuple_from_output(outcome, [])}
+            partial_results_dict[result_index] = {0: outcome}
 
-    # def create_tuple_from_output(self, new_results, combined_results):
-    #     for new_result in new_results:
-    #         combined_results.append((new_result, 0))
-    #     return combined_results
+        if outcome_stage - 1 in partial_results_dict[result_index]:
+            return partial_results_dict[result_index].pop(outcome_stage - 1)
+        return []
 
-    def add_results_part(self, previous_results_part, new_results):
-        combined_results = self.merge_results(previous_results_part, new_results)
-
-        return self.create_tuple_from_output(new_results, combined_results=combined_results)
+    # def add_results_part(self, previous_results_part, new_results):
+    #     combined_results = self.merge_results(previous_results_part, new_results)
+    #
+    #     return self.create_tuple_from_output(new_results, combined_results=combined_results)
         # for new_result in new_results:
         #     combined_results.append((new_result, 0))
         # return combined_results
 
     def group_results(self, subtree_outcomes, queries, l_all_query_indices, completed_subtrees, partial_results_dict, child_index, partial_subtrees):
-        for outcome, (result_part_index, result_index, is_permanent) in zip(subtree_outcomes, queries):
+        for outcome, (stage, result_index, is_permanent) in zip(subtree_outcomes, queries):
             if outcome:
-                if result_part_index == len(l_all_query_indices[result_index][0]) - 1:
-                    # new_results = self.create_subtrees(partial_results_dict, result_index, result_part_index, child_index, outcome)
-                    if result_part_index > 0:
-                        new_results = self.merge_results(partial_results_dict[result_index][result_part_index - 1],
-                                                         outcome)
-                    else:
-                        new_results = outcome
-
+                new_results = self.get_results(partial_results_dict, result_index, stage, outcome, len(l_all_query_indices[result_index][0]))
+                if new_results:
                     if is_permanent:
                         self.add_subtrees(completed_subtrees, new_results)
                     else:
                         self.add_subtrees(partial_subtrees, new_results)
-                else:
-                    self.add_partial_results(partial_results_dict, result_index, result_part_index, child_index, outcome)
             else:
                 if not is_permanent:
                     partial_subtrees.append(None)
@@ -282,9 +298,9 @@ class Tree(object):
         # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
         merged_results = []
         # old_results, old_stage = old_results_tuple
-        for old_result, old_stage in old_results:
+        for old_result in old_results:
             for new_result in new_results:
-                merged_results.append((old_result + new_result, old_stage + 1))
+                merged_results.append(old_result + new_result)
         # if not old_results:
         #     return new_results
         return merged_results
