@@ -45,103 +45,51 @@ class Tree(object):
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value) and \
                ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value)
 
-    def generate_children_queries(self, l_all_query_indices):
+    def generate_children_queries(self, all_query_indices):
         subtree_outcomes = []
-        # list of pairs (index of query in group, group of query)
-        queries = []
+        # list of pairs (index of query in group, group of query, is permanent)
+        child_queries_metadata = []
         for child_index, child in enumerate(self.l_children):
             new_queries = []
 
             # add continuation queries to children
-            for (result_part_index, result_index, is_permanent), subtree_outcome in zip(queries, subtree_outcomes):
+            for (result_part_index, result_index, is_permanent), subtree_outcome in zip(child_queries_metadata, subtree_outcomes):
                 if subtree_outcome:
-                    if len(l_all_query_indices[result_index][0]) > result_part_index + 1:
+                    if len(all_query_indices[result_index][0]) > result_part_index + 1:
                         new_queries.append((result_part_index + 1, result_index, is_permanent))
                     # else:
                     #     completed_subtrees.append((child, result_index))
 
-            queries = new_queries
+            child_queries_metadata = new_queries
 
             # add new queries to children
-            for result_index, (group, is_permanent) in enumerate(l_all_query_indices):
+            for result_index, (group, is_permanent) in enumerate(all_query_indices):
                 # check if node has enough children for query to be possible
                 if len(self.l_children) - len(group) >= child_index:
-                    queries.append((0, result_index, is_permanent))
+                    child_queries_metadata.append((0, result_index, is_permanent))
 
-            l_children_query_trees = []
-            for result_part_index, result_index, _ in queries:
-                l_children_query_trees.append(l_all_query_indices[result_index][0][result_part_index])
+            child_queries = []
+            for result_part_index, result_index, _ in child_queries_metadata:
+                child_queries.append(all_query_indices[result_index][0][result_part_index])
 
-            subtree_outcomes = yield child, l_children_query_trees, queries
+            subtree_outcomes = yield child, child_queries, child_queries_metadata
         yield None, None, None
 
     def add_subtrees(self, old_subtree, new_subtree):
         old_subtree.extend(new_subtree)
 
-    def group_results_old(self, subtree_outcomes, queries, l_all_query_indices, completed_subtrees, query_creation_dict, child_index, partial_subtrees):
-        for outcome, (result_part_index, result_index, is_permanent) in zip(subtree_outcomes, queries):
-            if outcome:
-                if result_part_index == len(l_all_query_indices[result_index][0]) - 1:
-                    new_results = self.create_subtrees(query_creation_dict, result_index, result_part_index, child_index, outcome)
-                    if is_permanent:
-                        self.add_subtrees(completed_subtrees, new_results)
-
-                    else:
-                        self.add_subtrees(partial_subtrees, new_results)
-                else:
-                    # save results for later usage
-                    if result_index in query_creation_dict:
-                        if result_part_index in query_creation_dict[result_index]:
-                            query_creation_dict[result_index][result_part_index][child_index] = outcome
-                        else:
-                            query_creation_dict[result_index][result_part_index] = {child_index: outcome}
-                    else:
-                        query_creation_dict[result_index] = {result_part_index: {child_index: outcome}}
-            else:
-                if not is_permanent:
-                    partial_subtrees.append(None)
 
 
-    # def get_results(self, partial_results_dict, result_index, outcome, outcome_stage):
-    #     # save results for later usage
-    #     if result_index in partial_results_dict:
-    #         # if result_part_index in partial_results_dict[result_index]:
-    #         #     # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
-    #         #     partial_results_dict[result_index][stage] = self.add_results_part(partial_results_dict[result_index][result_part_index], outcome)
-    #         # else:
-    #         #     partial_results_dict[result_index][result_part_index] = outcome
-    #         for stage in range(outcome_stage - 1, 0, -1):
-    #             # if previous stage exists extend that data
-    #             if stage - 1 in partial_results_dict[result_index]:
-    #                 partial_results_dict[result_index][stage] = self.merge_results(partial_results_dict[result_index][stage - 1], outcome)
-    #
-    #         # extend one word layer with output
-    #         partial_results_dict[result_index][0].extend(outcome)
-    #     else:
-    #         partial_results_dict[result_index] = {0: outcome}
-    #
-    #     if outcome_stage - 1 in partial_results_dict[result_index]:
-    #         return partial_results_dict[result_index].pop(outcome_stage - 1)
-    #     return []
-
-
-    def get_results(self, partial_results_dict, result_index, stage, outcome, outcome_stage):
+    def get_results(self, partial_results_dict, result_index, result_part, outcome, last_result_part):
         # save results for later usage
 
         # if result index already in and element 0 exists (otherwise error)
         if result_index in partial_results_dict and 0 in partial_results_dict[result_index]:
-            # if result_part_index in partial_results_dict[result_index]:
-            #     # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
-            #     partial_results_dict[result_index][stage] = self.add_results_part(partial_results_dict[result_index][result_part_index], outcome)
-            # else:
-            #     partial_results_dict[result_index][result_part_index] = outcome
-
-            # if previous stage exists extend that data
-            if stage - 1 in partial_results_dict[result_index]:
-                if stage in partial_results_dict[result_index]:
-                    partial_results_dict[result_index][stage].extend(self.merge_results(partial_results_dict[result_index][stage - 1], outcome))
+            if result_part - 1 in partial_results_dict[result_index]:
+                if result_part in partial_results_dict[result_index]:
+                    partial_results_dict[result_index][result_part].extend(self.merge_results(partial_results_dict[result_index][result_part - 1], outcome))
                 else:
-                    partial_results_dict[result_index][stage] = self.merge_results(partial_results_dict[result_index][stage - 1], outcome)
+                    partial_results_dict[result_index][result_part] = self.merge_results(partial_results_dict[result_index][result_part - 1], outcome)
 
             # extend one word layer with output
             else:
@@ -149,26 +97,26 @@ class Tree(object):
         else:
             partial_results_dict[result_index] = {0: outcome}
 
-        if outcome_stage - 1 in partial_results_dict[result_index]:
-            return partial_results_dict[result_index].pop(outcome_stage - 1)
+        if last_result_part - 1 in partial_results_dict[result_index]:
+            return partial_results_dict[result_index].pop(last_result_part - 1)
         return []
 
-    # def add_results_part(self, previous_results_part, new_results):
-    #     combined_results = self.merge_results(previous_results_part, new_results)
-    #
-    #     return self.create_tuple_from_output(new_results, combined_results=combined_results)
-        # for new_result in new_results:
-        #     combined_results.append((new_result, 0))
-        # return combined_results
-
-    def group_results(self, subtree_outcomes, queries, l_all_query_indices, completed_subtrees, partial_results_dict, child_index, partial_subtrees):
-        for outcome, (stage, result_index, is_permanent) in zip(subtree_outcomes, queries):
+    def group_results(self, subtree_outcomes, child_queries_metadata, all_query_indices, completed_subtrees, partial_results_dict, partial_subtrees):
+        for outcome, (result_part, result_index, is_permanent) in zip(subtree_outcomes, child_queries_metadata):
             if outcome:
-                new_results = self.get_results(partial_results_dict, result_index, stage, outcome, len(l_all_query_indices[result_index][0]))
+                new_results = self.get_results(partial_results_dict, result_index, result_part, outcome, len(all_query_indices[result_index][0]))
                 if new_results:
                     if is_permanent:
+                        # if result_index in completed_subtrees:
+                        #     self.add_subtrees(completed_subtrees[result_index], new_results)
+                        # else:
+                        #     completed_subtrees[result_index] = new_results
                         self.add_subtrees(completed_subtrees, new_results)
                     else:
+                        # if result_index in completed_subtrees:
+                        #     self.add_subtrees(partial_subtrees[result_index], new_results)
+                        # else:
+                        #     partial_subtrees[result_index] = new_results
                         self.add_subtrees(partial_subtrees, new_results)
             else:
                 if not is_permanent:
@@ -207,149 +155,33 @@ class Tree(object):
                     partial_subtrees[i] = [[self.create_output_string()]]
             elif 'l_children' not in temporary_query_tree and 'r_children' not in temporary_query_tree:
                 partial_subtrees[i] = None
-            # if self.fits_static_requirements(temporary_query_tree):
-            #     if temporary_query_tree['l_children'] and self.l_children:
-            #         l_children_permanent_query_trees.append(temporary_query_tree['l_children'])
-            #     if temporary_query_tree['r_children'] and self.r_children:
-            #         r_children_permanent_query_trees.append(temporary_query_tree['r_children'])
 
-
-
-        # tree_outcomes = []
         completed_subtrees = []
         # list of pairs (index of query in group, group of query)
-        queries = []
-        subtree_outcomes = []
-        query_creation_dict = {}
-
+        partial_results_dict = {}
 
         children_queries_generator = self.generate_children_queries(l_all_query_indices)
 
-        # # children_queries_generator.send([])
-        # a = next(children_queries_generator)
-        # a1 = children_queries_generator.send(list([True] * len(a)))
-        # # b = next(children_queries_generator)
-        # b1 = children_queries_generator.send(list([True] * len(a1)))
-        # # c = next(children_queries_generator)
-        # c1 = children_queries_generator.send(list([True] * len(b1)))
-        # # d = next(children_queries_generator)
-        # d1 = children_queries_generator.send(list([True] * len(c1)))
         child_index = 0
-        child, child_query, child_group_mapper = next(children_queries_generator)
+        child, child_queries, child_queries_metadata = next(children_queries_generator)
         while child:
-            subtree_outcomes, completed_subtrees = child.get_subtrees(permanent_query_trees, child_query)
+            # obtain children results
+            subtree_outcomes, completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries)
 
-            self.group_results(subtree_outcomes, child_group_mapper, l_all_query_indices, completed_subtrees, query_creation_dict, child_index, partial_subtrees)
-            # TODO
+            self.group_results(subtree_outcomes, child_queries_metadata, l_all_query_indices, completed_subtrees, partial_results_dict, partial_subtrees)
+            # TODO: Right children functionality
             child, child_query, child_group_mapper = children_queries_generator.send(subtree_outcomes)
             child_index += 1
-            print('test')
 
-        # for child_index, child in enumerate(self.l_children):
-        #     # add continuation queries to children
-        #     for (result_part_index, query_indices_index, is_permanent), subtree_outcome in zip(queries, subtree_outcomes):
-        #         if subtree_outcome:
-        #             if len(l_all_query_indices[query_indices_index]) > result_part_index + 1:
-        #                 queries.append((result_part_index + 1, query_indices_index, is_permanent))
-        #             # else:
-        #             #     completed_subtrees.append((child, query_indices_index))
-        #
-        #     # add new queries to children
-        #     for query_indices_index, (query_indices, is_permanent) in enumerate(l_all_query_indices):
-        #         # check if node has enough children for query to be possible
-        #         if len(self.l_children) - len(query_indices) >= child_index:
-        #             queries.append((0, query_indices_index, is_permanent))
-        #
-        #
-        #     l_children_query_trees = []
-        #     for result_part_index, query_indices_index, _ in queries:
-        #         l_children_query_trees.append(l_all_query_indices[query_indices_index][0][result_part_index])
-        #     subtree_outcomes, completed_subtrees = child.get_subtrees(permanent_query_trees, l_children_query_trees)
-        #
-        #
-        #
-        #     # TODO: Right children functionality
-        #
-        #
-        #
-        #     for outcome, (result_part_index, query_indices_index, is_permanent) in zip(subtree_outcomes, queries):
-        #         if outcome:
-        #             if result_part_index == len(l_all_query_indices[query_indices_index]) - 1:
-        #                 if is_permanent:
-        #                     completed_subtrees.extend(self.create_output(temp_results, query_indices_index, result_part_index, child_index))
-        #                 else:
-        #                     partial_subtrees.append(self.create_output(temp_results, query_indices_index, result_part_index, child_index))
-        #             else:
-        #                 # save results for later usage
-        #                 if child_index in temp_results:
-        #                     if query_indices_index in temp_results[child_index]:
-        #                         temp_results[child_index][query_indices_index][result_part_index] = outcome
-        #                     else:
-        #                         temp_results[child_index][query_indices_index] = {result_part_index: outcome}
-        #                 else:
-        #                     temp_results[child_index] = {query_indices_index: {result_part_index: outcome}}
-        #         else:
-        #             if not is_permanent:
-        #                 partial_subtrees.append(None)
         return partial_subtrees, completed_subtrees
 
     @staticmethod
     def merge_results(old_results, new_results):
-        # previous_results, previous_stage = partial_results_dict[result_index][result_part_index]
         merged_results = []
-        # old_results, old_stage = old_results_tuple
         for old_result in old_results:
             for new_result in new_results:
                 merged_results.append(old_result + new_result)
-        # if not old_results:
-        #     return new_results
         return merged_results
-
-    def create_subtrees(self, query_creation_dict, result_index, result_part_index, child_index, outcome):
-        new_valid_subtrees = []
-        # stores all result_parts that have specific child_index together
-        result_connections = {}
-        for i in range(result_part_index):
-            for j in range(child_index):
-                # if child indices exist in result_index and result_part_index plus index of part is higher or equal to index of child (otherwise it is not in query_creation_dict
-                if result_index in query_creation_dict and i in query_creation_dict[result_index] and j in query_creation_dict[result_index][i]:
-                # if result_index in query_creation_dict and i in query_creation_dict[result_index] and j in query_creation_dict[result_index][i] and i >= j:
-                    if i in result_connections:
-                        result_connections[i].append(j)
-                    else:
-                        result_connections[i] = [j]
-                    # positioned_candidates[j] = (query_creation_dict[i][result_index][j])
-
-        # result = []
-        return self.create_subtrees_from_result_connections(0, 0, result_part_index, query_creation_dict, result_connections, result_index, [], outcome)
-        # new_valid_subtrees.extend(outcome[])
-        # outcome.append(self.create_output_string())
-
-    def create_subtrees_from_result_connections(self, child_index_i, result_part_index_i, result_part_index_final, query_creation_dict, result_connections,
-                                                 result_index, res_array, outcome):
-        if result_part_index_i == result_part_index_final:
-            # self.merge_results(res_array, outcome)
-            return self.merge_results(res_array, outcome)
-
-
-
-        # res_array.append(query_creation_dict[result_index][result_part_index_i][child_index_i])
-        results = []
-
-        for child_index in result_connections[result_part_index_i]:
-            if not (result_index in query_creation_dict and result_part_index_i in query_creation_dict[
-                result_index] and child_index_i in query_creation_dict[result_index][result_part_index_i]):
-                print('HERE!')
-                return []
-
-            pass_array = self.merge_results(res_array,
-                                            query_creation_dict[result_index][result_part_index_i][child_index])
-            # if child_index >= result_part_index_i:
-            results.extend(self.create_subtrees_from_result_connections(child_index, result_part_index_i + 1, result_part_index_final, query_creation_dict,
-                                                                        result_connections, result_index, res_array, outcome))
-
-        # print('aaa')
-        return results
 
     def create_output_string(self):
         return self.form.get_value()
