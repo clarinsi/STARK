@@ -119,11 +119,22 @@ def main():
     query_tree = decode_query('(' + config.get('settings', 'query') + ')')
 
     for tree in all_trees:
+        # original
         # _, subtrees = tree.get_subtrees([query_tree], [])
+
+        # test 1 layer queries
+        # tree.r_children = []
+        # tree.l_children[1].l_children = []
+        # _, subtrees = tree.get_subtrees([{"l_children": [{'a1':''}, {'a2':''}], "r_children": []}, {"l_children": [{'b1':''}], "r_children": []}, {"l_children": [{'c1':''}, {'c2':''}, {'c3':''}], "r_children": []}], [])
+
+        # test 2 layer queries
         tree.r_children = []
         tree.l_children[1].l_children = []
-        _, subtrees = tree.get_subtrees([{"l_children": [{'a1':''}, {'a2':''}], "r_children": []}, {"l_children": [{'b1':''}], "r_children": []}, {"l_children": [{'c1':''}, {'c2':''}, {'c3':''}], "r_children": []}], [])
-        print('here')
+        new_tree = Tree('bil', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)
+        new_tree.l_children = [tree]
+        _, subtrees = new_tree.get_subtrees(
+            [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
+
         return
 
 

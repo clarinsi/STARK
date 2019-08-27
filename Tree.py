@@ -79,7 +79,6 @@ class Tree(object):
         old_subtree.extend(new_subtree)
 
 
-
     def get_results(self, partial_results_dict, result_index, result_part, outcome, last_result_part):
         # save results for later usage
 
@@ -101,8 +100,8 @@ class Tree(object):
             return partial_results_dict[result_index].pop(last_result_part - 1)
         return []
 
-    def group_results(self, subtree_outcomes, child_queries_metadata, all_query_indices, completed_subtrees, partial_results_dict, partial_subtrees):
-        for outcome, (result_part, result_index, is_permanent) in zip(subtree_outcomes, child_queries_metadata):
+    def group_results(self, new_partial_subtrees, child_queries_metadata, all_query_indices, completed_subtrees, partial_results_dict, partial_subtrees):
+        for outcome, (result_part, result_index, is_permanent) in zip(new_partial_subtrees, child_queries_metadata):
             if outcome:
                 new_results = self.get_results(partial_results_dict, result_index, result_part, outcome, len(all_query_indices[result_index][0]))
                 if new_results:
@@ -111,16 +110,38 @@ class Tree(object):
                         #     self.add_subtrees(completed_subtrees[result_index], new_results)
                         # else:
                         #     completed_subtrees[result_index] = new_results
-                        self.add_subtrees(completed_subtrees, new_results)
+                        self.add_subtrees(completed_subtrees[result_index], new_results)
                     else:
                         # if result_index in completed_subtrees:
                         #     self.add_subtrees(partial_subtrees[result_index], new_results)
                         # else:
                         #     partial_subtrees[result_index] = new_results
-                        self.add_subtrees(partial_subtrees, new_results)
+                        self.add_subtrees(partial_subtrees[result_index - len(completed_subtrees)], new_results)
             else:
                 if not is_permanent:
-                    partial_subtrees.append(None)
+                    partial_subtrees[result_index - len(completed_subtrees)].append([])
+
+    def get_all_query_indices(self, partial_subtrees, completed_subtrees, permanent_query_trees, l_all_query_indices):
+
+        # list of pairs (index of query in group, group of query)
+        partial_results_dict = {}
+
+        children_queries_generator = self.generate_children_queries(l_all_query_indices)
+
+        child_index = 0
+        child, child_queries, child_queries_metadata = next(children_queries_generator)
+        while child:
+            # obtain children results
+            new_partial_subtrees, new_completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries)
+
+            self.group_results(new_partial_subtrees, child_queries_metadata, l_all_query_indices, new_completed_subtrees,
+                               partial_results_dict, partial_subtrees)
+            # TODO: Right children functionality
+            for i in range(len(new_completed_subtrees)):
+                completed_subtrees[i].extend(new_completed_subtrees[i])
+            child, child_queries, child_queries_metadata = children_queries_generator.send(new_partial_subtrees)
+            child_index += 1
+
 
     def get_subtrees(self, permanent_query_trees, temporary_query_trees):
         """
@@ -141,39 +162,27 @@ class Tree(object):
                 l_all_query_indices.append((permanent_query_tree['l_children'], True))
                 r_all_query_indices.append((permanent_query_tree['r_children'], True))
 
-        active_temporary_query_tree = []
-        partial_subtrees = list([None] * len(temporary_query_trees))
+        # active_temporary_query_tree = []
+        l_partial_subtrees = [[] for i in range(len(temporary_query_trees))]
 
         for i, temporary_query_tree in enumerate(temporary_query_trees):
             if self.fits_static_requirements(temporary_query_tree):
-                active_temporary_query_tree.append(temporary_query_tree)
+                # active_temporary_query_tree.append(temporary_query_tree)
                 if 'l_children' in temporary_query_tree:
                     l_all_query_indices.append((temporary_query_tree['l_children'], False))
                 if 'r_children' in temporary_query_tree:
                     r_all_query_indices.append((temporary_query_tree['r_children'], False))
                 if 'l_children' not in temporary_query_tree and 'r_children' not in temporary_query_tree:
-                    partial_subtrees[i] = [[self.create_output_string()]]
-            elif 'l_children' not in temporary_query_tree and 'r_children' not in temporary_query_tree:
-                partial_subtrees[i] = None
+                    l_partial_subtrees[i] = [[self.create_output_string()]]
+            # elif 'l_children' not in temporary_query_tree and 'r_children' not in temporary_query_tree:
+            #     partial_subtrees[i] = None
 
-        completed_subtrees = []
-        # list of pairs (index of query in group, group of query)
-        partial_results_dict = {}
+        l_completed_subtrees = [[] for i in range(len(permanent_query_trees))]
+        self.get_all_query_indices(l_partial_subtrees, l_completed_subtrees, permanent_query_trees, l_all_query_indices)
+        # for i in range(len(l_partial_subtrees)):
+        #     self.merge_results(l_partial_subtrees[i], [[self.create_output_string()]])
 
-        children_queries_generator = self.generate_children_queries(l_all_query_indices)
-
-        child_index = 0
-        child, child_queries, child_queries_metadata = next(children_queries_generator)
-        while child:
-            # obtain children results
-            subtree_outcomes, completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries)
-
-            self.group_results(subtree_outcomes, child_queries_metadata, l_all_query_indices, completed_subtrees, partial_results_dict, partial_subtrees)
-            # TODO: Right children functionality
-            child, child_query, child_group_mapper = children_queries_generator.send(subtree_outcomes)
-            child_index += 1
-
-        return partial_subtrees, completed_subtrees
+        return l_partial_subtrees, l_completed_subtrees
 
     @staticmethod
     def merge_results(old_results, new_results):
