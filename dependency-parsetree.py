@@ -49,8 +49,10 @@ def decode_query(orig_query):
             r_children.append(decode_query(node_action))
         else:
             root = decode_query(node_action)
-    root["l_children"] = l_children
-    root["r_children"] = r_children
+    if l_children:
+        root["l_children"] = l_children
+    if r_children:
+        root["r_children"] = r_children
     return root
 
 
@@ -82,7 +84,7 @@ def create_trees(config):
                     root_id = int(token.id)
 
             for token_id, token in enumerate(token_nodes):
-                if token.parent == 0:
+                if int(token.parent) == 0:
                     token.set_parent(None)
                 else:
                     parent_id = int(token.parent) - 1
@@ -118,22 +120,27 @@ def main():
 
     query_tree = decode_query('(' + config.get('settings', 'query') + ')')
 
-    for tree in all_trees:
+    for tree in all_trees[1:]:
         # original
-        # _, subtrees = tree.get_subtrees([query_tree], [])
+        # r_children = tree.r_children[:1] + tree.r_children[3:4]
+        tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
+        _, subtrees = tree.get_subtrees([query_tree], [])
 
         # test 1 layer queries
         # tree.r_children = []
         # tree.l_children[1].l_children = []
-        # _, subtrees = tree.get_subtrees([{"l_children": [{'a1':''}, {'a2':''}], "r_children": []}, {"l_children": [{'b1':''}], "r_children": []}, {"l_children": [{'c1':''}, {'c2':''}, {'c3':''}], "r_children": []}], [])
+        # _, subtrees = tree.get_subtrees([{'q1':'', "l_children": [{'a1':''}, {'a2':''}]}, {'q2':'', "l_children": [{'b1':''}]}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}]}], [])
+        # # _, subtrees = tree.get_subtrees([{'q1':'', "l_children": [{'a1':''}, {'a2':''}], "r_children": []}, {'q2':'', "l_children": [{'b1':''}], "r_children": []}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}], "r_children": []}], [])
 
         # test 2 layer queries
-        tree.r_children = []
-        tree.l_children[1].l_children = []
-        new_tree = Tree('bil', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)
-        new_tree.l_children = [tree]
-        _, subtrees = new_tree.get_subtrees(
-            [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
+        # tree.r_children = [Tree('je', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)]
+        # tree.l_children[1].l_children = []
+        # new_tree = Tree('bil', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)
+        # new_tree.l_children = [tree]
+        # _, subtrees = new_tree.get_subtrees(
+        #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}]}]}], [])
+        # # _, subtrees = new_tree.get_subtrees(
+        # #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
 
         return
 
