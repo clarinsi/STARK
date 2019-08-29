@@ -1,4 +1,5 @@
 import configparser
+import csv
 import hashlib
 import os
 import pickle
@@ -115,17 +116,34 @@ def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
 
+    ngrams = 0
+    if config.getint('settings', 'ngrams') == 2:
+        ngrams = 2
+        query_tree = [{"l_children": [{}]}, {"r_children": [{}]}]
+    else:
+        query_tree = [decode_query('(' + config.get('settings', 'query') + ')')]
+
     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = create_trees(config)
 
 
-    query_tree = decode_query('(' + config.get('settings', 'query') + ')')
 
-    for tree in all_trees[1:]:
+    result_dict = {}
+
+    # for tree in all_trees[2:]:
+    for tree in all_trees:
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
-        tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
-        _, subtrees = tree.get_subtrees([query_tree], [])
-
+        # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
+        _, subtrees = tree.get_subtrees(query_tree, [])
+        for query_results in subtrees:
+            for result in query_results:
+                if ngrams:
+                    result = sorted(result)
+                r = tuple(result)
+                if r in result_dict:
+                    result_dict[r] += 1
+                else:
+                    result_dict[r] = 1
         # test 1 layer queries
         # tree.r_children = []
         # tree.l_children[1].l_children = []
@@ -142,11 +160,25 @@ def main():
         # # _, subtrees = new_tree.get_subtrees(
         # #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
 
-        return
+    sorted_list = sorted(result_dict.items(), key=lambda x: x[1], reverse=True)
 
+    with open(config.get('settings', 'output'), "w", newline="") as f:
+        # header - use every second space as a split
+        writer = csv.writer(f, delimiter='\t')
+        if ngrams:
+            writer.writerow(['Word 1', 'Word 2', 'Number of occurences'])
+        else:
+            span = 2
+            words = config.get('settings', 'query').split(" ")
+            header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Number of occurences']
+            writer.writerow(header)
 
-    # {"form": "", "lemma": "", "upos": "", "xpos": "", "l_children": [{}, {}], "r_children": [{}, {}]}
-    # {"form": "", "lemma": "", "upos": "", "xpos": "", "l_children": [{}, {}], "r_children": [{}, {}]}
+        # body
+        for k, v in sorted_list:
+            writer.writerow(list(k) + [str(v)])
+
+    return
+
 
 if __name__ == "__main__":
     main()

@@ -2,3 +2,4 @@
 venv/
 internal_saves/
 __pycache__/
+results/
