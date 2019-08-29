@@ -128,7 +128,7 @@ def main():
 
 
     # set filters
-    assert config.get('settings', 'analyze_type') in ['deprel', 'lemma', 'upos', 'upos', 'xpos'], '"analyze_type" is not set up correctly'
+    assert config.get('settings', 'analyze_type') in ['deprel', 'lemma', 'upos', 'upos', 'xpos', 'form'], '"analyze_type" is not set up correctly'
     if config.get('settings', 'analyze_type') == 'deprel':
         create_output_string_funct = create_output_string_deprel
     elif config.get('settings', 'analyze_type') == 'lemma':
