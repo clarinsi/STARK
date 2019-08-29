@@ -39,11 +39,11 @@ class Tree(object):
         self.parent = parent
 
     def fits_static_requirements(self, query_tree):
-        return ('form' not in query_tree or query_tree['form'] == self.form.get_value) and \
-               ('lemma' not in query_tree or query_tree['lemma'] == self.lemma.get_value) and \
-               ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value) and \
-               ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value) and \
-               ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value)
+        return ('form' not in query_tree or query_tree['form'] == self.form.get_value()) and \
+               ('lemma' not in query_tree or query_tree['lemma'] == self.lemma.get_value()) and \
+               ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value()) and \
+               ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
+               ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value())
 
     def generate_children_queries(self, all_query_indices, children):
         partial_results = {}
@@ -220,10 +220,14 @@ class Tree(object):
             i += 1
 
         completed_subtrees = l_completed_subtrees
-        for i in range(len(permanent_query_trees)):
+        # for i in range(len(permanent_query_trees)):
+        # for i in range(max(len(completed_subtrees), len(r_completed_subtrees), len(active_permanent_query_trees))):
+        for i in range(len(active_permanent_query_trees)):
+            # if 0 < len(active_permanent_query_trees):
             completed_subtrees[i].extend(merged_partial_subtrees[i])
+        for i in range(len(r_completed_subtrees)):
             completed_subtrees[i].extend(r_completed_subtrees[i])
-        return merged_partial_subtrees[len(permanent_query_trees):], completed_subtrees
+        return merged_partial_subtrees[len(active_permanent_query_trees):], completed_subtrees
 
     @staticmethod
     def merge_results(old_results, new_results):

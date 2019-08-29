@@ -18,11 +18,25 @@ def decode_query(orig_query):
         new_query = True
         orig_query = orig_query[1:-1]
 
+    orig_query_split = orig_query.split(' ')[0].split('=')
     # if orig_query is '_' return {}
     if orig_query == '_':
         return {}
-    elif not new_query:
-        raise Exception('Not supported yet!')
+    # if no spaces in query then this is query node and do this otherwise further split query
+    elif len(orig_query.split(' ')) == 1:
+        if len(orig_query_split) > 1:
+            if orig_query_split[0] == 'L':
+                return {'lemma': orig_query_split[1]}
+            elif orig_query_split[0] == 'upos':
+                return {'upos': orig_query_split[1]}
+            elif orig_query_split[0] == 'xpos':
+                return {'xpos': orig_query_split[1]}
+            elif orig_query_split[0] == 'form':
+                return {'form': orig_query_split[1]}
+            elif not new_query:
+                raise Exception('Not supported yet!')
+        elif not new_query:
+            return {'form': orig_query}
 
     # split over spaces if not inside braces
     PATTERN = re.compile(r'''((?:[^ ()]|\([^(]*\))+)''')
@@ -128,7 +142,7 @@ def main():
 
 
     # set filters
-    assert config.get('settings', 'analyze_type') in ['deprel', 'lemma', 'upos', 'upos', 'xpos', 'form'], '"analyze_type" is not set up correctly'
+    assert config.get('settings', 'analyze_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form'], '"analyze_type" is not set up correctly'
     if config.get('settings', 'analyze_type') == 'deprel':
         create_output_string_funct = create_output_string_deprel
     elif config.get('settings', 'analyze_type') == 'lemma':
@@ -143,6 +157,7 @@ def main():
     result_dict = {}
 
     # for tree in all_trees[2:]:
+    # for tree in all_trees[1205:]:
     for tree in all_trees:
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
