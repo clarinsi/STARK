@@ -7,7 +7,7 @@ import re
 
 import pyconll
 
-from Tree import Tree
+from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos
 
 
 def decode_query(orig_query):
@@ -116,6 +116,7 @@ def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
 
+    # create queries
     ngrams = 0
     if config.getint('settings', 'ngrams') == 2:
         ngrams = 2
@@ -126,6 +127,18 @@ def main():
     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = create_trees(config)
 
 
+    # set filters
+    assert config.get('settings', 'analyze_type') in ['deprel', 'lemma', 'upos', 'upos', 'xpos'], '"analyze_type" is not set up correctly'
+    if config.get('settings', 'analyze_type') == 'deprel':
+        create_output_string_funct = create_output_string_deprel
+    elif config.get('settings', 'analyze_type') == 'lemma':
+        create_output_string_funct = create_output_string_lemma
+    elif config.get('settings', 'analyze_type') == 'upos':
+        create_output_string_funct = create_output_string_upos
+    elif config.get('settings', 'analyze_type') == 'xpos':
+        create_output_string_funct = create_output_string_xpos
+    else:
+        create_output_string_funct = create_output_string_form
 
     result_dict = {}
 
@@ -134,7 +147,7 @@ def main():
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
         # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
-        _, subtrees = tree.get_subtrees(query_tree, [])
+        _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct)
         for query_results in subtrees:
             for result in query_results:
                 if ngrams:
