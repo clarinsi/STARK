@@ -3,3 +3,5 @@ venv/
 internal_saves/
 __pycache__/
 results/
+data/
+config.ini
