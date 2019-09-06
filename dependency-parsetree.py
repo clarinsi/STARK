@@ -1,3 +1,4 @@
+import argparse
 import configparser
 import csv
 import hashlib
@@ -10,7 +11,7 @@ import pyconll
 from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos
 
 
-def decode_query(orig_query):
+def decode_query(orig_query, dependency_type):
     new_query = False
 
     # if command in bracelets remove them and treat command as new query
@@ -20,23 +21,33 @@ def decode_query(orig_query):
 
     orig_query_split = orig_query.split(' ')[0].split('=')
     # if orig_query is '_' return {}
+    if dependency_type != '':
+        decoded_query = {'deprel': dependency_type}
+    else:
+        decoded_query = {}
+
     if orig_query == '_':
-        return {}
+        return decoded_query
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
         if len(orig_query_split) > 1:
             if orig_query_split[0] == 'L':
-                return {'lemma': orig_query_split[1]}
+                decoded_query['lemma'] = orig_query_split[1]
+                return decoded_query
             elif orig_query_split[0] == 'upos':
-                return {'upos': orig_query_split[1]}
+                decoded_query['upos'] = orig_query_split[1]
+                return decoded_query
             elif orig_query_split[0] == 'xpos':
-                return {'xpos': orig_query_split[1]}
+                decoded_query['xpos'] = orig_query_split[1]
+                return decoded_query
             elif orig_query_split[0] == 'form':
-                return {'form': orig_query_split[1]}
+                decoded_query['form'] = orig_query_split[1]
+                return decoded_query
             elif not new_query:
                 raise Exception('Not supported yet!')
         elif not new_query:
-            return {'form': orig_query}
+            decoded_query['form'] = orig_query_split[1]
+            return decoded_query
 
     # split over spaces if not inside braces
     PATTERN = re.compile(r'''((?:[^ ()]|\([^(]*\))+)''')
@@ -59,11 +70,11 @@ def decode_query(orig_query):
     root = None
     for i, node_action in enumerate(node_actions):
         if i < root_index:
-            l_children.append(decode_query(node_action))
+            l_children.append(decode_query(node_action, priority_actions[i][1:]))
         elif i > root_index:
-            r_children.append(decode_query(node_action))
+            r_children.append(decode_query(node_action, priority_actions[i - 1][1:]))
         else:
-            root = decode_query(node_action)
+            root = decode_query(node_action, dependency_type)
     if l_children:
         root["l_children"] = l_children
     if r_children:
@@ -127,16 +138,27 @@ def create_trees(config):
     return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict
 
 def main():
-    config = configparser.ConfigParser()
-    config.read('config.ini')
+    parser = argparse.ArgumentParser()
 
+    ## Required parameters
+    parser.add_argument("--config_file",
+                        default=None,
+                        type=str,
+                        required=True,
+                        help="The input config file.")
+    args = parser.parse_args()
+
+    config = configparser.ConfigParser()
+    config.read(args.config_file)
+    # a = args.config_file
+    # config.read('config.ini')
     # create queries
     ngrams = 0
     if config.getint('settings', 'ngrams') == 2:
         ngrams = 2
         query_tree = [{"l_children": [{}]}, {"r_children": [{}]}]
     else:
-        query_tree = [decode_query('(' + config.get('settings', 'query') + ')')]
+        query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
 
     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = create_trees(config)
 
