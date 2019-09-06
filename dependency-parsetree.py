@@ -46,7 +46,7 @@ def decode_query(orig_query, dependency_type):
             elif not new_query:
                 raise Exception('Not supported yet!')
         elif not new_query:
-            decoded_query['form'] = orig_query_split[1]
+            decoded_query['form'] = orig_query
             return decoded_query
 
     # split over spaces if not inside braces
