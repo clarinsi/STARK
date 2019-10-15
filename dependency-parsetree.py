@@ -10,6 +10,22 @@ import pyconll
 
 from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos
 
+feats_list = [
+    # lexical features
+    'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
+
+    # Inflectional features (nominal)
+    'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
+
+    # Inflectional features (verbal)
+    'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
+
+    # Other
+    'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
+]
+
+feats_dict = {key: {} for key in feats_list}
+
 
 def decode_query(orig_query, dependency_type):
     new_query = False
@@ -42,6 +58,10 @@ def decode_query(orig_query, dependency_type):
                 return decoded_query
             elif orig_query_split[0] == 'form':
                 decoded_query['form'] = orig_query_split[1]
+                return decoded_query
+            elif orig_query_split[0] in feats_list:
+                decoded_query['feats'] = {}
+                decoded_query['feats'][orig_query_split[0]] = orig_query_split[1]
                 return decoded_query
             elif not new_query:
                 raise Exception('Not supported yet!')
@@ -105,8 +125,8 @@ def create_trees(config):
             root_id = None
             token_nodes = []
             for token in sentence:
-                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, form_dict,
-                            lemma_dict, upos_dict, xpos_dict, deprel_dict, token.head)
+                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, token.feats, form_dict,
+                            lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, token.head)
                 token_nodes.append(node)
                 if token.deprel == 'root':
                     root = node
@@ -265,9 +285,8 @@ def main():
         if ngrams:
             len_words = ngrams
         else:
-            len_words = len(config.get('settings', 'query').split(" "))
-        span = 2
-        header = ["Structure"] + ["Word #" + str(int(i/2 + 1)) for i in range(0, len_words * 2, span)] + ['Number of occurences']
+            len_words = int(len(config.get('settings', 'query').split(" "))/2 + 1)
+        header = ["Structure"] + ["Word #" + str(i) for i in range(1, len_words + 1)] + ['Number of occurences']
         # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Number of occurences']
         writer.writerow(header)
 

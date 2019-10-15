@@ -7,7 +7,10 @@ from Value import Value
 
 
 class Tree(object):
-    def __init__(self, form, lemma, upos, xpos, deprel, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, head):
+    def __init__(self, form, lemma, upos, xpos, deprel, feats, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, head):
+        if not hasattr(self, 'feats'):
+            self.feats = {}
+
         # form_unicode = str(form).encode("utf-8")
         if form not in form_dict:
             form_dict[form] = Value(form)
@@ -24,6 +27,12 @@ class Tree(object):
         if deprel not in deprel_dict:
             deprel_dict[deprel] = Value(deprel)
         self.deprel = deprel_dict[deprel]
+        for feat in feats.keys():
+            if next(iter(feats[feat])) not in feats_dict[feat]:
+                feats_dict[feat][next(iter(feats[feat]))] = Value(next(iter(feats[feat])))
+            if not feat in self.feats:
+                self.feats[feat] = {}
+            self.feats[feat][next(iter(feats[feat]))] = feats_dict[feat][next(iter(feats[feat]))]
         # self.position = position
 
         self.parent = head
@@ -43,12 +52,24 @@ class Tree(object):
     def set_parent(self, parent):
         self.parent = parent
 
+    def fits_static_requirements_feats(self, query_tree):
+        if 'feats' not in query_tree:
+            return True
+
+        for feat in query_tree['feats'].keys():
+            if feat not in self.feats or query_tree['feats'][feat] != next(iter(self.feats[feat].values())).get_value():
+                return False
+
+        return True
+
+
     def fits_static_requirements(self, query_tree):
         return ('form' not in query_tree or query_tree['form'] == self.form.get_value()) and \
                ('lemma' not in query_tree or query_tree['lemma'] == self.lemma.get_value()) and \
                ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value()) and \
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
-               ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value())
+               ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value()) and \
+               self.fits_static_requirements_feats(query_tree)
 
     def generate_children_queries(self, all_query_indices, children):
         partial_results = {}
