@@ -1,4 +1,5 @@
 import sys
+from copy import copy
 
 from pyconll.unit import Token
 
@@ -29,10 +30,14 @@ class Tree(object):
         self.l_children = []
         self.r_children = []
 
+        self.index = 0
+
     def add_l_child(self, child):
+        child.index = len(self.l_children)
         self.l_children.append(child)
 
     def add_r_child(self, child):
+        child.index = len(self.l_children) + len(self.r_children)
         self.r_children.append(child)
 
     def set_parent(self, parent):
@@ -110,7 +115,7 @@ class Tree(object):
                 if not is_permanent:
                     partial_subtrees[result_index].append([])
 
-    def get_all_query_indices(self, temporary_query_trees_size, completed_subtrees_size, permanent_query_trees, l_all_query_indices, children, create_output_string):
+    def get_all_query_indices_old(self, temporary_query_trees_size, completed_subtrees_size, permanent_query_trees, l_all_query_indices, children, create_output_string):
         partial_subtrees = [[] for i in range(completed_subtrees_size + temporary_query_trees_size)]
         completed_subtrees = [[] for i in range(completed_subtrees_size)]
 
@@ -135,6 +140,162 @@ class Tree(object):
 
         return partial_subtrees, completed_subtrees
 
+    def get_all_query_indices(self, temporary_query_trees_size, completed_subtrees_size, permanent_query_trees, all_query_indices, children, create_output_string):
+        # l_partial_subtrees, l_completed_subtrees = self.get_all_query_indices(len(temporary_query_trees),
+        #                                                                       len(permanent_query_trees),
+        #                                                                       permanent_query_trees,
+        #                                                                       l_all_query_indices, self.l_children,
+        #                                                                       create_output_string)
+        partial_subtrees = [[] for i in range(completed_subtrees_size + temporary_query_trees_size)]
+        partial_subtrees_architectures = [[] for i in range(completed_subtrees_size + temporary_query_trees_size)]
+        completed_subtrees = [[] for i in range(completed_subtrees_size)]
+
+        # list of pairs (index of query in group, group of query)
+        partial_results_dict = {}
+
+        # TODO try to erase!!!
+        child_queries = [all_query_indice[0] for all_query_indice in all_query_indices]
+
+        answers_lengths = [len(query) for query in child_queries]
+
+        child_queries_flatten = [query_part for query in child_queries for query_part in query]
+
+        all_new_partial_answers = [[] for query_part in child_queries_flatten]
+        all_new_partial_answers_architecture = [[] for query_part in child_queries_flatten]
+
+        # ask children all queries/partial queries
+        for child in children:
+            # obtain children results
+            new_partial_answers_architecture, new_partial_answers, new_completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries_flatten,
+                                                                              create_output_string)
+
+            assert len(new_partial_answers) == len(child_queries_flatten)
+            for i, new_partial_subtree in enumerate(new_partial_answers):
+                all_new_partial_answers[i].append(new_partial_subtree)
+                all_new_partial_answers_architecture[i].append(new_partial_answers_architecture[i])
+
+            # add 6 queries from 3 split up
+            # self.group_results(new_partial_subtrees, child_queries_metadata, all_query_indices,
+            #                    partial_results_dict, partial_subtrees)
+
+            for i in range(len(new_completed_subtrees)):
+                completed_subtrees[i].extend(new_completed_subtrees[i])
+
+        # merge answers in appropriate way
+        i = 0
+        # iterate over all answers per queries
+        for answer_i, answer_length in enumerate(answers_lengths):
+            # iterate over answers of query
+            partial_subtrees[answer_i], partial_subtrees_architectures[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], all_new_partial_answers_architecture[i:i + answer_length], answer_length, len(self.l_children))
+            # while i < answers_length:
+            #     self.create_grouped_answers()
+            #     i += 1
+            i += answer_length
+
+            # merged_results = []
+            # for old_result in old_results:
+            #     for new_result in new_results:
+            #         merged_results.append(old_result + new_result)
+            # return merged_results
+        # children_queries_generator = self.generate_children_queries(all_query_indices, children)
+        #
+        # child_index = 0
+        # child, child_queries, child_queries_metadata = next(children_queries_generator)
+        # while child:
+        #     # obtain children results
+        #     new_partial_subtrees, new_completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries, create_output_string)
+        #
+        #     self.group_results(new_partial_subtrees, child_queries_metadata, all_query_indices,
+        #                        partial_results_dict, partial_subtrees)
+        #
+        #     for i in range(len(new_completed_subtrees)):
+        #         completed_subtrees[i].extend(new_completed_subtrees[i])
+        #     child, child_queries, child_queries_metadata = children_queries_generator.send(partial_results_dict)
+        #     child_index += 1
+
+        return partial_subtrees_architectures, partial_subtrees, completed_subtrees
+
+    def order_dependent_queries(self, active_permanent_query_trees, active_temporary_query_trees, l_partial_subtrees, l_partial_subtrees_architecture,
+                                r_partial_subtrees, r_partial_subtrees_architecture, create_output_string, merged_partial_subtrees, merged_partial_subtrees_architecture, i, i_left, i_right):
+        # string_output = ''
+        if i < len(active_permanent_query_trees):
+            if ('l_children' in active_permanent_query_trees[i] and 'r_children' in active_permanent_query_trees[i]):
+                merged_partial_subtree = self.create_output_left_children(l_partial_subtrees[i_left], [create_output_string(self)])
+                merged_partial_subtrees.append(
+                    self.create_output_right_children(merged_partial_subtree, r_partial_subtrees[i_right]))
+
+                merged_partial_subtree_architecture = self.create_output_left_children(l_partial_subtrees_architecture[i_left], [str([self.index])])
+                merged_partial_subtrees_architecture.append(
+                    self.create_output_right_children(merged_partial_subtree_architecture, l_partial_subtrees_architecture[i_right]))
+                # merged_partial_subtree = self.merge_results(l_partial_subtrees[i_left],
+                #                                             [[create_output_string(self)]])
+                # merged_partial_subtrees.append(
+                #     self.merge_results(merged_partial_subtree, r_partial_subtrees[i_right]))
+                # # merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
+                i_left += 1
+                i_right += 1
+
+            elif 'l_children' in active_permanent_query_trees[i]:
+                merged_partial_subtrees.append(self.create_output_left_children(l_partial_subtrees[i_left], [create_output_string(self)]))
+                merged_partial_subtrees_architecture.append(self.create_output_left_children(l_partial_subtrees_architecture[i_left], [str([self.index])]))
+                # merged_partial_subtrees.append(
+                #     self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]]))
+                i_left += 1
+
+            elif 'r_children' in active_permanent_query_trees[i]:
+                merged_partial_subtrees.append(self.create_output_right_children([create_output_string(self)], r_partial_subtrees[i_right]))
+                merged_partial_subtrees_architecture.append(
+                    self.create_output_right_children(r_partial_subtrees_architecture[i_left], [str([self.index])]))
+                # merged_partial_subtrees.append(
+                #     self.merge_results([[create_output_string(self)]], r_partial_subtrees[i_right]))
+                i_right += 1
+            else:
+                merged_partial_subtrees.append([create_output_string(self)])
+                merged_partial_subtrees_architecture.append([str([self.index])])
+                # merged_partial_subtrees.append([[create_output_string(self)]])
+        else:
+            if ('l_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)] and 'r_children' in
+                    active_temporary_query_trees[i - len(active_permanent_query_trees)]):
+                merged_partial_subtree = self.create_output_left_children(l_partial_subtrees[i_left],
+                                                                          [create_output_string(self)])
+                merged_partial_subtrees.append(
+                    self.create_output_right_children(merged_partial_subtree, r_partial_subtrees[i_right]))
+
+                merged_partial_subtree_architecture = self.create_output_left_children(
+                    l_partial_subtrees_architecture[i_left], [str([self.index])])
+                merged_partial_subtrees_architecture.append(
+                    self.create_output_right_children(merged_partial_subtree_architecture,
+                                                      l_partial_subtrees_architecture[i_right]))
+                # merged_partial_subtree = self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]])
+                # merged_partial_subtrees.append(self.merge_results(merged_partial_subtree, r_partial_subtrees[i_right]))
+                # # merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
+                i_left += 1
+                i_right += 1
+
+            elif 'l_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]:
+                merged_partial_subtrees.append(
+                    self.create_output_left_children(l_partial_subtrees[i_left], [create_output_string(self)]))
+                merged_partial_subtrees_architecture.append(
+                    self.create_output_left_children(l_partial_subtrees_architecture[i_left], [str([self.index])]))
+                # merged_partial_subtrees.append(
+                #     self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]]))
+                i_left += 1
+
+            elif 'r_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]:
+                merged_partial_subtrees.append(
+                    self.create_output_right_children([create_output_string(self)], r_partial_subtrees[i_right]))
+                merged_partial_subtrees_architecture.append(
+                    self.create_output_right_children(r_partial_subtrees_architecture[i_left], [str([self.index])]))
+                # merged_partial_subtrees.append(
+                #     self.merge_results([[create_output_string(self)]], r_partial_subtrees[i_right]))
+                i_right += 1
+            else:
+                merged_partial_subtrees.append([create_output_string(self)])
+                merged_partial_subtrees_architecture.append([str([self.index])])
+                # merged_partial_subtrees.append([[create_output_string(self)]])
+
+        return i_left, i_right
+
     def get_subtrees(self, permanent_query_trees, temporary_query_trees, create_output_string):
         """
 
@@ -149,74 +310,105 @@ class Tree(object):
         active_permanent_query_trees = []
         for permanent_query_tree in permanent_query_trees:
             if self.fits_static_requirements(permanent_query_tree):
+                if 'l_children' in permanent_query_tree and 'r_children' in permanent_query_tree:
+                    permanent_query_tree['l_children'] += permanent_query_tree['r_children']
+                    del(permanent_query_tree['r_children'])
+                elif 'r_children' in permanent_query_tree:
+                    permanent_query_tree['l_children'] = permanent_query_tree['r_children']
+                    del(permanent_query_tree['r_children'])
                 active_permanent_query_trees.append(permanent_query_tree)
                 if 'l_children' in permanent_query_tree:
                     l_all_query_indices.append((permanent_query_tree['l_children'], True))
                 if 'r_children' in permanent_query_tree:
-                    r_all_query_indices.append((permanent_query_tree['r_children'], True))
+                    r_all_query_indices.append((permanent_query_tree['l_children'], True))
+                    # r_all_query_indices.append((permanent_query_tree['r_children'], True))
 
         active_temporary_query_trees = []
+        successful_temporary_queries = []
         for i, temporary_query_tree in enumerate(temporary_query_trees):
             if self.fits_static_requirements(temporary_query_tree):
+                if 'l_children' in temporary_query_tree and 'r_children' in temporary_query_tree:
+                    temporary_query_tree['l_children'] += temporary_query_tree['r_children']
+                    del(temporary_query_tree['r_children'])
+                elif 'r_children' in temporary_query_tree:
+                    temporary_query_tree['l_children'] = temporary_query_tree['r_children']
+                    del(temporary_query_tree['r_children'])
                 active_temporary_query_trees.append(temporary_query_tree)
+                successful_temporary_queries.append(i)
                 # if 'l_children' in temporary_query_tree and 'r_children' in temporary_query_tree:
                 if 'l_children' in temporary_query_tree:
                     l_all_query_indices.append((temporary_query_tree['l_children'], False))
                 if 'r_children' in temporary_query_tree:
-                    r_all_query_indices.append((temporary_query_tree['r_children'], False))
+                    # r_all_query_indices.append((temporary_query_tree['r_children'], False))
+                    r_all_query_indices.append((temporary_query_tree['l_children'], False))
 
-        l_partial_subtrees, l_completed_subtrees = self.get_all_query_indices(len(temporary_query_trees), len(permanent_query_trees), permanent_query_trees, l_all_query_indices, self.l_children, create_output_string)
-        r_partial_subtrees, r_completed_subtrees = self.get_all_query_indices(len(temporary_query_trees), len(permanent_query_trees), permanent_query_trees, r_all_query_indices, self.r_children, create_output_string)
+        # l_partial_subtrees, l_completed_subtrees = self.get_all_query_indices_old(len(temporary_query_trees), len(permanent_query_trees), permanent_query_trees, l_all_query_indices, self.l_children, create_output_string)
+        # r_partial_subtrees, r_completed_subtrees = self.get_all_query_indices_old(len(temporary_query_trees), len(permanent_query_trees), permanent_query_trees, r_all_query_indices, self.r_children, create_output_string)
 
+        all_query_indices = l_all_query_indices + r_all_query_indices
 
+        l_partial_subtrees_architecture, l_partial_subtrees, l_completed_subtrees = self.get_all_query_indices(len(temporary_query_trees),
+                                                                              len(permanent_query_trees),
+                                                                              permanent_query_trees,
+                                                                              all_query_indices, self.l_children + self.r_children,
+                                                                              create_output_string)
+        # r_partial_subtrees_architecture, r_partial_subtrees, r_completed_subtrees = self.get_all_query_indices(len(temporary_query_trees),
+        #                                                                       len(permanent_query_trees),
+        #                                                                       permanent_query_trees,
+        #                                                                       r_all_query_indices, self.r_children,
+        #                                                                       create_output_string)
+        r_partial_subtrees_architecture, r_partial_subtrees, r_completed_subtrees = [], [], []
 
         merged_partial_subtrees = []
+        merged_partial_subtrees_architecture = []
         i = 0
         i_left = 0
         i_right = 0
         # go over all permanent and temporary query trees
         while i < len(active_permanent_query_trees) + len(active_temporary_query_trees):
             # permanent query trees always have left and right child
-            if i < len(active_permanent_query_trees):
-                if ('l_children' in active_permanent_query_trees[i] and 'r_children' in active_permanent_query_trees[i]):
-                    merged_partial_subtree = self.merge_results(l_partial_subtrees[i_left],
-                                                                [[create_output_string(self)]])
-                    merged_partial_subtrees.append(
-                        self.merge_results(merged_partial_subtree, r_partial_subtrees[i_right]))
-                    # merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
-                    i_left += 1
-                    i_right += 1
-
-                elif 'l_children' in active_permanent_query_trees[i]:
-                    merged_partial_subtrees.append(
-                        self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]]))
-                    i_left += 1
-
-                elif 'r_children' in active_permanent_query_trees[i]:
-                    merged_partial_subtrees.append(
-                        self.merge_results([[create_output_string(self)]], r_partial_subtrees[i_right]))
-                    i_right += 1
-                else:
-                    merged_partial_subtrees.append([[create_output_string(self)]])
-            else:
-                if ('l_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)] and 'r_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]):
-                    merged_partial_subtree = self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]])
-                    merged_partial_subtrees.append(self.merge_results(merged_partial_subtree, r_partial_subtrees[i_right]))
-                    # merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
-                    i_left += 1
-                    i_right += 1
-
-                elif 'l_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]:
-                    merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]]))
-                    i_left += 1
-
-                elif 'r_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]:
-                    merged_partial_subtrees.append(self.merge_results([[create_output_string(self)]], r_partial_subtrees[i_right]))
-                    i_right += 1
-                else:
-                    merged_partial_subtrees.append([[create_output_string(self)]])
-            # if r_partial_subtrees[i]:
-            #     merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
+            i_left, i_right = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees, l_partial_subtrees, l_partial_subtrees_architecture,
+                                r_partial_subtrees, r_partial_subtrees_architecture, create_output_string, merged_partial_subtrees, merged_partial_subtrees_architecture, i, i_left, i_right)
+            # if i < len(active_permanent_query_trees):
+            #     if ('l_children' in active_permanent_query_trees[i] and 'r_children' in active_permanent_query_trees[i]):
+            #         merged_partial_subtree = self.merge_results(l_partial_subtrees[i_left],
+            #                                                     [[create_output_string(self)]])
+            #         merged_partial_subtrees.append(
+            #             self.merge_results(merged_partial_subtree, r_partial_subtrees[i_right]))
+            #         # merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
+            #         i_left += 1
+            #         i_right += 1
+            #
+            #     elif 'l_children' in active_permanent_query_trees[i]:
+            #         merged_partial_subtrees.append(
+            #             self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]]))
+            #         i_left += 1
+            #
+            #     elif 'r_children' in active_permanent_query_trees[i]:
+            #         merged_partial_subtrees.append(
+            #             self.merge_results([[create_output_string(self)]], r_partial_subtrees[i_right]))
+            #         i_right += 1
+            #     else:
+            #         merged_partial_subtrees.append([[create_output_string(self)]])
+            # else:
+            #     if ('l_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)] and 'r_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]):
+            #         merged_partial_subtree = self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]])
+            #         merged_partial_subtrees.append(self.merge_results(merged_partial_subtree, r_partial_subtrees[i_right]))
+            #         # merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
+            #         i_left += 1
+            #         i_right += 1
+            #
+            #     elif 'l_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]:
+            #         merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i_left], [[create_output_string(self)]]))
+            #         i_left += 1
+            #
+            #     elif 'r_children' in active_temporary_query_trees[i - len(active_permanent_query_trees)]:
+            #         merged_partial_subtrees.append(self.merge_results([[create_output_string(self)]], r_partial_subtrees[i_right]))
+            #         i_right += 1
+            #     else:
+            #         merged_partial_subtrees.append([[create_output_string(self)]])
+            # # if r_partial_subtrees[i]:
+            # #     merged_partial_subtrees.append(self.merge_results(l_partial_subtrees[i], [[create_output_string(self)]]))
             i += 1
 
         completed_subtrees = l_completed_subtrees
@@ -227,7 +419,19 @@ class Tree(object):
             completed_subtrees[i].extend(merged_partial_subtrees[i])
         for i in range(len(r_completed_subtrees)):
             completed_subtrees[i].extend(r_completed_subtrees[i])
-        return merged_partial_subtrees[len(active_permanent_query_trees):], completed_subtrees
+
+        # answers to valid queries
+        subtrees_architecture = [[] for i in range(len(temporary_query_trees))]
+        for inside_i, outside_i in enumerate(successful_temporary_queries):
+            subtrees_architecture[outside_i] = merged_partial_subtrees_architecture[len(active_permanent_query_trees) + inside_i]
+
+        # answers to valid queries
+        subtrees = [[] for i in range(len(temporary_query_trees))]
+        for inside_i, outside_i in enumerate(successful_temporary_queries):
+            subtrees[outside_i] = merged_partial_subtrees[
+                len(active_permanent_query_trees) + inside_i]
+        return subtrees_architecture, subtrees, completed_subtrees
+        # return merged_partial_subtrees_architecture[len(active_permanent_query_trees):], merged_partial_subtrees[len(active_permanent_query_trees):], completed_subtrees
 
     @staticmethod
     def merge_results(old_results, new_results):
@@ -236,6 +440,143 @@ class Tree(object):
             for new_result in new_results:
                 merged_results.append(old_result + new_result)
         return merged_results
+
+    @staticmethod
+    def merge_answer(answer1, answer2, base_answer_i, answer_j):
+        merged_results = []
+        merged_indices = []
+        for answer1p_i, old_result in enumerate(answer1):
+            for answer2p_i, new_result in enumerate(answer2):
+                if answer1p_i != answer2p_i:
+                    new_indices = [answer1p_i] + [answer2p_i]
+                    sorted_indices = sorted(new_indices)
+
+                    if sorted_indices in merged_indices:
+                        test = merged_indices.index(sorted(new_indices))
+                        # TODO add comparison answers with different indices if equal than ignore
+                    merged_results.append(old_result + new_result)
+                    merged_indices.append(new_indices)
+        return merged_results, merged_indices
+
+    @staticmethod
+    def create_output_left_children(left_children, new_results):
+        merged_results = []
+        for child in left_children:
+            for new_result in new_results:
+                res = ''
+                if type(child) == str:
+                    res += '(' + child + ') < '
+                else:
+                    for el in sorted(child):
+                        res += '(' + el + ') < '
+                merged_results.append(res + new_result)
+        return merged_results
+
+    @staticmethod
+    def create_output_right_children(new_results, right_children):
+        merged_results = []
+        for child in right_children:
+            for new_result in new_results:
+                res = ''
+                if type(child) == str:
+                    res += ' > (' + child + ')'
+                else:
+                    for el in sorted(child):
+                        res += ' > (' + el + ')'
+                merged_results.append(new_result + res)
+                # merged_results.append(new_result + ' > (' + child + ')')
+        return merged_results
+
+    @staticmethod
+    def create_answers(separated_answers, separated_answers_architecture, answer_length, l_children_len):
+        # TODO
+        node_order = False
+        partly_built_trees = [[None] * answer_length]
+        partly_built_trees_architecture = [[None] * answer_length]
+        partly_built_trees_architecture_indices = [[None] * answer_length]
+        built_trees = []
+        built_trees_architecture = []
+        built_trees_architecture_indices = []
+        # iterate over children first, so that new partly built trees are added only after all results of specific
+        # child are added
+        for child_i in range(len(separated_answers[0])):
+            new_partly_built_trees = []
+            new_partly_built_trees_architecture = []
+            new_partly_built_trees_architecture_indices = []
+            # iterate over answers parts
+            for answer_part_i in range(len(separated_answers)):
+                # necessary because some parts do not pass filters and are not added
+                # if child_i < len(separated_answers[answer_part_i]) and separated_answers[answer_part_i][child_i]:
+                if separated_answers[answer_part_i][child_i]:
+                    for tree_part_i, tree_part in enumerate(partly_built_trees):
+                        # if tree_part[answer_part_i] equals None add new element in its place
+                        if not tree_part[answer_part_i]:
+                            new_tree_part = copy(tree_part)
+                            new_tree_part_architecture = copy(partly_built_trees_architecture[tree_part_i])
+                            new_tree_part_architecture_indices = copy(partly_built_trees_architecture_indices[tree_part_i])
+                            new_tree_part[answer_part_i] = separated_answers[answer_part_i][child_i][0]
+                            new_tree_part_architecture[answer_part_i] = separated_answers_architecture[answer_part_i][child_i][0]
+                            new_tree_part_architecture_indices[answer_part_i] = child_i
+                            completed_tree_part = True
+                            for val_i, val in enumerate(new_tree_part):
+                                if not val:
+                                    completed_tree_part = False
+                            if completed_tree_part:
+                                built_trees.append(new_tree_part)
+                                built_trees_architecture.append(new_tree_part_architecture)
+                                built_trees_architecture_indices.append(new_tree_part_architecture_indices)
+                            else:
+                                new_partly_built_trees.append(new_tree_part)
+                                new_partly_built_trees_architecture.append(new_tree_part_architecture)
+                                new_partly_built_trees_architecture_indices.append(new_tree_part_architecture_indices)
+
+            partly_built_trees.extend(new_partly_built_trees)
+            partly_built_trees_architecture.extend(new_partly_built_trees_architecture)
+            partly_built_trees_architecture_indices.extend(new_partly_built_trees_architecture_indices)
+
+        l_ordered_built_trees_architecture, l_ordered_built_trees, r_ordered_built_trees_architecture, r_ordered_built_trees, unique_trees_architecture = [], [], [], [], []
+
+        if built_trees:
+            # sort 3 arrays by architecture indices
+            temp_trees_architecture_indice, temp_trees, temp_trees_architectures = (list(t) for t in zip(
+                *sorted(zip(built_trees_architecture_indices, built_trees, built_trees_architecture))))
+
+            # order outputs and erase duplicates
+            # for tree, tree_architecture, tree_architecture_indice in zip(built_trees, built_trees_architecture, built_trees_architecture_indices):
+            for tree, tree_architecture, tree_architecture_indice in zip(temp_trees, temp_trees_architectures, temp_trees_architecture_indice):
+                new_tree_architecture_indice, new_tree, new_tree_architecture = (list(t) for t in zip(*sorted(zip(tree_architecture_indice, tree, tree_architecture))))
+                # TODO check if inside new_tree_architecture in ordered_built_trees_architecture and if not append!
+                is_unique = True
+                for unique_tree in unique_trees_architecture:
+                    already_in = True
+                    for part_i in range(len(unique_tree)):
+                        if unique_tree[part_i] != new_tree_architecture[part_i]:
+                            already_in = False
+                            break
+                    if already_in:
+                        is_unique = False
+                        break
+
+                if is_unique:
+                    unique_trees_architecture.append(new_tree_architecture)
+                    if not node_order:
+                        l_ordered_built_trees_architecture.append(new_tree_architecture)
+                        l_ordered_built_trees.append(new_tree)
+                    # TODO NODE ORDER = FALSE
+                    # else:
+                    #
+                    #     ordered_built_trees_architecture.append(tree_architecture)
+                    #     ordered_built_trees.append(tree)
+                # print("test")
+        # for answer1_i, answer1 in enumerate(separated_answers):
+        #     for answer2_i, answer2 in enumerate(separated_answers):
+        #         if answer1_i != answer2_i:
+        #             res, res_i = self.merge_answer(answer1, answer2, answer1_i, answer2_i)
+        #             print('aaa')
+        #
+        # pass
+        return l_ordered_built_trees, l_ordered_built_trees_architecture
+
 
 def create_output_string_form(tree):
     return tree.form.get_value()

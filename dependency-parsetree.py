@@ -50,8 +50,11 @@ def decode_query(orig_query, dependency_type):
             return decoded_query
 
     # split over spaces if not inside braces
-    PATTERN = re.compile(r'''((?:[^ ()]|\([^(]*\))+)''')
-    all_orders = PATTERN.split(orig_query)[1::2]
+    # PATTERN = re.compile(r'''((?:[^ ()]|\([^.]*\))+)''')
+    # all_orders = PATTERN.split(orig_query)
+    # PATTERN = re.compile(r"(?:[^ ()]|\([^.]*\))+")
+    # all_orders = re.findall(r"(?:[^ ()]|\([^]*\))+", orig_query)
+    all_orders = re.split(r"\s+(?=[^()]*(?:\(|$))", orig_query)
 
 
     # all_orders = orig_query.split()
@@ -137,6 +140,32 @@ def create_trees(config):
 
     return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict
 
+
+# def order_independent_queries(query_tree):
+#     all_children = query_tree['l_children'] + query_tree['r_children']
+#     if all_children > 0:
+#
+#     else:
+#         return query_tree
+#     pass
+
+def printable_answers(query):
+    # all_orders = re.findall(r"(?:[^ ()]|\([^]*\))+", query)
+    all_orders = re.split(r"\s+(?=[^()]*(?:\(|$))", query)
+
+    # all_orders = orig_query.split()
+    node_actions = all_orders[::2]
+    # priority_actions = all_orders[1::2]
+
+    if len(node_actions) > 1:
+        res = []
+        for node_action in node_actions[:-1]:
+            res.extend(printable_answers(node_action[1:-1]))
+        res.extend([node_actions[-1]])
+        return res
+    else:
+        return [query]
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -156,22 +185,34 @@ def main():
     ngrams = 0
     if config.getint('settings', 'ngrams') == 2:
         ngrams = 2
-        query_tree = [{"l_children": [{}]}, {"r_children": [{}]}]
+        query_tree = [{"l_children": [{}]}]
+    elif config.getint('settings', 'ngrams') == 3:
+        ngrams = 3
+        query_tree = [{"l_children": [{}, {}]}, {"l_children": [{"l_children": [{}]}]}]
+    elif config.getint('settings', 'ngrams') == 4:
+        ngrams = 4
+        query_tree = [{"l_children": [{}, {}, {}]}, {"l_children": [{"l_children": [{}, {}]}]}, {"l_children": [{"l_children": [{}]}, {}]}, {"l_children": [{"l_children": [{"l_children": [{}]}]}]}]
+    elif config.getint('settings', 'ngrams') == 5:
+        ngrams = 5
+        query_tree = [{"l_children": [{}, {}, {}, {}]}, {"l_children": [{"l_children": [{}]}, {}, {}]}, {"l_children": [{"l_children": [{}, {}]}, {}]}, {"l_children": [{"l_children": [{}]}, {"l_children": [{}]}]},
+                      {"l_children": [{"l_children": [{"l_children": [{}]}]}, {}]}, {"l_children": [{"l_children": [{"l_children": [{}]}, {}]}]}, {"l_children": [{"l_children": [{"l_children": [{}, {}]}]}]},
+                      {"l_children": [{"l_children": [{"l_children": [{"l_children": [{}]}]}]}]}]
     else:
         query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
+        # order_independent_queries(query_tree)
 
     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = create_trees(config)
 
 
     # set filters
-    assert config.get('settings', 'analyze_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form'], '"analyze_type" is not set up correctly'
-    if config.get('settings', 'analyze_type') == 'deprel':
+    assert config.get('settings', 'node_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form'], '"node_type" is not set up correctly'
+    if config.get('settings', 'node_type') == 'deprel':
         create_output_string_funct = create_output_string_deprel
-    elif config.get('settings', 'analyze_type') == 'lemma':
+    elif config.get('settings', 'node_type') == 'lemma':
         create_output_string_funct = create_output_string_lemma
-    elif config.get('settings', 'analyze_type') == 'upos':
+    elif config.get('settings', 'node_type') == 'upos':
         create_output_string_funct = create_output_string_upos
-    elif config.get('settings', 'analyze_type') == 'xpos':
+    elif config.get('settings', 'node_type') == 'xpos':
         create_output_string_funct = create_output_string_xpos
     else:
         create_output_string_funct = create_output_string_form
@@ -184,21 +225,27 @@ def main():
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
         # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
-        _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct)
+        _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct)
         for query_results in subtrees:
             for result in query_results:
-                if ngrams:
-                    result = sorted(result)
-                r = tuple(result)
+                # if ngrams:
+                #     result = sorted(result)
+                # r = tuple(result)
+                r = result
                 if r in result_dict:
                     result_dict[r] += 1
                 else:
                     result_dict[r] = 1
         # test 1 layer queries
-        # tree.r_children = []
-        # tree.l_children[1].l_children = []
-        # _, subtrees = tree.get_subtrees([{'q1':'', "l_children": [{'a1':''}, {'a2':''}]}, {'q2':'', "l_children": [{'b1':''}]}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}]}], [])
+        # # tree.r_children = []
+        # # tree.l_children[1].l_children = []
+        # # query = [{'l_children': [{}]}, {'r_children': [{}]}]
+        # # query = [{"l_children": [{}, {}]}, {"l_children": [{}]}, {"l_children": [{}, {}, {}]}]
+        # query = [{"l_children": [{'form': 'je'}, {}]}, {"l_children": [{'form': 'je'}]}, {"l_children": [{'form': 'je'}, {}, {}]}]
+        # # query = [{'q1':'', "l_children": [{'a1':''}, {'a2':''}]}, {'q2':'', "l_children": [{'b1':''}]}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}]}]
+        # _, _, subtrees = tree.get_subtrees(query, [], create_output_string_funct)
         # # _, subtrees = tree.get_subtrees([{'q1':'', "l_children": [{'a1':''}, {'a2':''}], "r_children": []}, {'q2':'', "l_children": [{'b1':''}], "r_children": []}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}], "r_children": []}], [])
+        # print('HERE!')
 
         # test 2 layer queries
         # tree.r_children = [Tree('je', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)]
@@ -216,16 +263,18 @@ def main():
         # header - use every second space as a split
         writer = csv.writer(f, delimiter='\t')
         if ngrams:
-            writer.writerow(['Word 1', 'Word 2', 'Number of occurences'])
+            len_words = ngrams
         else:
-            span = 2
-            words = config.get('settings', 'query').split(" ")
-            header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Number of occurences']
-            writer.writerow(header)
+            len_words = len(config.get('settings', 'query').split(" "))
+        span = 2
+        header = ["Structure"] + ["Word #" + str(int(i/2 + 1)) for i in range(0, len_words * 2, span)] + ['Number of occurences']
+        # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Number of occurences']
+        writer.writerow(header)
 
         # body
         for k, v in sorted_list:
-            writer.writerow(list(k) + [str(v)])
+            words_only = printable_answers(k)
+            writer.writerow([k] + words_only + [str(v)])
 
     return
 
