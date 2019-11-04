@@ -36,42 +36,51 @@ def decode_query(orig_query, dependency_type):
         new_query = True
         orig_query = orig_query[1:-1]
 
-    orig_query_split = orig_query.split(' ')[0].split('=')
+
     # if orig_query is '_' return {}
     if dependency_type != '':
         decoded_query = {'deprel': dependency_type}
     else:
         decoded_query = {}
 
+
+
+
     if orig_query == '_':
         return decoded_query
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
-        if len(orig_query_split) > 1:
-            if orig_query_split[0] == 'L':
-                decoded_query['lemma'] = orig_query_split[1]
-                return decoded_query
-            elif orig_query_split[0] == 'upos':
-                decoded_query['upos'] = orig_query_split[1]
-                return decoded_query
-            elif orig_query_split[0] == 'xpos':
-                decoded_query['xpos'] = orig_query_split[1]
-                return decoded_query
-            elif orig_query_split[0] == 'form':
-                decoded_query['form'] = orig_query_split[1]
-                return decoded_query
-            elif orig_query_split[0] == 'feats':
-                decoded_query['feats'] = orig_query_split[1]
-                return decoded_query
-            # elif orig_query_split[0] in feats_list:
-            #     decoded_query['feats'] = {}
-            #     decoded_query['feats'][orig_query_split[0]] = orig_query_split[1]
-            #     return decoded_query
+        orig_query_split_parts = orig_query.split(' ')[0].split('&')
+        for orig_query_split_part in orig_query_split_parts:
+            orig_query_split = orig_query_split_part.split('=')
+            if len(orig_query_split) > 1:
+                if orig_query_split[0] == 'L':
+                    decoded_query['lemma'] = orig_query_split[1]
+                    # return decoded_query
+                elif orig_query_split[0] == 'upos':
+                    decoded_query['upos'] = orig_query_split[1]
+                    # return decoded_query
+                elif orig_query_split[0] == 'xpos':
+                    decoded_query['xpos'] = orig_query_split[1]
+                    # return decoded_query
+                elif orig_query_split[0] == 'form':
+                    decoded_query['form'] = orig_query_split[1]
+                    # return decoded_query
+                elif orig_query_split[0] == 'feats':
+                    decoded_query['feats'] = orig_query_split[1]
+                    # return decoded_query
+                # elif orig_query_split[0] in feats_list:
+                #     decoded_query['feats'] = {}
+                #     decoded_query['feats'][orig_query_split[0]] = orig_query_split[1]
+                #     return decoded_query
+                elif not new_query:
+                    raise Exception('Not supported yet!')
+                else:
+                    print('???')
             elif not new_query:
-                raise Exception('Not supported yet!')
-        elif not new_query:
-            decoded_query['form'] = orig_query
-            return decoded_query
+                decoded_query['form'] = orig_query_split_part
+                # return decoded_query
+        return decoded_query
 
     # split over spaces if not inside braces
     # PATTERN = re.compile(r'''((?:[^ ()]|\([^.]*\))+)''')
