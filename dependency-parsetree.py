@@ -10,21 +10,22 @@ import pyconll
 
 from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos
 
-feats_list = [
-    # lexical features
-    'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
-
-    # Inflectional features (nominal)
-    'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
-
-    # Inflectional features (verbal)
-    'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
-
-    # Other
-    'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
-]
-
-feats_dict = {key: {} for key in feats_list}
+# for separate searches of feats
+# feats_list = [
+#     # lexical features
+#     'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
+#
+#     # Inflectional features (nominal)
+#     'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
+#
+#     # Inflectional features (verbal)
+#     'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
+#
+#     # Other
+#     'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
+# ]
+#
+# feats_dict = {key: {} for key in feats_list}
 
 
 def decode_query(orig_query, dependency_type):
@@ -59,10 +60,13 @@ def decode_query(orig_query, dependency_type):
             elif orig_query_split[0] == 'form':
                 decoded_query['form'] = orig_query_split[1]
                 return decoded_query
-            elif orig_query_split[0] in feats_list:
-                decoded_query['feats'] = {}
-                decoded_query['feats'][orig_query_split[0]] = orig_query_split[1]
+            elif orig_query_split[0] == 'feats':
+                decoded_query['feats'] = orig_query_split[1]
                 return decoded_query
+            # elif orig_query_split[0] in feats_list:
+            #     decoded_query['feats'] = {}
+            #     decoded_query['feats'][orig_query_split[0]] = orig_query_split[1]
+            #     return decoded_query
             elif not new_query:
                 raise Exception('Not supported yet!')
         elif not new_query:
@@ -88,20 +92,17 @@ def decode_query(orig_query, dependency_type):
     except ValueError:
         root_index = len(priority_actions)
 
-    l_children = []
-    r_children = []
+    children = []
     root = None
     for i, node_action in enumerate(node_actions):
         if i < root_index:
-            l_children.append(decode_query(node_action, priority_actions[i][1:]))
+            children.append(decode_query(node_action, priority_actions[i][1:]))
         elif i > root_index:
-            r_children.append(decode_query(node_action, priority_actions[i - 1][1:]))
+            children.append(decode_query(node_action, priority_actions[i - 1][1:]))
         else:
             root = decode_query(node_action, dependency_type)
-    if l_children:
-        root["l_children"] = l_children
-    if r_children:
-        root["r_children"] = r_children
+    if children:
+        root["children"] = children
     return root
 
 
@@ -116,7 +117,7 @@ def create_trees(config):
 
         train = pyconll.load_from_file(input_path)
 
-        form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict = {}, {}, {}, {}, {}
+        form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_complete_dict = {}, {}, {}, {}, {}, {}
 
         all_trees = []
 
@@ -125,8 +126,14 @@ def create_trees(config):
             root_id = None
             token_nodes = []
             for token in sentence:
-                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, token.feats, form_dict,
-                            lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, token.head)
+                # token_feats = ''
+                # for k, v in token.feats.items():
+                #     token_feats += k + next(iter(v)) + '|'
+                # token_feats = token_feats[:-1]
+                # TODO check if 5th place is always there for feats
+                token_feats = token._fields[5]
+                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, token_feats, form_dict,
+                            lemma_dict, upos_dict, xpos_dict, deprel_dict, None, feats_complete_dict, token.head)
                 token_nodes.append(node)
                 if token.deprel == 'root':
                     root = node
@@ -137,13 +144,20 @@ def create_trees(config):
                     token.set_parent(None)
                 else:
                     parent_id = int(token.parent) - 1
-                    if token_id < parent_id:
-                        token_nodes[parent_id].add_l_child(token)
-                    elif token_id > parent_id:
-                        token_nodes[parent_id].add_r_child(token)
-                    else:
-                        raise Exception('Root element should not be here!')
+                    # if token_id < parent_id:
+                    #     token_nodes[parent_id].add_l_child(token)
+                    # elif token_id > parent_id:
+                    #     token_nodes[parent_id].add_r_child(token)
+                    # else:
+                    #     raise Exception('Root element should not be here!')
+                    if token_nodes[parent_id].children_split == -1 and token_id > parent_id:
+                        token_nodes[parent_id].children_split = len(token_nodes[parent_id].children)
+                    token_nodes[parent_id].add_child(token)
                     token.set_parent(token_nodes[parent_id])
+
+            for token in token_nodes:
+                if token.children_split == -1:
+                    token.children_split = len(token.children)
 
             if root == None:
                 raise Exception('No root element in sentence!')
@@ -179,9 +193,11 @@ def printable_answers(query):
 
     if len(node_actions) > 1:
         res = []
-        for node_action in node_actions[:-1]:
-            res.extend(printable_answers(node_action[1:-1]))
-        res.extend([node_actions[-1]])
+        # for node_action in node_actions[:-1]:
+        #     res.extend(printable_answers(node_action[1:-1]))
+        # res.extend([node_actions[-1]])
+        for node_action in node_actions:
+            res.extend(printable_answers(node_action))
         return res
     else:
         return [query]
@@ -205,18 +221,18 @@ def main():
     ngrams = 0
     if config.getint('settings', 'ngrams') == 2:
         ngrams = 2
-        query_tree = [{"l_children": [{}]}]
+        query_tree = [{"children": [{}]}]
     elif config.getint('settings', 'ngrams') == 3:
         ngrams = 3
-        query_tree = [{"l_children": [{}, {}]}, {"l_children": [{"l_children": [{}]}]}]
+        query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
     elif config.getint('settings', 'ngrams') == 4:
         ngrams = 4
-        query_tree = [{"l_children": [{}, {}, {}]}, {"l_children": [{"l_children": [{}, {}]}]}, {"l_children": [{"l_children": [{}]}, {}]}, {"l_children": [{"l_children": [{"l_children": [{}]}]}]}]
+        query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
     elif config.getint('settings', 'ngrams') == 5:
         ngrams = 5
-        query_tree = [{"l_children": [{}, {}, {}, {}]}, {"l_children": [{"l_children": [{}]}, {}, {}]}, {"l_children": [{"l_children": [{}, {}]}, {}]}, {"l_children": [{"l_children": [{}]}, {"l_children": [{}]}]},
-                      {"l_children": [{"l_children": [{"l_children": [{}]}]}, {}]}, {"l_children": [{"l_children": [{"l_children": [{}]}, {}]}]}, {"l_children": [{"l_children": [{"l_children": [{}, {}]}]}]},
-                      {"l_children": [{"l_children": [{"l_children": [{"l_children": [{}]}]}]}]}]
+        query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
+                      {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
+                      {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}]
     else:
         query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
         # order_independent_queries(query_tree)
@@ -238,14 +254,16 @@ def main():
         create_output_string_funct = create_output_string_form
 
     result_dict = {}
+    filters = {}
+    filters['node_order'] = config.getboolean('settings', 'node_order')
 
-    # for tree in all_trees[2:]:
+    for tree in all_trees[2:]:
     # for tree in all_trees[1205:]:
-    for tree in all_trees:
+    # for tree in all_trees:
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
         # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
-        _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct)
+        _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
         for query_results in subtrees:
             for result in query_results:
                 # if ngrams:
@@ -258,13 +276,13 @@ def main():
                     result_dict[r] = 1
         # test 1 layer queries
         # # tree.r_children = []
-        # # tree.l_children[1].l_children = []
-        # # query = [{'l_children': [{}]}, {'r_children': [{}]}]
-        # # query = [{"l_children": [{}, {}]}, {"l_children": [{}]}, {"l_children": [{}, {}, {}]}]
-        # query = [{"l_children": [{'form': 'je'}, {}]}, {"l_children": [{'form': 'je'}]}, {"l_children": [{'form': 'je'}, {}, {}]}]
-        # # query = [{'q1':'', "l_children": [{'a1':''}, {'a2':''}]}, {'q2':'', "l_children": [{'b1':''}]}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}]}]
+        # # tree.children[1].children = []
+        # # query = [{'children': [{}]}, {'children': [{}]}]
+        # # query = [{"children": [{}, {}]}, {"children": [{}]}, {"children": [{}, {}, {}]}]
+        # query = [{"children": [{'form': 'je'}, {}]}, {"children": [{'form': 'je'}]}, {"children": [{'form': 'je'}, {}, {}]}]
+        # # query = [{'q1':'', "children": [{'a1':''}, {'a2':''}]}, {'q2':'', "children": [{'b1':''}]}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}]}]
         # _, _, subtrees = tree.get_subtrees(query, [], create_output_string_funct)
-        # # _, subtrees = tree.get_subtrees([{'q1':'', "l_children": [{'a1':''}, {'a2':''}], "r_children": []}, {'q2':'', "l_children": [{'b1':''}], "r_children": []}, {'q3':'', "l_children": [{'c1':''}, {'c2':''}, {'c3':''}], "r_children": []}], [])
+        # # _, subtrees = tree.get_subtrees([{'q1':'', "children": [{'a1':''}, {'a2':''}], "children": []}, {'q2':'', "children": [{'b1':''}], "children": []}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}], "children": []}], [])
         # print('HERE!')
 
         # test 2 layer queries
