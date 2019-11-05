@@ -260,7 +260,7 @@ def main():
 
     result_dict = {}
     filters = {}
-    filters['node_order'] = config.getboolean('settings', 'node_order')
+    filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
 
     # for tree in all_trees[2:]:
     # for tree in all_trees[1205:]:
