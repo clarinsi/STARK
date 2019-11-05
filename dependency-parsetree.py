@@ -202,7 +202,11 @@ def printable_answers(query):
         #     res.extend(printable_answers(node_action[1:-1]))
         # res.extend([node_actions[-1]])
         for node_action in node_actions:
-            res.extend(printable_answers(node_action))
+            # if command in bracelets remove them and treat command as new query
+            if node_action[0] == '(' and node_action[-1] == ')':
+                res.extend(printable_answers(node_action[1:-1]))
+            else:
+                res.extend([node_action])
         return res
     else:
         return [query]
