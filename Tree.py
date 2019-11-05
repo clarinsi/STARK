@@ -575,3 +575,6 @@ def create_output_string_upos(tree):
 
 def create_output_string_xpos(tree):
     return tree.xpos.get_value()
+
+def create_output_string_feats(tree):
+    return tree.feats_complete.get_value()

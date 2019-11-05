@@ -8,7 +8,7 @@ import re
 
 import pyconll
 
-from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos
+from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
 
 # for separate searches of feats
 # feats_list = [
@@ -250,7 +250,7 @@ def main():
 
 
     # set filters
-    assert config.get('settings', 'node_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form'], '"node_type" is not set up correctly'
+    assert config.get('settings', 'node_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
     if config.get('settings', 'node_type') == 'deprel':
         create_output_string_funct = create_output_string_deprel
     elif config.get('settings', 'node_type') == 'lemma':
@@ -259,6 +259,8 @@ def main():
         create_output_string_funct = create_output_string_upos
     elif config.get('settings', 'node_type') == 'xpos':
         create_output_string_funct = create_output_string_xpos
+    elif config.get('settings', 'node_type') == 'feats':
+        create_output_string_funct = create_output_string_feats
     else:
         create_output_string_funct = create_output_string_form
 
