@@ -36,15 +36,11 @@ def decode_query(orig_query, dependency_type):
         new_query = True
         orig_query = orig_query[1:-1]
 
-
     # if orig_query is '_' return {}
     if dependency_type != '':
         decoded_query = {'deprel': dependency_type}
     else:
         decoded_query = {}
-
-
-
 
     if orig_query == '_':
         return decoded_query
@@ -52,7 +48,7 @@ def decode_query(orig_query, dependency_type):
     elif len(orig_query.split(' ')) == 1:
         orig_query_split_parts = orig_query.split(' ')[0].split('&')
         for orig_query_split_part in orig_query_split_parts:
-            orig_query_split = orig_query_split_part.split('=')
+            orig_query_split = orig_query_split_part.split('=', 1)
             if len(orig_query_split) > 1:
                 if orig_query_split[0] == 'L':
                     decoded_query['lemma'] = orig_query_split[1]
@@ -266,9 +262,9 @@ def main():
     filters = {}
     filters['node_order'] = config.getboolean('settings', 'node_order')
 
-    for tree in all_trees[2:]:
+    # for tree in all_trees[2:]:
     # for tree in all_trees[1205:]:
-    # for tree in all_trees:
+    for tree in all_trees:
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
         # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
