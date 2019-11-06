@@ -276,9 +276,11 @@ def main():
     else:
         filters['label_whitelist'] = []
 
-    # for tree in all_trees[2:]:
+    filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
+
+    for tree in all_trees[2:]:
     # for tree in all_trees[1205:]:
-    for tree in all_trees:
+    # for tree in all_trees:
         # original
         # r_children = tree.r_children[:1] + tree.r_children[3:4]
         # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]

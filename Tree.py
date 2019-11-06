@@ -66,13 +66,14 @@ class Tree(object):
 
         return not filters['label_whitelist'] or self.deprel.get_value() in filters['label_whitelist']
 
-    def fits_static_requirements(self, query_tree):
+    def fits_static_requirements(self, query_tree, filters):
         return ('form' not in query_tree or query_tree['form'] == self.form.get_value()) and \
                ('lemma' not in query_tree or query_tree['lemma'] == self.lemma.get_value()) and \
                ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value()) and \
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
                ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value()) and \
-               ('feats' not in query_tree or query_tree['feats'] == self.feats_complete.get_value())
+               ('feats' not in query_tree or query_tree['feats'] == self.feats_complete.get_value()) and \
+               (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or ('children' in query_tree and len(self.children) == len(query_tree['children'])))
                # self.fits_static_requirements_feats(query_tree)
 
     def generate_children_queries(self, all_query_indices, children):
@@ -301,7 +302,7 @@ class Tree(object):
 
         active_permanent_query_trees = []
         for permanent_query_tree in permanent_query_trees:
-            if self.fits_static_requirements(permanent_query_tree):
+            if self.fits_static_requirements(permanent_query_tree, filters):
                 active_permanent_query_trees.append(permanent_query_tree)
                 if 'children' in permanent_query_tree:
                     all_query_indices.append((permanent_query_tree['children'], True))
@@ -310,10 +311,10 @@ class Tree(object):
         active_temporary_query_trees = []
         successful_temporary_queries = []
         for i, temporary_query_tree in enumerate(temporary_query_trees):
-            if self.fits_static_requirements(temporary_query_tree) and self.fits_temporary_requirements(filters):
+            if self.fits_static_requirements(temporary_query_tree, filters) and self.fits_temporary_requirements(filters):
+                # if 'l_children' in temporary_query_tree and 'r_children' in temporary_query_tree:
                 active_temporary_query_trees.append(temporary_query_tree)
                 successful_temporary_queries.append(i)
-                # if 'l_children' in temporary_query_tree and 'r_children' in temporary_query_tree:
                 if 'children' in temporary_query_tree:
                     all_query_indices.append((temporary_query_tree['children'], False))
 
