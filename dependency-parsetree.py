@@ -203,7 +203,10 @@ def printable_answers(query):
         # res.extend([node_actions[-1]])
         for node_action in node_actions:
             # if command in bracelets remove them and treat command as new query
-            if node_action[0] == '(' and node_action[-1] == ')':
+            # TODO FIX BRACELETS IN A BETTER WAY
+            if not node_action:
+                res.extend(['('])
+            elif node_action[0] == '(' and node_action[-1] == ')':
                 res.extend(printable_answers(node_action[1:-1]))
             else:
                 res.extend([node_action])
@@ -267,6 +270,7 @@ def main():
     result_dict = {}
     filters = {}
     filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
+    filters['dependency_type'] = config.get('settings', 'dependency_type') == 'labeled'
 
     # for tree in all_trees[2:]:
     # for tree in all_trees[1205:]:
