@@ -7,9 +7,9 @@ from Value import Value
 
 
 class Tree(object):
-    def __init__(self, form, lemma, upos, xpos, deprel, feats, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_complete_dict, head):
-        # if not hasattr(self, 'feats'):
-        #     self.feats = {}
+    def __init__(self, form, lemma, upos, xpos, deprel, feats, feats_detailed, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, head):
+        if not hasattr(self, 'feats'):
+            self.feats_detailed = {}
 
         # form_unicode = str(form).encode("utf-8")
         if form not in form_dict:
@@ -27,15 +27,15 @@ class Tree(object):
         if deprel not in deprel_dict:
             deprel_dict[deprel] = Value(deprel)
         self.deprel = deprel_dict[deprel]
-        if feats not in feats_complete_dict:
-            feats_complete_dict[feats] = Value(feats)
-        self.feats_complete = feats_complete_dict[feats]
-        # for feat in feats.keys():
-        #     if next(iter(feats[feat])) not in feats_dict[feat]:
-        #         feats_dict[feat][next(iter(feats[feat]))] = Value(next(iter(feats[feat])))
-        #     if not feat in self.feats:
-        #         self.feats[feat] = {}
-        #     self.feats[feat][next(iter(feats[feat]))] = feats_dict[feat][next(iter(feats[feat]))]
+        if feats not in feats_dict:
+            feats_dict[feats] = Value(feats)
+        self.feats = feats_dict[feats]
+        for feat in feats_detailed.keys():
+            if next(iter(feats_detailed[feat])) not in feats_detailed_dict[feat]:
+                feats_detailed_dict[feat][next(iter(feats_detailed[feat]))] = Value(next(iter(feats_detailed[feat])))
+            if not feat in self.feats_detailed:
+                self.feats_detailed[feat] = {}
+            self.feats_detailed[feat][next(iter(feats_detailed[feat]))] = feats_detailed_dict[feat][next(iter(feats_detailed[feat]))]
         # self.position = position
 
         self.parent = head
@@ -62,8 +62,34 @@ class Tree(object):
     #     return True
 
 
-    def fits_temporary_requirements(self, filters):
+    def fits_permanent_requirements(self, filters):
+        main_attributes = ['deprel', 'feats', 'form', 'lemma', 'upos']
 
+        if not filters['root_whitelist']:
+            return True
+
+        for option in filters['root_whitelist']:
+            filter_passed = True
+
+            # check if attributes are valid
+            for key in option.keys():
+                if key not in main_attributes:
+                    if key not in self.feats_detailed or option[key] != list(self.feats_detailed[key].items())[0][1].get_value():
+                        filter_passed = False
+
+            filter_passed = filter_passed and \
+                            ('deprel' not in option or option['deprel'] == self.deprel.get_value()) and \
+                            ('feats' not in option or option['feats'] == self.feats.get_value()) and \
+                            ('form' not in option or option['form'] == self.form.get_value()) and \
+                            ('lemma' not in option or option['lemma'] == self.lemma.get_value()) and \
+                            ('upos' not in option or option['upos'] == self.upos.get_value())
+
+            if filter_passed:
+                return True
+
+        return False
+
+    def fits_temporary_requirements(self, filters):
         return not filters['label_whitelist'] or self.deprel.get_value() in filters['label_whitelist']
 
     def fits_static_requirements(self, query_tree, filters):
@@ -72,7 +98,7 @@ class Tree(object):
                ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value()) and \
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
                ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value()) and \
-               ('feats' not in query_tree or query_tree['feats'] == self.feats_complete.get_value()) and \
+               ('feats' not in query_tree or query_tree['feats'] == self.feats.get_value()) and \
                (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or ('children' in query_tree and len(self.children) == len(query_tree['children'])))
                # self.fits_static_requirements_feats(query_tree)
 
@@ -302,7 +328,7 @@ class Tree(object):
 
         active_permanent_query_trees = []
         for permanent_query_tree in permanent_query_trees:
-            if self.fits_static_requirements(permanent_query_tree, filters):
+            if self.fits_static_requirements(permanent_query_tree, filters) and self.fits_permanent_requirements(filters):
                 active_permanent_query_trees.append(permanent_query_tree)
                 if 'children' in permanent_query_tree:
                     all_query_indices.append((permanent_query_tree['children'], True))
@@ -617,4 +643,4 @@ def create_output_string_xpos(tree):
     return tree.xpos.get_value()
 
 def create_output_string_feats(tree):
-    return tree.feats_complete.get_value()
+    return tree.feats.get_value()

@@ -11,21 +11,21 @@ import pyconll
 from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
 
 # for separate searches of feats
-# feats_list = [
-#     # lexical features
-#     'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
-#
-#     # Inflectional features (nominal)
-#     'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
-#
-#     # Inflectional features (verbal)
-#     'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
-#
-#     # Other
-#     'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
-# ]
-#
-# feats_dict = {key: {} for key in feats_list}
+feats_detailed_list = [
+    # lexical features
+    'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
+
+    # Inflectional features (nominal)
+    'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
+
+    # Inflectional features (verbal)
+    'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
+
+    # Other
+    'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
+]
+
+feats_detailed_dict = {key: {} for key in feats_detailed_list}
 
 
 def decode_query(orig_query, dependency_type):
@@ -65,10 +65,10 @@ def decode_query(orig_query, dependency_type):
                 elif orig_query_split[0] == 'feats':
                     decoded_query['feats'] = orig_query_split[1]
                     # return decoded_query
-                # elif orig_query_split[0] in feats_list:
-                #     decoded_query['feats'] = {}
-                #     decoded_query['feats'][orig_query_split[0]] = orig_query_split[1]
-                #     return decoded_query
+                elif orig_query_split[0] in feats_detailed_list:
+                    decoded_query['feats_detailed'] = {}
+                    decoded_query['feats_detailed'][orig_query_split[0]] = orig_query_split[1]
+                    return decoded_query
                 elif not new_query:
                     raise Exception('Not supported yet!')
                 else:
@@ -122,7 +122,7 @@ def create_trees(config):
 
         train = pyconll.load_from_file(input_path)
 
-        form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_complete_dict = {}, {}, {}, {}, {}, {}
+        form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict = {}, {}, {}, {}, {}, {}
 
         all_trees = []
 
@@ -136,9 +136,9 @@ def create_trees(config):
                 #     token_feats += k + next(iter(v)) + '|'
                 # token_feats = token_feats[:-1]
                 # TODO check if 5th place is always there for feats
-                token_feats = token._fields[5]
-                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, token_feats, form_dict,
-                            lemma_dict, upos_dict, xpos_dict, deprel_dict, None, feats_complete_dict, token.head)
+                feats = token._fields[5]
+                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, feats, token.feats, form_dict,
+                            lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, token.head)
                 token_nodes.append(node)
                 if token.deprel == 'root':
                     root = node
@@ -275,6 +275,22 @@ def main():
         filters['label_whitelist'] = config.get('settings', 'label_whitelist').split('|')
     else:
         filters['label_whitelist'] = []
+
+    if config.has_option('settings', 'root_whitelist'):
+        # test
+        filters['root_whitelist'] = []
+
+        for option in config.get('settings', 'root_whitelist'). split('|'):
+            attribute_dict = {}
+            for attribute in option.split('&'):
+                value = attribute.split('=')
+                # assert value[0] in ['deprel', 'lemma', 'upos', 'xpos', 'form',
+                #                     'feats'], '"root_whitelist" is not set up correctly'
+                attribute_dict[value[0]] = value[1]
+            filters['root_whitelist'].append(attribute_dict)
+        # filters['root_whitelist'] = [{'upos': 'NOUN', 'Case': 'Nom'}, {'upos': 'ADJ', 'Degree': 'Sup'}]
+    else:
+        filters['root_whitelist'] = []
 
     filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
 
