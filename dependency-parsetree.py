@@ -5,6 +5,9 @@ import hashlib
 import os
 import pickle
 import re
+import time
+import timeit
+from multiprocessing import Pool
 
 import pyconll
 
@@ -214,6 +217,34 @@ def printable_answers(query):
     else:
         return [query]
 
+
+def tree_calculations(input_data):
+    tree, query_tree, create_output_string_funct, filters = input_data
+    _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
+    return subtrees
+
+
+def tree_calculations_chunks(input_data):
+    trees, query_tree, create_output_string_funct, filters = input_data
+
+    result_dict = {}
+    for tree in trees:
+        _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
+
+        for query_results in subtrees:
+            for r in query_results:
+                if r in result_dict:
+                    result_dict[r] += 1
+                else:
+                    result_dict[r] = 1
+    return result_dict
+
+
+def chunkify(a, n):
+    k, m = divmod(len(a), n)
+    return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -254,6 +285,7 @@ def main():
 
     # set filters
     assert config.get('settings', 'node_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
+    cpu_cores = config.getint('settings', 'cpu_cores')
     if config.get('settings', 'node_type') == 'deprel':
         create_output_string_funct = create_output_string_deprel
     elif config.get('settings', 'node_type') == 'lemma':
@@ -294,44 +326,69 @@ def main():
 
     filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
 
-    for tree in all_trees[2:]:
+
+    # for tree in all_trees[2:]:
     # for tree in all_trees[1205:]:
-    # for tree in all_trees:
-        # original
-        # r_children = tree.r_children[:1] + tree.r_children[3:4]
-        # tree.r_children = tree.r_children[:1] + tree.r_children[2:4]
-        _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
-        for query_results in subtrees:
-            for result in query_results:
-                # if ngrams:
-                #     result = sorted(result)
-                # r = tuple(result)
-                r = result
-                if r in result_dict:
-                    result_dict[r] += 1
-                else:
-                    result_dict[r] = 1
-        # test 1 layer queries
-        # # tree.r_children = []
-        # # tree.children[1].children = []
-        # # query = [{'children': [{}]}, {'children': [{}]}]
-        # # query = [{"children": [{}, {}]}, {"children": [{}]}, {"children": [{}, {}, {}]}]
-        # query = [{"children": [{'form': 'je'}, {}]}, {"children": [{'form': 'je'}]}, {"children": [{'form': 'je'}, {}, {}]}]
-        # # query = [{'q1':'', "children": [{'a1':''}, {'a2':''}]}, {'q2':'', "children": [{'b1':''}]}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}]}]
-        # _, _, subtrees = tree.get_subtrees(query, [], create_output_string_funct)
-        # # _, subtrees = tree.get_subtrees([{'q1':'', "children": [{'a1':''}, {'a2':''}], "children": []}, {'q2':'', "children": [{'b1':''}], "children": []}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}], "children": []}], [])
-        # print('HERE!')
+    with Pool(cpu_cores) as p:
+        start_exe_time = time.time()
+        # 1.25 s (16 cores)
+        # chunked_trees = list(chunkify(all_trees, cpu_cores))
+        # if cpu_cores > 1:
+        #     part_results = p.map(tree_calculations_chunks,
+        #                          [(tree, query_tree, create_output_string_funct, filters) for tree in chunked_trees])
+        #
+        #     for part_result in part_results:
+        #         for r_k, r_v in part_result.items():
+        #             if r_k in result_dict:
+        #                 result_dict[r_k] += r_v
+        #             else:
+        #                 result_dict[r_k] = r_v
 
-        # test 2 layer queries
-        # tree.r_children = [Tree('je', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)]
-        # tree.l_children[1].l_children = []
-        # new_tree = Tree('bil', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)
-        # new_tree.l_children = [tree]
-        # _, subtrees = new_tree.get_subtrees(
-        #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}]}]}], [])
-        # # _, subtrees = new_tree.get_subtrees(
-        # #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
+        # 1.02 s (16 cores)
+        if cpu_cores > 1:
+            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_funct, filters) for tree in all_trees])
 
+            for subtrees in all_subtrees:
+                for query_results in subtrees:
+                    for r in query_results:
+                        if r in result_dict:
+                            result_dict[r] += 1
+                        else:
+                            result_dict[r] = 1
+
+        # 3.65 s (1 core)
+        else:
+            for tree in all_trees:
+                subtrees = tree_calculations((tree, query_tree, create_output_string_funct, filters))
+                for query_results in subtrees:
+                    for r in query_results:
+                        if r in result_dict:
+                            result_dict[r] += 1
+                        else:
+                            result_dict[r] = 1
+
+        print("Execution time:")
+        print("--- %s seconds ---" % (time.time() - start_exe_time))
+            # test 1 layer queries
+            # # tree.r_children = []
+            # # tree.children[1].children = []
+            # # query = [{'children': [{}]}, {'children': [{}]}]
+            # # query = [{"children": [{}, {}]}, {"children": [{}]}, {"children": [{}, {}, {}]}]
+            # query = [{"children": [{'form': 'je'}, {}]}, {"children": [{'form': 'je'}]}, {"children": [{'form': 'je'}, {}, {}]}]
+            # # query = [{'q1':'', "children": [{'a1':''}, {'a2':''}]}, {'q2':'', "children": [{'b1':''}]}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}]}]
+            # _, _, subtrees = tree.get_subtrees(query, [], create_output_string_funct)
+            # # _, subtrees = tree.get_subtrees([{'q1':'', "children": [{'a1':''}, {'a2':''}], "children": []}, {'q2':'', "children": [{'b1':''}], "children": []}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}], "children": []}], [])
+            # print('HERE!')
+
+            # test 2 layer queries
+            # tree.r_children = [Tree('je', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)]
+            # tree.l_children[1].l_children = []
+            # new_tree = Tree('bil', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)
+            # new_tree.l_children = [tree]
+            # _, subtrees = new_tree.get_subtrees(
+            #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}]}]}], [])
+            # # _, subtrees = new_tree.get_subtrees(
+            # #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1], reverse=True)
 
     with open(config.get('settings', 'output'), "w", newline="") as f:
@@ -350,8 +407,11 @@ def main():
             words_only = printable_answers(k)
             writer.writerow([k] + words_only + [str(v)])
 
-    return
+    return "Done"
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    print("Total:")
+    print("--- %s seconds ---" % (time.time() - start_time))

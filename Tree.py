@@ -44,6 +44,9 @@ class Tree(object):
 
         self.index = 0
 
+        # for caching answers to questions
+        self.cache = {}
+
     def add_child(self, child):
         child.index = len(self.children)
         self.children.append(child)
