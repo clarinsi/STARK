@@ -221,20 +221,47 @@ class Tree(object):
         all_new_partial_answers_architecture = [[] for query_part in child_queries_flatten]
         all_new_partial_answers_deprel = [[] for query_part in child_queries_flatten]
 
+        if filters['caching']:
+            # erase duplicate queries
+            child_queries_flatten_dedup = []
+            child_queries_flatten_dedup_indices = []
+            for query_part in child_queries_flatten:
+                try:
+                    index = child_queries_flatten_dedup.index(query_part)
+                except ValueError:
+                    index = len(child_queries_flatten_dedup)
+                    child_queries_flatten_dedup.append(query_part)
+
+                child_queries_flatten_dedup_indices.append(index)
 
         # ask children all queries/partial queries
         for child in children:
             # obtain children results
-            new_partial_answers_architecture, new_partial_answers, new_complete_answers = child.get_subtrees(permanent_query_trees, child_queries_flatten,
-                                                                              create_output_string, filters)
+            if filters['caching']:
+                new_partial_answers_architecture_dedup, new_partial_answers_dedup, new_complete_answers = child.get_subtrees(permanent_query_trees, child_queries_flatten_dedup,
+                                                                                  create_output_string, filters)
 
-            assert len(new_partial_answers) == len(child_queries_flatten)
-            for i, new_partial_subtree in enumerate(new_partial_answers):
-                all_new_partial_answers[i].append(new_partial_subtree)
-                all_new_partial_answers_architecture[i].append(new_partial_answers_architecture[i])
-                # if len(new_partial_answers_architecture[i]) > 1:
-                #     print('HERE!!!')
-                all_new_partial_answers_deprel[i].append(create_output_string_deprel(child))
+                assert len(new_partial_answers_dedup) == len(child_queries_flatten_dedup)
+
+                # duplicate results again on correct places
+                for i, flattened_index in enumerate(child_queries_flatten_dedup_indices):
+                    all_new_partial_answers[i].append(new_partial_answers_dedup[flattened_index])
+                    all_new_partial_answers_architecture[i].append(new_partial_answers_architecture_dedup[flattened_index])
+                    all_new_partial_answers_deprel[i].append(create_output_string_deprel(child))
+
+            else:
+                new_partial_answers_architecture, new_partial_answers, new_complete_answers = child.get_subtrees(
+                    permanent_query_trees, child_queries_flatten,
+                    create_output_string, filters)
+
+                assert len(new_partial_answers) == len(child_queries_flatten)
+
+                for i, new_partial_subtree in enumerate(new_partial_answers):
+                    all_new_partial_answers[i].append(new_partial_subtree)
+                    all_new_partial_answers_architecture[i].append(new_partial_answers_architecture[i])
+                    # if len(new_partial_answers_architecture[i]) > 1:
+                    #     print('HERE!!!')
+                    all_new_partial_answers_deprel[i].append(create_output_string_deprel(child))
 
             # add 6 queries from 3 split up
             # self.group_results(new_partial_subtrees, child_queries_metadata, all_query_indices,

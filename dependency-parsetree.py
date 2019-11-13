@@ -302,6 +302,7 @@ def main():
     result_dict = {}
     filters = {}
     filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
+    filters['caching'] = config.getboolean('settings', 'caching')
     filters['dependency_type'] = config.get('settings', 'dependency_type') == 'labeled'
     if config.has_option('settings', 'label_whitelist'):
         filters['label_whitelist'] = config.get('settings', 'label_whitelist').split('|')
