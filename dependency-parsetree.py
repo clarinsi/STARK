@@ -1,5 +1,6 @@
 import argparse
 import configparser
+import copy
 import csv
 import hashlib
 import os
@@ -245,6 +246,78 @@ def chunkify(a, n):
     return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
+def add_node(tree):
+    if 'children' in tree:
+        tree['children'].append({})
+    else:
+        tree['children'] = [{}]
+
+
+# walk over all nodes in tree and add a node to each possible node
+def tree_grow(orig_tree):
+    new_trees = []
+    new_tree = copy.deepcopy(orig_tree)
+    add_node(new_tree)
+    new_trees.append(new_tree)
+    if 'children' in orig_tree:
+        children = []
+        for child_tree in orig_tree['children']:
+            children.append(tree_grow(child_tree))
+        for i, child in enumerate(children):
+            for child_res in child:
+                new_tree = copy.deepcopy(orig_tree)
+                new_tree['children'][i] = child_res
+                new_trees.append(new_tree)
+
+    return new_trees
+
+
+def compare_trees(tree1, tree2):
+    if tree1 == {} and tree2 == {}:
+        return True
+
+    if 'children' not in tree1 or 'children' not in tree2 or len(tree1['children']) != len(tree2['children']):
+        return False
+
+    children2_connections = []
+
+    for child1_i, child1 in enumerate(tree1['children']):
+        child_duplicated = False
+        for child2_i, child2 in enumerate(tree2['children']):
+            if child2_i in children2_connections:
+                pass
+            if compare_trees(child1, child2):
+                children2_connections.append(child2_i)
+                child_duplicated = True
+                break
+        if not child_duplicated:
+            return False
+
+    return True
+
+def create_ngrams_query_trees(n, trees):
+    for i in range(n - 1):
+        new_trees = []
+        for tree in trees:
+            # append new_tree only if it is not already inside
+            for new_tree in tree_grow(tree):
+                duplicate = False
+                for confirmed_new_tree in new_trees:
+                    if compare_trees(new_tree, confirmed_new_tree):
+                        duplicate = True
+                        break
+                if not duplicate:
+                    new_trees.append(new_tree)
+
+        trees = new_trees
+        # delete_duplicates(trees)
+        # print('here')
+    # tree_grow(tree)
+    # tree_grow(tree)
+    # tree['children'] = [{}]
+    return trees
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -262,24 +335,34 @@ def main():
     # config.read('config.ini')
     # create queries
     ngrams = 0
-    if config.getint('settings', 'ngrams') == 2:
-        ngrams = 2
-        query_tree = [{"children": [{}]}]
-    elif config.getint('settings', 'ngrams') == 3:
-        ngrams = 3
-        query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
-    elif config.getint('settings', 'ngrams') == 4:
-        ngrams = 4
-        query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
-    elif config.getint('settings', 'ngrams') == 5:
-        ngrams = 5
-        query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
-                      {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
-                      {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}]
+
+
+
+    # if config.getint('settings', 'ngrams') == 2:
+    #     ngrams = 2
+    #     query_tree = [{"children": [{}]}]
+    # elif config.getint('settings', 'ngrams') == 3:
+    #     ngrams = 3
+    #     query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
+    # elif config.getint('settings', 'ngrams') == 4:
+    #     ngrams = 4
+    #     query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
+    # elif config.getint('settings', 'ngrams') == 5:
+    #     ngrams = 5
+    #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
+    #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
+    #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
+    if config.getint('settings', 'ngrams') > 1:
+        query_tree = create_ngrams_query_trees(config.getint('settings', 'ngrams'), [{}])
     else:
         query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
         # order_independent_queries(query_tree)
 
+    # 261 - 9 grams
+    # 647 - 10 grams
+    # 1622 - 11 grams
+    # 4126 - 12 grams
+    # 10598 - 13 grams
     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = create_trees(config)
 
 
@@ -302,7 +385,7 @@ def main():
     result_dict = {}
     filters = {}
     filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
-    filters['caching'] = config.getboolean('settings', 'caching')
+    # filters['caching'] = config.getboolean('settings', 'caching')
     filters['dependency_type'] = config.get('settings', 'dependency_type') == 'labeled'
     if config.has_option('settings', 'label_whitelist'):
         filters['label_whitelist'] = config.get('settings', 'label_whitelist').split('|')
