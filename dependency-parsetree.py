@@ -352,8 +352,16 @@ def main():
     #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
     #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
     #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
-    if config.getint('settings', 'ngrams') > 1:
-        query_tree = create_ngrams_query_trees(config.getint('settings', 'ngrams'), [{}])
+    ngrams_range = config.get('settings', 'ngrams').split('-')
+    ngrams_range = [int(r) for r in ngrams_range]
+
+    if ngrams_range[0] > 1:
+        if len(ngrams_range) == 1:
+            query_tree = create_ngrams_query_trees(ngrams_range[0], [{}])
+        elif len(ngrams_range) == 2:
+            query_tree = []
+            for i in range(ngrams_range[0], ngrams_range[1] + 1):
+                query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
         query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
         # order_independent_queries(query_tree)
