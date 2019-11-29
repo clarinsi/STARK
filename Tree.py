@@ -203,7 +203,6 @@ class Tree(object):
         #                                                                       l_all_query_indices, self.l_children,
         #                                                                       create_output_string)
         partial_answers = [[] for i in range(permanent_query_nb + temporary_query_nb)]
-        partial_answers_architectures = [[] for i in range(permanent_query_nb + temporary_query_nb)]
         partial_answers_index = [[] for i in range(permanent_query_nb + temporary_query_nb)]
         partial_answers_deprel = [[] for i in range(permanent_query_nb + temporary_query_nb)]
         complete_answers = [[] for i in range(permanent_query_nb)]
@@ -219,7 +218,6 @@ class Tree(object):
         child_queries_flatten = [query_part for query in child_queries for query_part in query]
 
         all_new_partial_answers = [[] for query_part in child_queries_flatten]
-        all_new_partial_answers_architecture = [[] for query_part in child_queries_flatten]
         all_new_partial_answers_deprel = [[] for query_part in child_queries_flatten]
 
         # if filters['caching']:
@@ -239,7 +237,7 @@ class Tree(object):
         for child in children:
             # obtain children results
             # if filters['caching']:
-            new_partial_answers_architecture_dedup, new_partial_answers_dedup, new_complete_answers = child.get_subtrees(permanent_query_trees, child_queries_flatten_dedup,
+            new_partial_answers_dedup, new_complete_answers = child.get_subtrees(permanent_query_trees, child_queries_flatten_dedup,
                                                                               create_output_string, filters)
 
             assert len(new_partial_answers_dedup) == len(child_queries_flatten_dedup)
@@ -247,7 +245,6 @@ class Tree(object):
             # duplicate results again on correct places
             for i, flattened_index in enumerate(child_queries_flatten_dedup_indices):
                 all_new_partial_answers[i].append(new_partial_answers_dedup[flattened_index])
-                all_new_partial_answers_architecture[i].append(new_partial_answers_architecture_dedup[flattened_index])
                 all_new_partial_answers_deprel[i].append(create_output_string_deprel(child))
 
             # else:
@@ -272,8 +269,8 @@ class Tree(object):
                 # TODO add order rearagement (TO KEY)
                 complete_answers[i].extend(new_complete_answers[i])
 
-        if create_output_string_form(self) == 'Dogodek':
-            print('HERE!@@!')
+        # if create_output_string_form(self) == 'Dogodek':
+        #     print('HERE!@@!')
         # if create_output_string_form(self) == 'vpiti':
         #     print('HERE!@@!')
         # merge answers in appropriate way
@@ -282,7 +279,7 @@ class Tree(object):
         for answer_i, answer_length in enumerate(answers_lengths):
             # iterate over answers of query
             # TODO ERROR IN HERE!
-            partial_answers[answer_i], partial_answers_architectures[answer_i], partial_answers_index[answer_i], partial_answers_deprel[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], all_new_partial_answers_architecture[i:i + answer_length], all_new_partial_answers_deprel[i:i + answer_length], answer_length, filters)
+            partial_answers[answer_i], partial_answers_index[answer_i], partial_answers_deprel[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], all_new_partial_answers_deprel[i:i + answer_length], answer_length, filters)
             # while i < answers_length:
             #     self.create_grouped_answers()
             #     i += 1
@@ -309,10 +306,10 @@ class Tree(object):
         #     child, child_queries, child_queries_metadata = children_queries_generator.send(partial_results_dict)
         #     child_index += 1
 
-        return partial_answers_architectures, partial_answers, partial_answers_index, partial_answers_deprel, complete_answers
+        return partial_answers, partial_answers_index, partial_answers_deprel, complete_answers
 
-    def order_dependent_queries(self, active_permanent_query_trees, active_temporary_query_trees, partial_subtrees, partial_subtrees_architecture, partial_subtrees_index, partial_subtrees_deprel,
-                                create_output_string, merged_partial_subtrees, merged_partial_subtrees_architecture, i_query, i_answer, filters):
+    def order_dependent_queries(self, active_permanent_query_trees, active_temporary_query_trees, partial_subtrees, partial_subtrees_index, partial_subtrees_deprel,
+                                create_output_string, merged_partial_subtrees, i_query, i_answer, filters):
         # string_output = ''
         # if create_output_string_form(self) == 'vožnji':
         #     print('HERE!@@!')
@@ -383,14 +380,14 @@ class Tree(object):
                 if 'children' in temporary_query_tree:
                     all_query_indices.append((temporary_query_tree['children'], False))
 
-        partial_subtrees_architecture, partial_subtrees, partial_subtrees_index, partial_subtrees_deprel, complete_answers = self.get_all_query_indices(len(temporary_query_trees),
+        partial_subtrees, partial_subtrees_index, partial_subtrees_deprel, complete_answers = self.get_all_query_indices(len(temporary_query_trees),
                                                                                                       len(permanent_query_trees),
                                                                                                       permanent_query_trees,
                                                                                                       all_query_indices, self.children,
                                                                                                       create_output_string, filters)
 
         merged_partial_answers = []
-        merged_partial_answers_architecture = []
+        # merged_partial_answers_architecture = []
         i_question = 0
         # i_child is necessary, because some queries may be answered at the beginning and were not passed to children.
         # i_child is used to point where we are inside answers
@@ -398,8 +395,8 @@ class Tree(object):
         # go over all permanent and temporary query trees
         while i_question < len(active_permanent_query_trees) + len(active_temporary_query_trees):
             # permanent query trees always have left and right child
-            i_answer = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees, partial_subtrees, partial_subtrees_architecture, partial_subtrees_index, partial_subtrees_deprel,
-                                                           create_output_string, merged_partial_answers, merged_partial_answers_architecture, i_question, i_answer, filters)
+            i_answer = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees, partial_subtrees, partial_subtrees_index, partial_subtrees_deprel,
+                                                           create_output_string, merged_partial_answers, i_question, i_answer, filters)
 
             i_question += 1
 
@@ -412,7 +409,6 @@ class Tree(object):
             # completed_subtrees[i].extend(merged_partial_subtrees[i])
 
         # answers to valid queries
-        partial_answers_architecture = [[] for i in range(len(temporary_query_trees))]
         partial_answers = [[] for i in range(len(temporary_query_trees))]
         for inside_i, outside_i in enumerate(successful_temporary_queries):
             # partial_answers_architecture[outside_i] = merged_partial_answers_architecture[len(active_permanent_query_trees) + inside_i]
@@ -420,7 +416,7 @@ class Tree(object):
                 len(active_permanent_query_trees) + inside_i]
 
         # return subtrees_architecture, subtrees, completed_subtrees
-        return partial_answers_architecture, partial_answers, complete_answers
+        return partial_answers, complete_answers
         # return merged_partial_subtrees_architecture[len(active_permanent_query_trees):], merged_partial_subtrees[len(active_permanent_query_trees):], completed_subtrees
 
     @staticmethod
@@ -560,7 +556,7 @@ class Tree(object):
         return merged_results
 
     # @staticmethod
-    def create_answers(self, separated_answers, separated_answers_architecture, separated_answers_deprel, answer_length, filters):
+    def create_answers(self, separated_answers, separated_answers_deprel, answer_length, filters):
         # TODO
         # node_order = False
         partly_built_trees = [[None] * answer_length]
@@ -572,7 +568,7 @@ class Tree(object):
         built_trees_architecture_indices = []
         built_trees_deprel = []
 
-        # if create_output_string_form(self) == 'vpiti':
+        # if create_output_string_form(self) == 'Dogodek':
         #     print('HERE!@@!')
 
         # iterate over children first, so that new partly built trees are added only after all results of specific
@@ -622,7 +618,7 @@ class Tree(object):
             partly_built_trees_architecture_indices.extend(new_partly_built_trees_architecture_indices)
             partly_built_trees_deprel.extend(new_partly_built_trees_deprel)
 
-        l_ordered_built_trees_architecture, l_ordered_built_trees, l_ordered_built_trees_index, l_ordered_built_trees_deprel, unique_trees_architecture = [], [], [], [], []
+        l_ordered_built_trees, l_ordered_built_trees_index, l_ordered_built_trees_deprel, unique_trees_architecture = [], [], [], []
 
         if built_trees:
             # sort 3 arrays by architecture indices
@@ -642,7 +638,9 @@ class Tree(object):
                 for unique_tree in unique_trees_architecture:
                     already_in = True
                     for part_i in range(len(unique_tree)):
-                        if unique_tree[part_i].order_key != new_tree[part_i].order_key:
+                        test = unique_tree[part_i][0].order_key
+                        if len(unique_tree[part_i]) != len(new_tree[part_i]) or any(unique_tree[part_i][i_unique_part].order_key != new_tree[part_i][i_unique_part].order_key for i_unique_part in range(len(unique_tree[part_i]))):
+                        # if unique_tree[part_i].order_key != new_tree[part_i].order_key:
                             already_in = False
                             break
                     if already_in:
@@ -669,7 +667,7 @@ class Tree(object):
         #             print('aaa')
         #
         # pass
-        return l_ordered_built_trees, l_ordered_built_trees_architecture, l_ordered_built_trees_index, l_ordered_built_trees_deprel
+        return l_ordered_built_trees, l_ordered_built_trees_index, l_ordered_built_trees_deprel
 
 
 def create_output_string_form(tree):

@@ -224,7 +224,7 @@ def printable_answers(query):
 
 def tree_calculations(input_data):
     tree, query_tree, create_output_string_funct, filters = input_data
-    _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
+    _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
     return subtrees
 
 
@@ -233,7 +233,7 @@ def tree_calculations_chunks(input_data):
 
     result_dict = {}
     for tree in trees:
-        _, _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
+        _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
 
         for query_results in subtrees:
             for r in query_results:
@@ -441,7 +441,7 @@ def main():
 
         # 1.02 s (16 cores)
         if cpu_cores > 1:
-            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_funct, filters) for tree in all_trees[5170:]])
+            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_funct, filters) for tree in all_trees])
 
             # for subtrees in all_subtrees:
             for tree_i, subtrees in enumerate(all_subtrees):
@@ -453,15 +453,15 @@ def main():
                         #     result_dict[r] += 1
                         # else:
                         #     result_dict[r] = 1
-                        if r in result_dict:
-                            result_dict[r]['number'] += 1
+                        if r.key in result_dict:
+                            result_dict[r.key]['number'] += 1
                         else:
-                            result_dict[r] = {'object': r, 'number': 1}
+                            result_dict[r.key] = {'object': r, 'number': 1}
 
         # 3.65 s (1 core)
         else:
             # for tree_i, tree in enumerate(all_trees[-5:]):
-            for tree_i, tree in enumerate(all_trees[1:]):
+            for tree_i, tree in enumerate(all_trees):
             # text = Če pa ostane odrasel otrok doma, se starši le težko sprijaznijo s tem, da je "velik", otrok pa ima ves čas občutek, da se njegovi starši po nepotrebnem vtikajo v njegovo življenje.
             # for tree_i, tree in enumerate(all_trees[5170:]):
             # for tree in all_trees:
@@ -470,10 +470,10 @@ def main():
                     for r in query_results:
                         # if r == '(" < , < je < velik) < tem':
                         #     print(tree_i)
-                        if r in result_dict:
-                            result_dict[r]['number'] += 1
+                        if r.key in result_dict:
+                            result_dict[r.key]['number'] += 1
                         else:
-                            result_dict[r] = {'object': r, 'number': 1}
+                            result_dict[r.key] = {'object': r, 'number': 1}
 
         print("Execution time:")
         print("--- %s seconds ---" % (time.time() - start_exe_time))
@@ -512,8 +512,8 @@ def main():
 
         # body
         for k, v in sorted_list:
-            words_only = printable_answers(k.key)
-            writer.writerow([k.key] + words_only + [str(v['number'])])
+            words_only = printable_answers(k)
+            writer.writerow([k] + words_only + [str(v['number'])])
 
     return "Done"
 
