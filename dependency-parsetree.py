@@ -139,9 +139,12 @@ def create_trees(config):
                 # for k, v in token.feats.items():
                 #     token_feats += k + next(iter(v)) + '|'
                 # token_feats = token_feats[:-1]
+                if not token.id.isdigit():
+                    continue
+
                 # TODO check if 5th place is always there for feats
                 feats = token._fields[5]
-                node = Tree(token.form, token.lemma, token.upos, token.xpos, token.deprel, feats, token.feats, form_dict,
+                node = Tree(int(token.id), token.form, token.lemma, token.upos, token.xpos, token.deprel, feats, token.feats, form_dict,
                             lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, token.head)
                 token_nodes.append(node)
                 if token.deprel == 'root':
@@ -438,26 +441,39 @@ def main():
 
         # 1.02 s (16 cores)
         if cpu_cores > 1:
-            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_funct, filters) for tree in all_trees])
+            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_funct, filters) for tree in all_trees[5170:]])
 
-            for subtrees in all_subtrees:
+            # for subtrees in all_subtrees:
+            for tree_i, subtrees in enumerate(all_subtrees):
                 for query_results in subtrees:
                     for r in query_results:
+                        # if r == '(" < , < je < velik) < tem':
+                        #     print(tree_i)
+                        # if r in result_dict:
+                        #     result_dict[r] += 1
+                        # else:
+                        #     result_dict[r] = 1
                         if r in result_dict:
-                            result_dict[r] += 1
+                            result_dict[r]['number'] += 1
                         else:
-                            result_dict[r] = 1
+                            result_dict[r] = {'object': r, 'number': 1}
 
         # 3.65 s (1 core)
         else:
-            for tree in all_trees:
+            # for tree_i, tree in enumerate(all_trees[-5:]):
+            for tree_i, tree in enumerate(all_trees[1:]):
+            # text = Če pa ostane odrasel otrok doma, se starši le težko sprijaznijo s tem, da je "velik", otrok pa ima ves čas občutek, da se njegovi starši po nepotrebnem vtikajo v njegovo življenje.
+            # for tree_i, tree in enumerate(all_trees[5170:]):
+            # for tree in all_trees:
                 subtrees = tree_calculations((tree, query_tree, create_output_string_funct, filters))
                 for query_results in subtrees:
                     for r in query_results:
+                        # if r == '(" < , < je < velik) < tem':
+                        #     print(tree_i)
                         if r in result_dict:
-                            result_dict[r] += 1
+                            result_dict[r]['number'] += 1
                         else:
-                            result_dict[r] = 1
+                            result_dict[r] = {'object': r, 'number': 1}
 
         print("Execution time:")
         print("--- %s seconds ---" % (time.time() - start_exe_time))
@@ -481,7 +497,7 @@ def main():
             #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}]}]}], [])
             # # _, subtrees = new_tree.get_subtrees(
             # #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
-    sorted_list = sorted(result_dict.items(), key=lambda x: x[1], reverse=True)
+    sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
     with open(config.get('settings', 'output'), "w", newline="") as f:
         # header - use every second space as a split
@@ -496,8 +512,8 @@ def main():
 
         # body
         for k, v in sorted_list:
-            words_only = printable_answers(k)
-            writer.writerow([k] + words_only + [str(v)])
+            words_only = printable_answers(k.key)
+            writer.writerow([k.key] + words_only + [str(v['number'])])
 
     return "Done"
 
