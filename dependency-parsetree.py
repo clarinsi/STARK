@@ -337,33 +337,33 @@ def main():
     # a = args.config_file
     # config.read('config.ini')
     # create queries
-    ngrams = 0
+    tree_size = 0
 
 
 
-    # if config.getint('settings', 'ngrams') == 2:
-    #     ngrams = 2
+    # if config.getint('settings', 'tree_size') == 2:
+    #     tree_size = 2
     #     query_tree = [{"children": [{}]}]
-    # elif config.getint('settings', 'ngrams') == 3:
-    #     ngrams = 3
+    # elif config.getint('settings', 'tree_size') == 3:
+    #     tree_size = 3
     #     query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
-    # elif config.getint('settings', 'ngrams') == 4:
-    #     ngrams = 4
+    # elif config.getint('settings', 'tree_size') == 4:
+    #     tree_size = 4
     #     query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
-    # elif config.getint('settings', 'ngrams') == 5:
-    #     ngrams = 5
+    # elif config.getint('settings', 'tree_size') == 5:
+    #     tree_size = 5
     #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
     #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
     #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
-    ngrams_range = config.get('settings', 'ngrams').split('-')
-    ngrams_range = [int(r) for r in ngrams_range]
+    tree_size_range = config.get('settings', 'tree_size').split('-')
+    tree_size_range = [int(r) for r in tree_size_range]
 
-    if ngrams_range[0] > 1:
-        if len(ngrams_range) == 1:
-            query_tree = create_ngrams_query_trees(ngrams_range[0], [{}])
-        elif len(ngrams_range) == 2:
+    if tree_size_range[0] > 1:
+        if len(tree_size_range) == 1:
+            query_tree = create_ngrams_query_trees(tree_size_range[0], [{}])
+        elif len(tree_size_range) == 2:
             query_tree = []
-            for i in range(ngrams_range[0], ngrams_range[1] + 1):
+            for i in range(tree_size_range[0], tree_size_range[1] + 1):
                 query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
         query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
@@ -502,8 +502,8 @@ def main():
     with open(config.get('settings', 'output'), "w", newline="") as f:
         # header - use every second space as a split
         writer = csv.writer(f, delimiter='\t')
-        if ngrams:
-            len_words = ngrams
+        if tree_size_range[-1]:
+            len_words = tree_size_range[-1]
         else:
             len_words = int(len(config.get('settings', 'query').split(" "))/2 + 1)
         header = ["Structure"] + ["Word #" + str(i) for i in range(1, len_words + 1)] + ['Number of occurences']
@@ -512,7 +512,8 @@ def main():
 
         # body
         for k, v in sorted_list:
-            words_only = printable_answers(k)
+            words_only = v['object'].array + ['' for i in range(tree_size_range[-1] - len(v['object'].array))]
+            # words_only = printable_answers(k)
             writer.writerow([k] + words_only + [str(v['number'])])
 
     return "Done"
