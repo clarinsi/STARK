@@ -32,6 +32,8 @@ class Tree(object):
             feats_dict[feats] = Value(feats)
         self.feats = feats_dict[feats]
         for feat in feats_detailed.keys():
+            if feat not in feats_detailed_dict:
+                feats_detailed_dict[feat] = {}
             if next(iter(feats_detailed[feat])) not in feats_detailed_dict[feat]:
                 feats_detailed_dict[feat][next(iter(feats_detailed[feat]))] = Value(next(iter(feats_detailed[feat])))
             if not feat in self.feats_detailed:

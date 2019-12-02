@@ -15,24 +15,26 @@ import pyconll
 from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
 
 # for separate searches of feats
-feats_detailed_list = [
-    # lexical features
-    'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
+# feats_detailed_list = [
+#     # lexical features
+#     'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
+#
+#     # Inflectional features (nominal)
+#     'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
+#
+#     # Inflectional features (verbal)
+#     'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
+#
+#     # Other
+#     'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
+# ]
 
-    # Inflectional features (nominal)
-    'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
+# feats_detailed_list = []
 
-    # Inflectional features (verbal)
-    'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
-
-    # Other
-    'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
-]
-
-feats_detailed_dict = {key: {} for key in feats_detailed_list}
+# feats_detailed_dict = {key: {} for key in feats_detailed_list}
 
 
-def decode_query(orig_query, dependency_type):
+def decode_query(orig_query, dependency_type, feats_detailed_list):
     new_query = False
 
     # if command in bracelets remove them and treat command as new query
@@ -129,6 +131,8 @@ def create_trees(config):
         form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict = {}, {}, {}, {}, {}, {}
 
         all_trees = []
+        corpus_size = 0
+        feats_detailed_dict = {}
 
         for sentence in train:
             root = None
@@ -149,7 +153,8 @@ def create_trees(config):
                 token_nodes.append(node)
                 if token.deprel == 'root':
                     root = node
-                    root_id = int(token.id)
+
+                corpus_size += 1
 
             for token_id, token in enumerate(token_nodes):
                 if int(token.parent) == 0:
@@ -177,14 +182,14 @@ def create_trees(config):
 
 
         with open(trees_read_outputfile, 'wb') as output:
-            pickle.dump((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict), output)
+            pickle.dump((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), output)
     else:
         print('Reading trees:')
         print('Completed')
         with open(trees_read_outputfile, 'rb') as pkl_file:
-            (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = pickle.load(pkl_file)
+            (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict) = pickle.load(pkl_file)
 
-    return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict
+    return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict
 
 
 # def order_independent_queries(query_tree):
@@ -339,6 +344,14 @@ def main():
     # create queries
     tree_size = 0
 
+    # 261 - 9 grams
+    # 647 - 10 grams
+    # 1622 - 11 grams
+    # 4126 - 12 grams
+    # 10598 - 13 grams
+    (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
+     feats_detailed_list) = create_trees(config)
+
 
 
     # if config.getint('settings', 'tree_size') == 2:
@@ -366,15 +379,8 @@ def main():
             for i in range(tree_size_range[0], tree_size_range[1] + 1):
                 query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
-        query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '')]
+        query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '', feats_detailed_list)]
         # order_independent_queries(query_tree)
-
-    # 261 - 9 grams
-    # 647 - 10 grams
-    # 1622 - 11 grams
-    # 4126 - 12 grams
-    # 10598 - 13 grams
-    (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict) = create_trees(config)
 
 
     # set filters
@@ -507,6 +513,10 @@ def main():
         else:
             len_words = int(len(config.get('settings', 'query').split(" "))/2 + 1)
         header = ["Structure"] + ["Word #" + str(i) for i in range(1, len_words + 1)] + ['Number of occurences']
+        if config.get('settings', 'relative_number'):
+            header += ['Relative frequency']
+        if config.get('settings', 'nodes_number'):
+            header += ['Nodes number']
         # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Number of occurences']
         writer.writerow(header)
 
@@ -514,7 +524,13 @@ def main():
         for k, v in sorted_list:
             words_only = v['object'].array + ['' for i in range(tree_size_range[-1] - len(v['object'].array))]
             # words_only = printable_answers(k)
-            writer.writerow([k] + words_only + [str(v['number'])])
+            row = [k] + words_only + [str(v['number'])]
+            if config.get('settings', 'relative_number'):
+                row += ['%.4f' % (v['number'] * 1000000.0 / corpus_size)]
+            if config.get('settings', 'nodes_number'):
+                row += ['%d' % len(v['object'].array)]
+
+            writer.writerow(row)
 
     return "Done"
 
