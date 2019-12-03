@@ -2,10 +2,16 @@ import copy
 
 
 class Result(object):
-    def __init__(self, string, architecture_order):
-        self.key = string
+    def __init__(self, node, architecture_order, create_output_strings):
+        self.array = [[create_output_string(node) for create_output_string in create_output_strings]]
+        if len(self.array[0]) > 1:
+            self.key = '{' + ','.join(self.array[0]) + '}'
+        else:
+            # output_string = create_output_strings[0](node)
+            self.key = self.array[0][0]
+            # self.array = [[output_string]]
         self.order_key = str([architecture_order])
-        self.array = [string]
+
         # order with original numbers in sentences
         # self.order = str([architecture_order])
         # order with numbers from 0 to n of n-gram

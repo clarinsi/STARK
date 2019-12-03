@@ -384,20 +384,24 @@ def main():
 
 
     # set filters
-    assert config.get('settings', 'node_type') in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
-    cpu_cores = config.getint('settings', 'cpu_cores')
-    if config.get('settings', 'node_type') == 'deprel':
-        create_output_string_funct = create_output_string_deprel
-    elif config.get('settings', 'node_type') == 'lemma':
-        create_output_string_funct = create_output_string_lemma
-    elif config.get('settings', 'node_type') == 'upos':
-        create_output_string_funct = create_output_string_upos
-    elif config.get('settings', 'node_type') == 'xpos':
-        create_output_string_funct = create_output_string_xpos
-    elif config.get('settings', 'node_type') == 'feats':
-        create_output_string_funct = create_output_string_feats
-    else:
-        create_output_string_funct = create_output_string_form
+    node_types = config.get('settings', 'node_type').split('+')
+    create_output_string_functs = []
+    for node_type in node_types:
+        assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
+        cpu_cores = config.getint('settings', 'cpu_cores')
+        if node_type == 'deprel':
+            create_output_string_funct = create_output_string_deprel
+        elif node_type == 'lemma':
+            create_output_string_funct = create_output_string_lemma
+        elif node_type == 'upos':
+            create_output_string_funct = create_output_string_upos
+        elif node_type == 'xpos':
+            create_output_string_funct = create_output_string_xpos
+        elif node_type == 'feats':
+            create_output_string_funct = create_output_string_feats
+        else:
+            create_output_string_funct = create_output_string_form
+        create_output_string_functs.append(create_output_string_funct)
 
     result_dict = {}
     filters = {}
@@ -447,7 +451,7 @@ def main():
 
         # 1.02 s (16 cores)
         if cpu_cores > 1:
-            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_funct, filters) for tree in all_trees])
+            all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
 
             # for subtrees in all_subtrees:
             for tree_i, subtrees in enumerate(all_subtrees):
@@ -471,7 +475,7 @@ def main():
             # text = Če pa ostane odrasel otrok doma, se starši le težko sprijaznijo s tem, da je "velik", otrok pa ima ves čas občutek, da se njegovi starši po nepotrebnem vtikajo v njegovo življenje.
             # for tree_i, tree in enumerate(all_trees[5170:]):
             # for tree in all_trees:
-                subtrees = tree_calculations((tree, query_tree, create_output_string_funct, filters))
+                subtrees = tree_calculations((tree, query_tree, create_output_string_functs, filters))
                 for query_results in subtrees:
                     for r in query_results:
                         # if r == '(" < , < je < velik) < tem':
@@ -512,7 +516,7 @@ def main():
             len_words = tree_size_range[-1]
         else:
             len_words = int(len(config.get('settings', 'query').split(" "))/2 + 1)
-        header = ["Structure"] + ["Word #" + str(i) for i in range(1, len_words + 1)] + ['Number of occurences']
+        header = ["Structure"] + ["Word #" + str(i) + "-" + node_type for i in range(1, len_words + 1) for node_type in node_types] + ['Number of occurences']
         if config.get('settings', 'relative_number'):
             header += ['Relative frequency']
         if config.get('settings', 'nodes_number'):
@@ -522,7 +526,7 @@ def main():
 
         # body
         for k, v in sorted_list:
-            words_only = v['object'].array + ['' for i in range(tree_size_range[-1] - len(v['object'].array))]
+            words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
             # words_only = printable_answers(k)
             row = [k] + words_only + [str(v['number'])]
             if config.get('settings', 'relative_number'):

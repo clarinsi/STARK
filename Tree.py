@@ -324,11 +324,11 @@ class Tree(object):
                 #     self.create_output_children(partial_subtrees_architecture[i_answer], [str([self.index])], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
 
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [Result(create_output_string(self), self.index)], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
+                    self.create_output_children(partial_subtrees[i_answer], [Result(self, self.index, create_output_string)], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
 
                 i_answer += 1
             else:
-                merged_partial_subtrees.append([Result(create_output_string(self), self.index)])
+                merged_partial_subtrees.append([Result(self, self.index, create_output_string)])
                 # merged_partial_subtrees.append([create_output_string(self)])
                 # merged_partial_subtrees_architecture.append([str([self.index])])
 
@@ -341,11 +341,11 @@ class Tree(object):
                 #     self.create_output_children(partial_subtrees_architecture[i_answer], [str([self.index])], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
 
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [Result(create_output_string(self), self.index)], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
+                    self.create_output_children(partial_subtrees[i_answer], [Result(self, self.index, create_output_string)], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
 
                 i_answer += 1
             else:
-                merged_partial_subtrees.append([Result(create_output_string(self), self.index)])
+                merged_partial_subtrees.append([Result(self, self.index, create_output_string)])
                 # merged_partial_subtrees.append([create_output_string(self)])
                 # merged_partial_subtrees_architecture.append([str([self.index])])
 
