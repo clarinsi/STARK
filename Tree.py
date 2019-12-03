@@ -510,7 +510,7 @@ class Tree(object):
                     merged_results.extend([el.put_in_bracelets() for el in l_res_combined])
             elif r_res:
                 r_res_combined = self.merge_results(new_results, r_res, None)
-                merged_results.extend(['(' + el + ')' for el in r_res_combined])
+                merged_results.extend([el.put_in_bracelets() for el in r_res_combined])
 
 
                 # merged_results.append('(' + l_res + new_result + r_res + ')')
