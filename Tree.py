@@ -438,7 +438,8 @@ class Tree(object):
         merged_results = []
         for left_part in left_parts:
             for right_part in right_parts:
-                merged_results.append(left_part.merge_results(right_part, separator))
+                merged_results.append(left_part.merge_results(right_part, separator, left))
+                # merged_results.append(left_part.merge_results(right_part, separator))
                 # if separator:
                 #     if left:
                 #         merged_results.append(left_part + right_part + separator)
@@ -465,9 +466,114 @@ class Tree(object):
                     merged_indices.append(new_indices)
         return merged_results, merged_indices
 
+    def merge_results2(self, new_child, new_results, i_child, indices, deprel, filters):
+        l_res = []
+        r_res = []
+        results = []
+        for i_answer, answer in enumerate(new_child):
+            if filters['node_order'] and indices[i_child][i_answer] < self.children_split:
+                if filters['dependency_type']:
+                    separator = ' <' + deprel[i_child][i_answer] + ' '
+                else:
+                    separator = ' < '
+                l_res = self.merge_results(l_res, answer, separator, left=True)
+                # l_res += answer + separator
+            else:
+                if filters['dependency_type']:
+                    separator = ' >' + deprel[i_child][i_answer] + ' '
+                else:
+                    separator = ' > '
+                r_res = self.merge_results(r_res, answer, separator, left=False)
+                # r_res += separator + answer
+        if l_res:
+            l_res_combined = self.merge_results(l_res, new_results, None)
+            if r_res:
+                r_res_combined = self.merge_results(l_res_combined, r_res, None)
+                # merged_results.extend(['(' + el + ')' for el in r_res_combined])
+                results.extend([el.put_in_bracelets() for el in r_res_combined])
+            else:
+                results.extend([el.put_in_bracelets() for el in l_res_combined])
+        elif r_res:
+            r_res_combined = self.merge_results(new_results, r_res, None)
+            results.extend([el.put_in_bracelets() for el in r_res_combined])
+
+        return results
+
+    def create_merged_results(self, answers, separators, separator_switch):
+        new_answers = []
+        for answer_i, answer in enumerate(answers):
+            new_answer = copy(answer[0])
+            print(create_output_string_form(self))
+            for answer_part_i, answer_part in enumerate(answer[1:]):
+                new_answer.extend_answer(answer_part, separators[answer_part_i])
+            new_answer.put_in_bracelets(inplace=True)
+            new_answers.append(new_answer)
+        return new_answers
+    # def create_merged_results(self, new_child, new_answers, i_child, indices, deprel, filters):
+
+    def merge_results3(self, new_child, new_answers, i_child, indices, deprel, filters):
+        # l_res = []
+        # r_res = []
+        # results = []
+        separators = []
+        l_answers = []
+        r_answers = []
+        separator_switch = len(new_child) - 1
+        for i_answer, answer in enumerate(new_child):
+            if filters['node_order'] and indices[i_child][i_answer] < self.children_split:
+                if filters['dependency_type']:
+                    separators.append(' <' + deprel[i_child][i_answer] + ' ')
+                else:
+                    separators.append(' < ')
+                l_answers.append(answer)
+                # l_res = res
+                # return merged_results
+                # l_res += answer + separator
+            else:
+                if i_answer < separator_switch:
+                    separator_switch = i_answer
+                if filters['dependency_type']:
+                    separators.append(' >' + deprel[i_child][i_answer] + ' ')
+                else:
+                    separators.append(' > ')
+                r_answers.append(answer)
+                # r_res += separator + answer
+
+        answers = []
+        if l_answers and r_answers:
+            answers = l_answers + [new_answers] + r_answers
+            # for l_answer in l_answers:
+            #     for r_answer in r_answers:
+            #         answers.append(l_answer + new_answers + r_answer)
+        elif l_answers:
+            answers = l_answers + [new_answers]
+            # for l_answer in l_answers:
+            #     answers.append(l_answer + new_answers)
+        elif r_answers:
+            answers = [new_answers] + r_answers
+            # for r_answer in r_answers:
+            #     answers.append(new_answers + r_answer)
+        else:
+            answers = [new_answers]
+
+        results = self.create_merged_results(answers, separators, separator_switch)
+
+        # if l_res:
+        #     l_res_combined = self.merge_results(l_res, new_answers, None)
+        #     if r_res:
+        #         r_res_combined = self.merge_results(l_res_combined, r_res, None)
+        #         # merged_results.extend(['(' + el + ')' for el in r_res_combined])
+        #         results.extend([el.put_in_bracelets() for el in r_res_combined])
+        #     else:
+        #         results.extend([el.put_in_bracelets() for el in l_res_combined])
+        # elif r_res:
+        #     r_res_combined = self.merge_results(new_answers, r_res, None)
+        #     results.extend([el.put_in_bracelets() for el in r_res_combined])
+
+        return results
 
     def create_output_children(self, children, new_results, filters, indices, deprel):
-        # if create_output_string_form(self) == 'prijel':
+        # if create_output_string_form(self) == 'Dogodek':
         #     print('HERE!@@!')
         # if create_output_string_form(self) == 'utišal':
         #     print('HERE!@@!')
@@ -475,45 +581,12 @@ class Tree(object):
         #     print('HERE')
         merged_results = []
         for i_child, child in enumerate(children):
-            l_res = []
-            r_res = []
             if filters['node_order']:
                 new_child = child
             else:
-                # a = [['tistega', 'dne'], ['sem', 'bil']]
-                # b = sorted(a)
-                # TODO CHECK IF THIS WORKS FOR CERTIAN
                 new_child = sorted(child, key=lambda x: x[0].key)
-            for i_answer, answer in enumerate(new_child):
-                # res += '(' + el + ') < '
-                if not filters['node_order'] or indices[i_child][i_answer] < self.children_split:
-                    if filters['dependency_type']:
-                        separator = ' <' + deprel[i_child][i_answer] + ' '
-                    else:
-                        separator = ' < '
-                    l_res = self.merge_results(l_res, answer, separator, left=True)
-                    # l_res += answer + separator
-                else:
-                    if filters['dependency_type']:
-                        separator = ' >' + deprel[i_child][i_answer] + ' '
-                    else:
-                        separator = ' > '
-                    r_res = self.merge_results(r_res, answer, separator, left=False)
-                    # r_res += separator + answer
-            if l_res:
-                l_res_combined = self.merge_results(l_res, new_results, None)
-                if r_res:
-                    r_res_combined = self.merge_results(l_res_combined, r_res, None)
-                    # merged_results.extend(['(' + el + ')' for el in r_res_combined])
-                    merged_results.extend([el.put_in_bracelets() for el in r_res_combined])
-                else:
-                    merged_results.extend([el.put_in_bracelets() for el in l_res_combined])
-            elif r_res:
-                r_res_combined = self.merge_results(new_results, r_res, None)
-                merged_results.extend([el.put_in_bracelets() for el in r_res_combined])
-
-
-                # merged_results.append('(' + l_res + new_result + r_res + ')')
+            #################
+            merged_results.extend(self.merge_results2(new_child, new_results, i_child, indices, deprel, filters))
         return merged_results
 
     @staticmethod

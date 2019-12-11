@@ -457,33 +457,42 @@ def main():
             for tree_i, subtrees in enumerate(all_subtrees):
                 for query_results in subtrees:
                     for r in query_results:
+                        if filters['node_order']:
+                            key = r.key + r.order
+                        else:
+                            key = r.key
                         # if r == '(" < , < je < velik) < tem':
                         #     print(tree_i)
                         # if r in result_dict:
                         #     result_dict[r] += 1
                         # else:
                         #     result_dict[r] = 1
-                        if r.key in result_dict:
-                            result_dict[r.key]['number'] += 1
+                        if key in result_dict:
+                            result_dict[key]['number'] += 1
                         else:
-                            result_dict[r.key] = {'object': r, 'number': 1}
+                            result_dict[key] = {'object': r, 'number': 1}
 
         # 3.65 s (1 core)
         else:
             # for tree_i, tree in enumerate(all_trees[-5:]):
-            for tree_i, tree in enumerate(all_trees):
+            # for tree_i, tree in enumerate(all_trees):
+            for tree_i, tree in enumerate(all_trees[1:]):
             # text = Če pa ostane odrasel otrok doma, se starši le težko sprijaznijo s tem, da je "velik", otrok pa ima ves čas občutek, da se njegovi starši po nepotrebnem vtikajo v njegovo življenje.
             # for tree_i, tree in enumerate(all_trees[5170:]):
             # for tree in all_trees:
                 subtrees = tree_calculations((tree, query_tree, create_output_string_functs, filters))
                 for query_results in subtrees:
                     for r in query_results:
+                        if filters['node_order']:
+                            key = r.key + r.order
+                        else:
+                            key = r.key
                         # if r == '(" < , < je < velik) < tem':
                         #     print(tree_i)
-                        if r.key in result_dict:
-                            result_dict[r.key]['number'] += 1
+                        if key in result_dict:
+                            result_dict[key]['number'] += 1
                         else:
-                            result_dict[r.key] = {'object': r, 'number': 1}
+                            result_dict[key] = {'object': r, 'number': 1}
 
         print("Execution time:")
         print("--- %s seconds ---" % (time.time() - start_exe_time))
@@ -516,23 +525,32 @@ def main():
             len_words = tree_size_range[-1]
         else:
             len_words = int(len(config.get('settings', 'query').split(" "))/2 + 1)
-        header = ["Structure"] + ["Word #" + str(i) + "-" + node_type for i in range(1, len_words + 1) for node_type in node_types] + ['Number of occurences']
-        if config.get('settings', 'relative_number'):
-            header += ['Relative frequency']
-        if config.get('settings', 'nodes_number'):
-            header += ['Nodes number']
-        # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Number of occurences']
+        header = ["Structure"] + ["Node #" + str(i) + "-" + node_type for i in range(1, len_words + 1) for node_type in node_types] + ['Absolute frequency']
+        header += ['Relative frequency']
+        if filters['node_order']:
+            header += ['Order']
+        if config.getboolean('settings', 'nodes_number'):
+            header += ['Number of nodes']
+        if config.getboolean('settings', 'print_root'):
+            header += ['Root node']
+        # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Absolute frequency']
         writer.writerow(header)
+
+        if config.getint('settings', 'lines_threshold'):
+            sorted_list = sorted_list[:config.getint('settings', 'lines_threshold')]
 
         # body
         for k, v in sorted_list:
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
             # words_only = printable_answers(k)
-            row = [k] + words_only + [str(v['number'])]
-            if config.get('settings', 'relative_number'):
-                row += ['%.4f' % (v['number'] * 1000000.0 / corpus_size)]
+            row = [v['object'].key] + words_only + [str(v['number'])]
+            row += ['%.4f' % (v['number'] * 1000000.0 / corpus_size)]
+            if filters['node_order']:
+                row += [v['object'].order]
             if config.get('settings', 'nodes_number'):
                 row += ['%d' % len(v['object'].array)]
+            if config.get('settings', 'print_root'):
+                row += [v['object'].root]
 
             writer.writerow(row)
 
