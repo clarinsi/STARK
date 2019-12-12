@@ -107,11 +107,11 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
     root = None
     for i, node_action in enumerate(node_actions):
         if i < root_index:
-            children.append(decode_query(node_action, priority_actions[i][1:]))
+            children.append(decode_query(node_action, priority_actions[i][1:], feats_detailed_list))
         elif i > root_index:
-            children.append(decode_query(node_action, priority_actions[i - 1][1:]))
+            children.append(decode_query(node_action, priority_actions[i - 1][1:], feats_detailed_list))
         else:
-            root = decode_query(node_action, dependency_type)
+            root = decode_query(node_action, dependency_type, feats_detailed_list)
     if children:
         root["children"] = children
     return root
