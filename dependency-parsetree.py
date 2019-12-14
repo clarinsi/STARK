@@ -476,8 +476,12 @@ def main():
 
             # for subtrees in all_subtrees:
             for tree_i, subtrees in enumerate(all_subtrees):
+
                 for query_results in subtrees:
                     for r in query_results:
+                        # if r.key == '(ne <advmod more >xcomp (se <expl izogniti) >punct .)':
+                        #     print('HERE')
+                        #     print(tree_i)
                         if filters['node_order']:
                             key = r.key + r.order
                         else:
@@ -496,8 +500,10 @@ def main():
         # 3.65 s (1 core)
         else:
             # for tree_i, tree in enumerate(all_trees[-5:]):
-            # for tree_i, tree in enumerate(all_trees):
-            for tree_i, tree in enumerate(all_trees[1:]):
+            for tree_i, tree in enumerate(all_trees):
+            # for tree_i, tree in enumerate(all_trees[852:]):
+            # for tree_i, tree in enumerate(all_trees[1689:]):
+            # for tree_i, tree in enumerate(all_trees[2:]):
                 input_data = (tree, query_tree, create_output_string_functs, filters)
                 if filters['association_measures']:
                     unigrams = get_unigrams(input_data)
@@ -573,19 +579,20 @@ def main():
 
         # body
         for k, v in sorted_list:
+            v['object'].get_array()
             absolute_frequency = v['number'] * 1000000.0 / corpus_size
             if filters['frequency_threshold'] and filters['frequency_threshold'] > absolute_frequency:
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
             # words_only = printable_answers(k)
-            row = [v['object'].key] + words_only + [str(v['number'])]
+            row = [v['object'].key[1:-1]] + words_only + [str(v['number'])]
             row += ['%.4f' % absolute_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
             if filters['nodes_number']:
                 row += ['%d' % len(v['object'].array)]
             if filters['print_root']:
-                row += [v['object'].root]
+                row += [v['object'].node.name]
             if filters['association_measures']:
                 row += get_collocabilities(v, unigrams_dict, corpus_size)
             writer.writerow(row)

@@ -36,6 +36,22 @@ def generate_key(node, create_output_strings, print_lemma=True):
 
     return array, key
 
+def generate_name(node, create_output_strings, print_lemma=True):
+    array = [create_output_string(node) for create_output_string in create_output_strings]
+    if create_output_string_lemma in create_output_strings and print_lemma:
+        name_array = [create_output_string(
+            node) if create_output_string != create_output_string_lemma else 'L=' + create_output_string(node) for
+                      create_output_string in create_output_strings]
+    else:
+        name_array = array
+    if len(array) > 1:
+        name = '&'.join(name_array)
+    else:
+        # output_string = create_output_strings[0](node)
+        name = name_array[0]
+
+    return array, name
+
 def get_collocabilities(ngram, unigrams_dict, corpus_size):
     sum_fwi = 0.0
     mul_fwi = 1.0
