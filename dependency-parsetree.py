@@ -6,6 +6,7 @@ import hashlib
 import os
 import pickle
 import re
+import string
 import time
 import timeit
 from multiprocessing import Pool
@@ -32,6 +33,7 @@ from Tree import Tree, create_output_string_form, create_output_string_deprel, c
 # feats_detailed_list = []
 
 # feats_detailed_dict = {key: {} for key in feats_detailed_list}
+from generic import get_collocabilities
 
 
 def decode_query(orig_query, dependency_type, feats_detailed_list):
@@ -232,6 +234,11 @@ def tree_calculations(input_data):
     _, subtrees = tree.get_subtrees(query_tree, [], create_output_string_funct, filters)
     return subtrees
 
+def get_unigrams(input_data):
+    tree, query_tree, create_output_string_funct, filters = input_data
+    unigrams = tree.get_unigrams(create_output_string_funct, filters)
+    return unigrams
+
 
 def tree_calculations_chunks(input_data):
     trees, query_tree, create_output_string_funct, filters = input_data
@@ -404,6 +411,7 @@ def main():
         create_output_string_functs.append(create_output_string_funct)
 
     result_dict = {}
+    unigrams_dict = {}
     filters = {}
     filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
     # filters['caching'] = config.getboolean('settings', 'caching')
@@ -430,6 +438,11 @@ def main():
         filters['root_whitelist'] = []
 
     filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
+    filters['association_measures'] = config.getboolean('settings', 'association_measures')
+    filters['nodes_number'] = config.getboolean('settings', 'nodes_number')
+    filters['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold')
+    filters['lines_threshold'] = config.getint('settings', 'lines_threshold')
+    filters['print_root'] = config.getboolean('settings', 'print_root')
 
 
     # for tree in all_trees[2:]:
@@ -448,9 +461,17 @@ def main():
         #                 result_dict[r_k] += r_v
         #             else:
         #                 result_dict[r_k] = r_v
-
         # 1.02 s (16 cores)
         if cpu_cores > 1:
+            # input_data = (tree, query_tree, create_output_string_functs, filters)
+            all_unigrams = p.map(get_unigrams, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
+            for unigrams in all_unigrams:
+                for unigram in unigrams:
+                    if unigram in unigrams_dict:
+                        unigrams_dict[unigram] += 1
+                    else:
+                        unigrams_dict[unigram] = 1
+
             all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
 
             # for subtrees in all_subtrees:
@@ -477,10 +498,19 @@ def main():
             # for tree_i, tree in enumerate(all_trees[-5:]):
             # for tree_i, tree in enumerate(all_trees):
             for tree_i, tree in enumerate(all_trees[1:]):
+                input_data = (tree, query_tree, create_output_string_functs, filters)
+                if filters['association_measures']:
+                    unigrams = get_unigrams(input_data)
+                    for unigram in unigrams:
+                        if unigram in unigrams_dict:
+                            unigrams_dict[unigram] += 1
+                        else:
+                            unigrams_dict[unigram] = 1
+            # for tree_i, tree in enumerate(all_trees[1:]):
             # text = Če pa ostane odrasel otrok doma, se starši le težko sprijaznijo s tem, da je "velik", otrok pa ima ves čas občutek, da se njegovi starši po nepotrebnem vtikajo v njegovo življenje.
             # for tree_i, tree in enumerate(all_trees[5170:]):
             # for tree in all_trees:
-                subtrees = tree_calculations((tree, query_tree, create_output_string_functs, filters))
+                subtrees = tree_calculations(input_data)
                 for query_results in subtrees:
                     for r in query_results:
                         if filters['node_order']:
@@ -525,33 +555,39 @@ def main():
             len_words = tree_size_range[-1]
         else:
             len_words = int(len(config.get('settings', 'query').split(" "))/2 + 1)
-        header = ["Structure"] + ["Node #" + str(i) + "-" + node_type for i in range(1, len_words + 1) for node_type in node_types] + ['Absolute frequency']
+        header = ["Structure"] + ["Node " + string.ascii_uppercase[i] + "-" + node_type for i in range(len_words) for node_type in node_types] + ['Absolute frequency']
         header += ['Relative frequency']
         if filters['node_order']:
             header += ['Order']
-        if config.getboolean('settings', 'nodes_number'):
+        if filters['nodes_number']:
             header += ['Number of nodes']
-        if config.getboolean('settings', 'print_root'):
+        if filters['print_root']:
             header += ['Root node']
+        if filters['association_measures']:
+            header += ['MI', 'MI3', 'Dice', 't-score', 'simple-LL']
         # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Absolute frequency']
         writer.writerow(header)
 
-        if config.getint('settings', 'lines_threshold'):
-            sorted_list = sorted_list[:config.getint('settings', 'lines_threshold')]
+        if filters['lines_threshold']:
+            sorted_list = sorted_list[:filters['lines_threshold']]
 
         # body
         for k, v in sorted_list:
+            absolute_frequency = v['number'] * 1000000.0 / corpus_size
+            if filters['frequency_threshold'] and filters['frequency_threshold'] > absolute_frequency:
+                break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
             # words_only = printable_answers(k)
             row = [v['object'].key] + words_only + [str(v['number'])]
-            row += ['%.4f' % (v['number'] * 1000000.0 / corpus_size)]
+            row += ['%.4f' % absolute_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
-            if config.get('settings', 'nodes_number'):
+            if filters['nodes_number']:
                 row += ['%d' % len(v['object'].array)]
-            if config.get('settings', 'print_root'):
+            if filters['print_root']:
                 row += [v['object'].root]
-
+            if filters['association_measures']:
+                row += get_collocabilities(v, unigrams_dict, corpus_size)
             writer.writerow(row)
 
     return "Done"

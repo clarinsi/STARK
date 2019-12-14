@@ -1,18 +1,28 @@
 import copy
 import string
 
+from generic import create_output_string_form, create_output_string_deprel, create_output_string_lemma, \
+    create_output_string_upos, create_output_string_xpos, create_output_string_feats, generate_key
+
 
 class Result(object):
     def __init__(self, node, architecture_order, create_output_strings):
-        self.array = [[create_output_string(node) for create_output_string in create_output_strings]]
-        if len(self.array[0]) > 1:
-            self.key = '{' + ','.join(self.array[0]) + '}'
-        else:
-            # output_string = create_output_strings[0](node)
-            self.key = self.array[0][0]
+        # self.array = [[create_output_string(node) for create_output_string in create_output_strings]]
+        # if create_output_string_lemma in create_output_strings:
+        #     key_array = [[create_output_string(node) if create_output_string != create_output_string_lemma else 'L=' + create_output_string(node) for create_output_string in create_output_strings]]
+        # else:
+        #     key_array = self.array
+        # if len(self.array[0]) > 1:
+        #     self.key = '&'.join(key_array[0])
+        # else:
+        #     # output_string = create_output_strings[0](node)
+        #     self.key = key_array[0][0]
+
+        self.array, self.key = generate_key(node, create_output_strings)
             # self.array = [[output_string]]
         self.order_key = str([architecture_order])
         self.order = [architecture_order]
+        self.deprel = node.deprel.get_value()
         # order with original numbers in sentences
         # self.order = str([architecture_order])
         # order with numbers from 0 to n of n-gram
@@ -123,7 +133,7 @@ class Result(object):
 
     def set_root(self):
         if len(self.array[0]) > 1:
-            self.root = '{' + ','.join(self.array[0]) + '}'
+            self.root = '&'.join(self.array[0])
         else:
             # output_string = create_output_strings[0](node)
             self.root = self.array[0][0]
