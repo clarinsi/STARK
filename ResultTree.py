@@ -37,14 +37,18 @@ class ResultTree(object):
     def set_children(self, children):
         self.children = children
 
-    def get_key(self):
+    def get_key(self, get_free=False):
         # if self.key:
         #     return self.key
         key = ''
         write_self_node_to_result = False
         if self.children:
-            for child in self.children:
-                if child.node.location < self.node.location:
+            if get_free:
+                children = sorted(self.children, key=lambda x: x.node.name)
+            else:
+                children = self.children
+            for child in children:
+                if self.filters['node_order'] and child.node.location < self.node.location and not get_free:
                     if self.filters['dependency_type']:
                         # separator = ' <' + deprel[i_child][i_answer] + ' '
                         separator = ' <' + child.node.deprel + ' '
@@ -75,7 +79,7 @@ class ResultTree(object):
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if child.node.location < self.node.location:
+                if self.filters['node_order'] and child.node.location < self.node.location:
                     if self.filters['dependency_type']:
                         # separator = ' <' + deprel[i_child][i_answer] + ' '
                         separator = ' <' + child.node.deprel + ' '
@@ -105,7 +109,7 @@ class ResultTree(object):
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if child.node.location < self.node.location:
+                if self.filters['node_order'] and child.node.location < self.node.location:
                     order += child.get_order()
                 else:
                     if not write_self_node_to_result:
@@ -127,7 +131,7 @@ class ResultTree(object):
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if child.node.location < self.node.location:
+                if self.filters['node_order'] and child.node.location < self.node.location:
                     array += child.get_array()
                 else:
                     if not write_self_node_to_result:

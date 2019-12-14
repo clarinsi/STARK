@@ -595,8 +595,8 @@ class Tree(object):
     # def create_merged_results(self, new_child, new_answers, i_child, indices, deprel, filters):
 
     def merge_results3(self, child, new_results, filters):
-        if create_output_string_form(self) == 'Dogodek':
-            print('HERE!@@!')
+        # if create_output_string_form(self) == 'Dogodek':
+        #     print('HERE!@@!')
         # if create_output_string_form(self) == 'začelo':
         #     print('HERE!@@!')
         # if create_output_string_form(self) == 'utišal':
@@ -627,8 +627,8 @@ class Tree(object):
         #     for children in children_groups_sorted:
         #         new_result = copy(result)
         #         new_result.set_children(children)
-        #         order = sorted(new_result.get_order())
-        #         results_sorted.append(new_result)
+        #         order = tuple(sorted(new_result.get_order()))
+        #         results_sorted[order] = new_result
 
 
         results = []
@@ -636,7 +636,7 @@ class Tree(object):
             for children in children_groups:
                 new_result = copy(result)
                 new_result.set_children(children)
-                order = new_result.get_order()
+                order = tuple(sorted(new_result.get_order()))
                 results.append(new_result)
 
         return results

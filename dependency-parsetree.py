@@ -503,7 +503,7 @@ def main():
             for tree_i, tree in enumerate(all_trees):
             # for tree_i, tree in enumerate(all_trees[852:]):
             # for tree_i, tree in enumerate(all_trees[1689:]):
-            # for tree_i, tree in enumerate(all_trees[2:]):
+            # for tree_i, tree in enumerate(all_trees[1:3]):
                 input_data = (tree, query_tree, create_output_string_functs, filters)
                 if filters['association_measures']:
                     unigrams = get_unigrams(input_data)
@@ -565,6 +565,7 @@ def main():
         header += ['Relative frequency']
         if filters['node_order']:
             header += ['Order']
+            header += ['Free structure']
         if filters['nodes_number']:
             header += ['Number of nodes']
         if filters['print_root']:
@@ -589,6 +590,7 @@ def main():
             row += ['%.4f' % absolute_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
+                row += [v['object'].get_key(get_free=True)[1:-1]]
             if filters['nodes_number']:
                 row += ['%d' % len(v['object'].array)]
             if filters['print_root']:
