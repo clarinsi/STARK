@@ -280,7 +280,7 @@ class Tree(object):
         for answer_i, answer_length in enumerate(answers_lengths):
             # iterate over answers of query
             # TODO ERROR IN HERE!
-            partial_answers[answer_i], partial_answers_index[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], answer_length, filters)
+            partial_answers[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], answer_length, filters)
             # while i < answers_length:
             #     self.create_grouped_answers()
             #     i += 1
@@ -307,9 +307,9 @@ class Tree(object):
         #     child, child_queries, child_queries_metadata = children_queries_generator.send(partial_results_dict)
         #     child_index += 1
 
-        return partial_answers, partial_answers_index, complete_answers
+        return partial_answers, complete_answers
 
-    def order_dependent_queries(self, active_permanent_query_trees, active_temporary_query_trees, partial_subtrees, partial_subtrees_index,
+    def order_dependent_queries(self, active_permanent_query_trees, active_temporary_query_trees, partial_subtrees,
                                 create_output_string, merged_partial_subtrees, i_query, i_answer, filters):
         # string_output = ''
         # if create_output_string_form(self) == 'vožnji':
@@ -323,7 +323,7 @@ class Tree(object):
                 #     self.create_output_children(partial_subtrees_architecture[i_answer], [str([self.index])], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
 
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [Result(self, self.index, create_output_string)], filters, partial_subtrees_index[i_answer]))
+                    self.create_output_children(partial_subtrees[i_answer], [Result(self, self.index, create_output_string)], filters))
 
                 i_answer += 1
             else:
@@ -340,7 +340,7 @@ class Tree(object):
                 #     self.create_output_children(partial_subtrees_architecture[i_answer], [str([self.index])], filters, partial_subtrees_index[i_answer], partial_subtrees_deprel[i_answer]))
 
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [Result(self, self.index, create_output_string)], filters, partial_subtrees_index[i_answer]))
+                    self.create_output_children(partial_subtrees[i_answer], [Result(self, self.index, create_output_string)], filters))
 
                 i_answer += 1
             else:
@@ -387,7 +387,7 @@ class Tree(object):
                 if 'children' in temporary_query_tree:
                     all_query_indices.append((temporary_query_tree['children'], False))
 
-        partial_subtrees, partial_subtrees_index, complete_answers = self.get_all_query_indices(len(temporary_query_trees),
+        partial_subtrees, complete_answers = self.get_all_query_indices(len(temporary_query_trees),
                                                                                                       len(permanent_query_trees),
                                                                                                       permanent_query_trees,
                                                                                                       all_query_indices, self.children,
@@ -402,7 +402,7 @@ class Tree(object):
         # go over all permanent and temporary query trees
         while i_question < len(active_permanent_query_trees) + len(active_temporary_query_trees):
             # permanent query trees always have left and right child
-            i_answer = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees, partial_subtrees, partial_subtrees_index,
+            i_answer = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees, partial_subtrees,
                                                            create_output_string, merged_partial_answers, i_question, i_answer, filters)
 
             i_question += 1
@@ -427,7 +427,7 @@ class Tree(object):
         # return merged_partial_subtrees_architecture[len(active_permanent_query_trees):], merged_partial_subtrees[len(active_permanent_query_trees):], completed_subtrees
 
     @staticmethod
-    def merge_results(left_parts, right_parts, separator, left=True):
+    def merge_results(left_parts, right_parts, separator, left=True, right_part_free=False):
         if not left_parts:
             # return all right_parts
             return [r_p.add_separator(separator, left) for r_p in right_parts]
@@ -442,8 +442,12 @@ class Tree(object):
             # return [separator + l_p for l_p in left_parts]
         merged_results = []
         for left_part in left_parts:
-            for right_part in right_parts:
-                merged_results.append(left_part.merge_results(right_part, separator, left))
+            if right_part_free:
+                for right_part in right_parts[1]:
+                    merged_results.append((right_parts[0], left_part.merge_results(right_part, separator, left)))
+            else:
+                for right_part in right_parts:
+                    merged_results.append(left_part.merge_results(right_part, separator, left))
                 # merged_results.append(left_part.merge_results(right_part, separator))
                 # if separator:
                 #     if left:
@@ -471,12 +475,19 @@ class Tree(object):
                     merged_indices.append(new_indices)
         return merged_results, merged_indices
 
-    def merge_results2(self, new_child, new_results, i_child, indices, filters):
+    def merge_results2(self, child, new_results, filters):
+        if filters['node_order']:
+            new_child = child
+            # new_child_sorted = sorted(enumerate(child), key=lambda x: x[1][0].key)
+        else:
+            new_child = sorted(child, key=lambda x: x[0].key)
+
         l_res = []
         r_res = []
         results = []
         for i_answer, answer in enumerate(new_child):
-            if filters['node_order'] and indices[i_child][i_answer] < self.children_split:
+            if filters['node_order'] and answer[0].order[0] < self.index:
+            # if filters['node_order'] and indices[i_child][i_answer] < self.children_split:
                 if filters['dependency_type']:
                     # separator = ' <' + deprel[i_child][i_answer] + ' '
                     separator = ' <' + answer[0].deprel + ' '
@@ -491,17 +502,39 @@ class Tree(object):
                     separator = ' > '
                 r_res = self.merge_results(r_res, answer, separator, left=False)
                 # r_res += separator + answer
+
+        # if filters['node_order']:
+        #     r_res_sorted = []
+        #     for i_answer, answer in new_child_sorted:
+        #         if filters['dependency_type']:
+        #             separator = ' >' + answer[0].deprel + ' '
+        #         else:
+        #             separator = ' > '
+        #         r_res_sorted = (i_answer, self.merge_results(r_res_sorted, answer, separator, left=False))
+        #
+        #
+        #     r_res_sorted_combined = self.merge_results(new_results, r_res_sorted, None, right_part_free=True)
+        #     # print('here')
+
         if l_res:
             l_res_combined = self.merge_results(l_res, new_results, None)
             if r_res:
                 r_res_combined = self.merge_results(l_res_combined, r_res, None)
                 # merged_results.extend(['(' + el + ')' for el in r_res_combined])
-                results.extend([el.put_in_bracelets() for el in r_res_combined])
+                result = r_res_combined
+                # results.extend([el.put_in_bracelets() for el in r_res_combined])
             else:
-                results.extend([el.put_in_bracelets() for el in l_res_combined])
+                result = l_res_combined
+                # results.extend([el.put_in_bracelets() for el in l_res_combined])
         elif r_res:
             r_res_combined = self.merge_results(new_results, r_res, None)
-            results.extend([el.put_in_bracelets() for el in r_res_combined])
+            result = r_res_combined
+            # results.extend([el.put_in_bracelets() for el in r_res_combined])
+        else:
+            result = []
+
+
+        results.extend([el.put_in_bracelets() for el in result])
 
         return results
 
@@ -578,7 +611,7 @@ class Tree(object):
 
         return results
 
-    def create_output_children(self, children, new_results, filters, indices):
+    def create_output_children(self, children, new_results, filters):
         # if create_output_string_form(self) == 'Dogodek':
         #     print('HERE!@@!')
         # if create_output_string_form(self) == 'utišal':
@@ -587,53 +620,7 @@ class Tree(object):
         #     print('HERE')
         merged_results = []
         for i_child, child in enumerate(children):
-            if filters['node_order']:
-                new_child = child
-            else:
-                new_child = sorted(child, key=lambda x: x[0].key)
-            #################
-            merged_results.extend(self.merge_results2(new_child, new_results, i_child, indices, filters))
-        return merged_results
-
-    @staticmethod
-    def create_output_left_children(left_children, new_results, filters):
-        merged_results = []
-        for child in left_children:
-            for new_result in new_results:
-                res = ''
-                if type(child) == str:
-                    # res += '(' + child + ') < '
-                    res += child + ' < '
-                else:
-                    if filters['node_order']:
-                        new_child = child
-                    else:
-                        new_child = sorted(child)
-                    for el in new_child:
-                        # res += '(' + el + ') < '
-                        res += el + ' < '
-                merged_results.append('(' + res + new_result + ')')
-        return merged_results
-
-    @staticmethod
-    def create_output_right_children(new_results, right_children, filters):
-        merged_results = []
-        for child in right_children:
-            for new_result in new_results:
-                res = ''
-                if type(child) == str:
-                    res += ' > ' + child
-                    # res += ' > (' + child + ')'
-                else:
-                    if filters['node_order']:
-                        new_child = child
-                    else:
-                        new_child = sorted(child)
-                    for el in new_child:
-                        res += ' > ' + el
-                        # res += ' > (' + el + ')'
-                merged_results.append('(' + new_result + res + ')')
-                # merged_results.append(new_result + ' > (' + child + ')')
+            merged_results.extend(self.merge_results2(child, new_results, filters))
         return merged_results
 
     # @staticmethod
@@ -678,7 +665,7 @@ class Tree(object):
             partly_built_trees.extend(new_partly_built_trees)
             partly_built_trees_architecture_indices.extend(new_partly_built_trees_architecture_indices)
 
-        l_ordered_built_trees, l_ordered_built_trees_index, unique_trees_architecture = [], [], []
+        l_ordered_built_trees, unique_trees_architecture = [], []
 
         if built_trees:
             # sort 3 arrays by architecture indices
@@ -707,7 +694,6 @@ class Tree(object):
                     # if not filters['node_order']:
                     # l_ordered_built_trees_architecture.append(new_tree_architecture)
                     l_ordered_built_trees.append(new_tree)
-                    l_ordered_built_trees_index.append(new_tree_index)
                     # TODO NODE ORDER = FALSE
                     # else:
                     #
@@ -721,4 +707,4 @@ class Tree(object):
         #             print('aaa')
         #
         # pass
-        return l_ordered_built_trees, l_ordered_built_trees_index
+        return l_ordered_built_trees

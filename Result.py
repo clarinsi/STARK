@@ -19,8 +19,9 @@ class Result(object):
         #     self.key = key_array[0][0]
 
         self.array, self.key = generate_key(node, create_output_strings)
+        self.key_free = self.key
             # self.array = [[output_string]]
-        self.order_key = str([architecture_order])
+        self.order_key = str(architecture_order)
         self.order = [architecture_order]
         self.deprel = node.deprel.get_value()
         # order with original numbers in sentences
