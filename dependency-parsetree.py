@@ -483,9 +483,9 @@ def main():
                         #     print('HERE')
                         #     print(tree_i)
                         if filters['node_order']:
-                            key = r.key + r.order
+                            key = r.get_key() + r.order
                         else:
-                            key = r.key
+                            key = r.get_key()
                         # if r == '(" < , < je < velik) < tem':
                         #     print(tree_i)
                         # if r in result_dict:
@@ -520,9 +520,9 @@ def main():
                 for query_results in subtrees:
                     for r in query_results:
                         if filters['node_order']:
-                            key = r.key + r.order
+                            key = r.get_key() + r.order
                         else:
-                            key = r.key
+                            key = r.get_key()
                         # if r == '(" < , < je < velik) < tem':
                         #     print(tree_i)
                         if key in result_dict:
@@ -586,11 +586,11 @@ def main():
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
             # words_only = printable_answers(k)
-            row = [v['object'].key[1:-1]] + words_only + [str(v['number'])]
+            row = [v['object'].get_key()[1:-1]] + words_only + [str(v['number'])]
             row += ['%.4f' % absolute_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
-                row += [v['object'].get_key(get_free=True)[1:-1]]
+                row += [v['object'].get_key_sorted()[1:-1]]
             if filters['nodes_number']:
                 row += ['%d' % len(v['object'].array)]
             if filters['print_root']:

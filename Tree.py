@@ -146,61 +146,61 @@ class Tree(object):
         old_subtree.extend(new_subtree)
 
 
-    def get_results(self, partial_results_dict, result_index, result_part, outcome, last_result_part):
-        # save results for later usage
+    # def get_results(self, partial_results_dict, result_index, result_part, outcome, last_result_part):
+    #     # save results for later usage
+    #
+    #     # if result index already in and element 0 exists (otherwise error)
+    #     if result_index in partial_results_dict and 0 in partial_results_dict[result_index]:
+    #         if result_part - 1 in partial_results_dict[result_index]:
+    #             if result_part in partial_results_dict[result_index]:
+    #                 partial_results_dict[result_index][result_part].extend(self.merge_results(partial_results_dict[result_index][result_part - 1], outcome))
+    #             else:
+    #                 partial_results_dict[result_index][result_part] = self.merge_results(partial_results_dict[result_index][result_part - 1], outcome)
+    #
+    #         # extend one word layer with output
+    #         else:
+    #             partial_results_dict[result_index][0].extend(outcome)
+    #     else:
+    #         partial_results_dict[result_index] = {0: outcome}
+    #
+    #     if last_result_part - 1 in partial_results_dict[result_index]:
+    #         return partial_results_dict[result_index].pop(last_result_part - 1)
+    #     return []
 
-        # if result index already in and element 0 exists (otherwise error)
-        if result_index in partial_results_dict and 0 in partial_results_dict[result_index]:
-            if result_part - 1 in partial_results_dict[result_index]:
-                if result_part in partial_results_dict[result_index]:
-                    partial_results_dict[result_index][result_part].extend(self.merge_results(partial_results_dict[result_index][result_part - 1], outcome))
-                else:
-                    partial_results_dict[result_index][result_part] = self.merge_results(partial_results_dict[result_index][result_part - 1], outcome)
+    # def group_results(self, new_partial_subtrees, child_queries_metadata, all_query_indices, partial_results_dict, partial_subtrees):
+    #     for outcome, (result_part, result_index, is_permanent) in zip(new_partial_subtrees, child_queries_metadata):
+    #         if outcome:
+    #             new_results = self.get_results(partial_results_dict, result_index, result_part, outcome, len(all_query_indices[result_index][0]))
+    #             if new_results:
+    #                 self.add_subtrees(partial_subtrees[result_index], new_results)
+    #         else:
+    #             if not is_permanent:
+    #                 partial_subtrees[result_index].append([])
 
-            # extend one word layer with output
-            else:
-                partial_results_dict[result_index][0].extend(outcome)
-        else:
-            partial_results_dict[result_index] = {0: outcome}
-
-        if last_result_part - 1 in partial_results_dict[result_index]:
-            return partial_results_dict[result_index].pop(last_result_part - 1)
-        return []
-
-    def group_results(self, new_partial_subtrees, child_queries_metadata, all_query_indices, partial_results_dict, partial_subtrees):
-        for outcome, (result_part, result_index, is_permanent) in zip(new_partial_subtrees, child_queries_metadata):
-            if outcome:
-                new_results = self.get_results(partial_results_dict, result_index, result_part, outcome, len(all_query_indices[result_index][0]))
-                if new_results:
-                    self.add_subtrees(partial_subtrees[result_index], new_results)
-            else:
-                if not is_permanent:
-                    partial_subtrees[result_index].append([])
-
-    def get_all_query_indices_old(self, temporary_query_trees_size, completed_subtrees_size, permanent_query_trees, l_all_query_indices, children, create_output_string):
-        partial_subtrees = [[] for i in range(completed_subtrees_size + temporary_query_trees_size)]
-        completed_subtrees = [[] for i in range(completed_subtrees_size)]
-
-        # list of pairs (index of query in group, group of query)
-        partial_results_dict = {}
-
-        children_queries_generator = self.generate_children_queries(l_all_query_indices, children)
-
-        child_index = 0
-        child, child_queries, child_queries_metadata = next(children_queries_generator)
-        while child:
-            # obtain children results
-            new_partial_subtrees, new_completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries, create_output_string)
-
-            self.group_results(new_partial_subtrees, child_queries_metadata, l_all_query_indices,
-                               partial_results_dict, partial_subtrees)
-
-            for i in range(len(new_completed_subtrees)):
-                completed_subtrees[i].extend(new_completed_subtrees[i])
-            child, child_queries, child_queries_metadata = children_queries_generator.send(partial_results_dict)
-            child_index += 1
-
-        return partial_subtrees, completed_subtrees
+    # def get_all_query_indices_old(self, temporary_query_trees_size, completed_subtrees_size, permanent_query_trees, l_all_query_indices, children, create_output_string):
+    #     partial_subtrees = [[] for i in range(completed_subtrees_size + temporary_query_trees_size)]
+    #     completed_subtrees = [[] for i in range(completed_subtrees_size)]
+    #
+    #     # list of pairs (index of query in group, group of query)
+    #     partial_results_dict = {}
+    #
+    #     children_queries_generator = self.generate_children_queries(l_all_query_indices, children)
+    #
+    #     child_index = 0
+    #     child, child_queries, child_queries_metadata = next(children_queries_generator)
+    #     while child:
+    #         # obtain children results
+    #         new_partial_subtrees, new_completed_subtrees = child.get_subtrees(permanent_query_trees, child_queries, create_output_string)
+    #
+    #         self.group_results(new_partial_subtrees, child_queries_metadata, l_all_query_indices,
+    #                            partial_results_dict, partial_subtrees)
+    #
+    #         for i in range(len(new_completed_subtrees)):
+    #             completed_subtrees[i].extend(new_completed_subtrees[i])
+    #         child, child_queries, child_queries_metadata = children_queries_generator.send(partial_results_dict)
+    #         child_index += 1
+    #
+    #     return partial_subtrees, completed_subtrees
 
     def get_all_query_indices(self, temporary_query_nb, permanent_query_nb, permanent_query_trees, all_query_indices, children, create_output_string, filters):
         # l_partial_subtrees, l_completed_subtrees = self.get_all_query_indices(len(temporary_query_trees),
@@ -432,37 +432,37 @@ class Tree(object):
         return partial_answers, complete_answers
         # return merged_partial_subtrees_architecture[len(active_permanent_query_trees):], merged_partial_subtrees[len(active_permanent_query_trees):], completed_subtrees
 
-    @staticmethod
-    def merge_results(left_parts, right_parts, separator, left=True, right_part_free=False):
-        if not left_parts:
-            # return all right_parts
-            return [r_p.add_separator(separator, left) for r_p in right_parts]
-            # if left:
-            #     return [r_p + separator for r_p in right_parts]
-            #     # return [r_p.add_separator(separator, left) for r_p in right_parts]
-            # else:
-            #     return [separator + r_p for r_p in right_parts]
-
-        if not right_parts:
-            return [l_p.add_separator(separator, False) for l_p in left_parts]
-            # return [separator + l_p for l_p in left_parts]
-        merged_results = []
-        for left_part in left_parts:
-            if right_part_free:
-                for right_part in right_parts[1]:
-                    merged_results.append((right_parts[0], left_part.merge_results(right_part, separator, left)))
-            else:
-                for right_part in right_parts:
-                    merged_results.append(left_part.merge_results(right_part, separator, left))
-                # merged_results.append(left_part.merge_results(right_part, separator))
-                # if separator:
-                #     if left:
-                #         merged_results.append(left_part + right_part + separator)
-                #     else:
-                #         merged_results.append(left_part + separator + right_part)
-                # else:
-                #     merged_results.append(left_part + right_part)
-        return merged_results
+    # @staticmethod
+    # def merge_results(left_parts, right_parts, separator, left=True, right_part_free=False):
+    #     if not left_parts:
+    #         # return all right_parts
+    #         return [r_p.add_separator(separator, left) for r_p in right_parts]
+    #         # if left:
+    #         #     return [r_p + separator for r_p in right_parts]
+    #         #     # return [r_p.add_separator(separator, left) for r_p in right_parts]
+    #         # else:
+    #         #     return [separator + r_p for r_p in right_parts]
+    #
+    #     if not right_parts:
+    #         return [l_p.add_separator(separator, False) for l_p in left_parts]
+    #         # return [separator + l_p for l_p in left_parts]
+    #     merged_results = []
+    #     for left_part in left_parts:
+    #         if right_part_free:
+    #             for right_part in right_parts[1]:
+    #                 merged_results.append((right_parts[0], left_part.merge_results(right_part, separator, left)))
+    #         else:
+    #             for right_part in right_parts:
+    #                 merged_results.append(left_part.merge_results(right_part, separator, left))
+    #             # merged_results.append(left_part.merge_results(right_part, separator))
+    #             # if separator:
+    #             #     if left:
+    #             #         merged_results.append(left_part + right_part + separator)
+    #             #     else:
+    #             #         merged_results.append(left_part + separator + right_part)
+    #             # else:
+    #             #     merged_results.append(left_part + right_part)
+    #     return merged_results
 
     @staticmethod
     def create_children_groups(left_parts, right_parts):
@@ -482,6 +482,7 @@ class Tree(object):
         for left_part in left_parts:
             for right_part in right_parts:
                 new_part = copy(left_part)
+                # new_part.reset_params()
                 new_part.extend(right_part)
                 all_children_group_possibilities.append(new_part)
                 # merged_results.append(left_part.merge_results(right_part, separator))
@@ -511,87 +512,87 @@ class Tree(object):
                     merged_indices.append(new_indices)
         return merged_results, merged_indices
 
-    def merge_results2(self, child, new_results, filters):
-        if create_output_string_form(self) == 'začelo':
-            print('HERE!@@!')
-        if create_output_string_form(self) == 'Dogodek':
-            print('HERE!@@!')
-        if create_output_string_form(self) == 'utišal':
-            print('HERE!@@!')
-        if create_output_string_form(self) == 'prijel':
-            print('HERE!@@!')
-        if filters['node_order']:
-            new_child = child
-            # new_child_sorted = sorted(enumerate(child), key=lambda x: x[1][0].key)
-        else:
-            new_child = sorted(child, key=lambda x: x[0].key)
+    # def merge_results2(self, child, new_results, filters):
+    #     if create_output_string_form(self) == 'začelo':
+    #         print('HERE!@@!')
+    #     if create_output_string_form(self) == 'Dogodek':
+    #         print('HERE!@@!')
+    #     if create_output_string_form(self) == 'utišal':
+    #         print('HERE!@@!')
+    #     if create_output_string_form(self) == 'prijel':
+    #         print('HERE!@@!')
+    #     if filters['node_order']:
+    #         new_child = child
+    #         # new_child_sorted = sorted(enumerate(child), key=lambda x: x[1][0].key)
+    #     else:
+    #         new_child = sorted(child, key=lambda x: x[0].key)
+    #
+    #     l_res = []
+    #     r_res = []
+    #     results = []
+    #     for i_answer, answer in enumerate(new_child):
+    #         if filters['node_order'] and answer[0].order[0] < self.index:
+    #         # if filters['node_order'] and indices[i_child][i_answer] < self.children_split:
+    #             if filters['dependency_type']:
+    #                 # separator = ' <' + deprel[i_child][i_answer] + ' '
+    #                 separator = ' <' + answer[0].deprel + ' '
+    #             else:
+    #                 separator = ' < '
+    #             l_res = self.merge_results(l_res, answer, separator, left=True)
+    #             # l_res += answer + separator
+    #         else:
+    #             if filters['dependency_type']:
+    #                 separator = ' >' + answer[0].deprel + ' '
+    #             else:
+    #                 separator = ' > '
+    #             r_res = self.merge_results(r_res, answer, separator, left=False)
+    #             # r_res += separator + answer
+    #
+    #     # if filters['node_order']:
+    #     #     r_res_sorted = []
+    #     #     for i_answer, answer in new_child_sorted:
+    #     #         if filters['dependency_type']:
+    #     #             separator = ' >' + answer[0].deprel + ' '
+    #     #         else:
+    #     #             separator = ' > '
+    #     #         r_res_sorted = (i_answer, self.merge_results(r_res_sorted, answer, separator, left=False))
+    #     #
+    #     #
+    #     #     r_res_sorted_combined = self.merge_results(new_results, r_res_sorted, None, right_part_free=True)
+    #     #     # print('here')
+    #
+    #     if l_res:
+    #         l_res_combined = self.merge_results(l_res, new_results, None)
+    #         if r_res:
+    #             r_res_combined = self.merge_results(l_res_combined, r_res, None)
+    #             # merged_results.extend(['(' + el + ')' for el in r_res_combined])
+    #             result = r_res_combined
+    #             # results.extend([el.put_in_bracelets() for el in r_res_combined])
+    #         else:
+    #             result = l_res_combined
+    #             # results.extend([el.put_in_bracelets() for el in l_res_combined])
+    #     elif r_res:
+    #         r_res_combined = self.merge_results(new_results, r_res, None)
+    #         result = r_res_combined
+    #         # results.extend([el.put_in_bracelets() for el in r_res_combined])
+    #     else:
+    #         result = []
+    #
+    #
+    #     results.extend([el.put_in_bracelets() for el in result])
+    #
+    #     return results
 
-        l_res = []
-        r_res = []
-        results = []
-        for i_answer, answer in enumerate(new_child):
-            if filters['node_order'] and answer[0].order[0] < self.index:
-            # if filters['node_order'] and indices[i_child][i_answer] < self.children_split:
-                if filters['dependency_type']:
-                    # separator = ' <' + deprel[i_child][i_answer] + ' '
-                    separator = ' <' + answer[0].deprel + ' '
-                else:
-                    separator = ' < '
-                l_res = self.merge_results(l_res, answer, separator, left=True)
-                # l_res += answer + separator
-            else:
-                if filters['dependency_type']:
-                    separator = ' >' + answer[0].deprel + ' '
-                else:
-                    separator = ' > '
-                r_res = self.merge_results(r_res, answer, separator, left=False)
-                # r_res += separator + answer
-
-        # if filters['node_order']:
-        #     r_res_sorted = []
-        #     for i_answer, answer in new_child_sorted:
-        #         if filters['dependency_type']:
-        #             separator = ' >' + answer[0].deprel + ' '
-        #         else:
-        #             separator = ' > '
-        #         r_res_sorted = (i_answer, self.merge_results(r_res_sorted, answer, separator, left=False))
-        #
-        #
-        #     r_res_sorted_combined = self.merge_results(new_results, r_res_sorted, None, right_part_free=True)
-        #     # print('here')
-
-        if l_res:
-            l_res_combined = self.merge_results(l_res, new_results, None)
-            if r_res:
-                r_res_combined = self.merge_results(l_res_combined, r_res, None)
-                # merged_results.extend(['(' + el + ')' for el in r_res_combined])
-                result = r_res_combined
-                # results.extend([el.put_in_bracelets() for el in r_res_combined])
-            else:
-                result = l_res_combined
-                # results.extend([el.put_in_bracelets() for el in l_res_combined])
-        elif r_res:
-            r_res_combined = self.merge_results(new_results, r_res, None)
-            result = r_res_combined
-            # results.extend([el.put_in_bracelets() for el in r_res_combined])
-        else:
-            result = []
-
-
-        results.extend([el.put_in_bracelets() for el in result])
-
-        return results
-
-    def create_merged_results(self, answers, separators, separator_switch):
-        new_answers = []
-        for answer_i, answer in enumerate(answers):
-            new_answer = copy(answer[0])
-            print(create_output_string_form(self))
-            for answer_part_i, answer_part in enumerate(answer[1:]):
-                new_answer.extend_answer(answer_part, separators[answer_part_i])
-            new_answer.put_in_bracelets(inplace=True)
-            new_answers.append(new_answer)
-        return new_answers
+    # def create_merged_results(self, answers, separators, separator_switch):
+    #     new_answers = []
+    #     for answer_i, answer in enumerate(answers):
+    #         new_answer = copy(answer[0])
+    #         print(create_output_string_form(self))
+    #         for answer_part_i, answer_part in enumerate(answer[1:]):
+    #             new_answer.extend_answer(answer_part, separators[answer_part_i])
+    #         new_answer.put_in_bracelets(inplace=True)
+    #         new_answers.append(new_answer)
+    #     return new_answers
     # def create_merged_results(self, new_child, new_answers, i_child, indices, deprel, filters):
 
     def merge_results3(self, child, new_results, filters):
@@ -635,8 +636,11 @@ class Tree(object):
         for result in new_results:
             for children in children_groups:
                 new_result = copy(result)
+                # if result.key is not None or result.order is not None or result.array is not None or result.order_key is not None:
+                #     print('here')
+                # new_result.reset_params()
                 new_result.set_children(children)
-                order = tuple(sorted(new_result.get_order()))
+                # order = tuple(sorted(new_result.get_order()))
                 results.append(new_result)
 
         return results
