@@ -1,8 +1,6 @@
 import sys
 from copy import copy
 
-from pyconll.unit import Token
-
 from Result import Result
 from ResultNode import ResultNode
 from ResultTree import ResultTree
@@ -61,15 +59,15 @@ class Tree(object):
     def set_parent(self, parent):
         self.parent = parent
 
-    # def fits_static_requirements_feats(self, query_tree):
-    #     if 'feats' not in query_tree:
-    #         return True
-    #
-    #     for feat in query_tree['feats'].keys():
-    #         if feat not in self.feats or query_tree['feats'][feat] != next(iter(self.feats[feat].values())).get_value():
-    #             return False
-    #
-    #     return True
+    def fits_static_requirements_feats(self, query_tree):
+        if 'feats_detailed' not in query_tree:
+            return True
+
+        for feat in query_tree['feats_detailed'].keys():
+            if feat not in self.feats_detailed or query_tree['feats_detailed'][feat] != next(iter(self.feats_detailed[feat].values())).get_value():
+                return False
+
+        return True
 
 
     def fits_permanent_requirements(self, filters):
@@ -109,8 +107,8 @@ class Tree(object):
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
                ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value()) and \
                ('feats' not in query_tree or query_tree['feats'] == self.feats.get_value()) and \
-               (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or ('children' in query_tree and len(self.children) == len(query_tree['children'])))
-               # self.fits_static_requirements_feats(query_tree)
+               (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or ('children' in query_tree and len(self.children) == len(query_tree['children']))) and \
+               self.fits_static_requirements_feats(query_tree)
 
     def generate_children_queries(self, all_query_indices, children):
         partial_results = {}

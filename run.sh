@@ -1,3 +1,3 @@
 source venv/bin/activate
-python dependency-parsetree.py --config_file="$1"
+python3 dependency-parsetree.py --config_file="$1"
 deactivate
