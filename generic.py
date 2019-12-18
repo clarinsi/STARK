@@ -76,12 +76,11 @@ def get_collocabilities(ngram, unigrams_dict, corpus_size):
     O = ngram['number']
     E = mul_fwi / pow(N, n-1)
 
-    # ['MI', 'MI3', 'Dice', 't-score', 'simple-LL']
-    # mi = Math.log(O / E) / Math.log(2);
+    # ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
     mi = math.log(O / E, 2)
-    # Math.log(Math.pow(O, 3.0) / E) / Math.log(2);
     mi3 = math.log(pow(O, 3) / E, 2)
     dice = n * O / sum_fwi
+    logdice = 14 + math.log(dice, 2)
     tscore = (O - E) / math.sqrt(O)
     simplell = 2 * (O * math.log10(O / E) - (O - E))
-    return ['%.4f' % mi, '%.4f' % mi3, '%.4f' % dice, '%.4f' % tscore, '%.4f' % simplell]
+    return [('%.4f; N=%.4f, n=%.4f; O=%.4f, E=%.4f, sum_fwi=%.4f, mul_fwi=%.4f' % (mi, N, n, O, E, sum_fwi, mul_fwi)), '%.4f' % mi3, '%.4f' % dice, '%.4f' % logdice, '%.4f' % tscore, '%.4f' % simplell]

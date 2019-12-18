@@ -375,7 +375,7 @@ def main():
     #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
     #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
     #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
-    tree_size_range = config.get('settings', 'tree_size').split('-')
+    tree_size_range = config.get('settings', 'tree_size', fallback='0').split('-')
     tree_size_range = [int(r) for r in tree_size_range]
 
     if tree_size_range[0] > 1:
@@ -440,8 +440,8 @@ def main():
     filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
     filters['association_measures'] = config.getboolean('settings', 'association_measures')
     filters['nodes_number'] = config.getboolean('settings', 'nodes_number')
-    filters['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold')
-    filters['lines_threshold'] = config.getint('settings', 'lines_threshold')
+    filters['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold', fallback=0)
+    filters['lines_threshold'] = config.getint('settings', 'lines_threshold', fallback=0)
     filters['print_root'] = config.getboolean('settings', 'print_root')
 
 
@@ -571,7 +571,7 @@ def main():
         if filters['print_root']:
             header += ['Root node']
         if filters['association_measures']:
-            header += ['MI', 'MI3', 'Dice', 't-score', 'simple-LL']
+            header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Absolute frequency']
         writer.writerow(header)
 
@@ -581,13 +581,13 @@ def main():
         # body
         for k, v in sorted_list:
             v['object'].get_array()
-            absolute_frequency = v['number'] * 1000000.0 / corpus_size
-            if filters['frequency_threshold'] and filters['frequency_threshold'] > absolute_frequency:
+            relative_frequency = v['number'] * 1000000.0 / corpus_size
+            if filters['frequency_threshold'] and filters['frequency_threshold'] > v['number']:
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
             # words_only = printable_answers(k)
             row = [v['object'].get_key()[1:-1]] + words_only + [str(v['number'])]
-            row += ['%.4f' % absolute_frequency]
+            row += ['%.4f' % relative_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
                 row += [v['object'].get_key_sorted()[1:-1]]
