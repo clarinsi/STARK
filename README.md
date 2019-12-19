@@ -24,5 +24,5 @@ python3 dependency-parsetree.py --config_file=<PATH TO .ini file>
 
 Example:
 ```bash
-python3 dependency-parsetree.py --config_file=config_template.ini
+python3 dependency-parsetree.py --config_file=official_config.ini
 ```
