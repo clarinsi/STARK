@@ -26,3 +26,6 @@ Example:
 ```bash
 python3 dependency-parsetree.py --config_file=official_config.ini
 ```
+
+
+[![alt text](https://gitea.cjvt.si/lkrsnik/dependency_parsing/src/branch/master/Clarin-SI-logo.png)](http://www.clarin.si/info/about/)
