@@ -1,7 +1,6 @@
 import sys
 from copy import copy
 
-from Result import Result
 from ResultNode import ResultNode
 from ResultTree import ResultTree
 from Value import Value
@@ -270,7 +269,7 @@ class Tree(object):
                 # TODO add order rearagement (TO KEY)
                 complete_answers[i].extend(new_complete_answers[i])
 
-        # if create_output_string_form(self) == 'Dogodek':
+        # if create_output_string_lemma(self) == 'drama':
         #     print('HERE!@@!')
         # if create_output_string_form(self) == 'vpiti':
         #     print('HERE!@@!')

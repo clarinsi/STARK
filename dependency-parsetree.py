@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+# Copyright 2019 CJVT
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import argparse
 import configparser
 import copy
@@ -11,6 +25,16 @@ import string
 import time
 import timeit
 from multiprocessing import Pool
+import gzip
+
+def save_zipped_pickle(obj, filename, protocol=-1):
+    with gzip.open(filename, 'wb') as f:
+        pickle.dump(obj, f, protocol)
+
+def load_zipped_pickle(filename):
+    with gzip.open(filename, 'rb') as f:
+        loaded_object = pickle.load(f)
+        return loaded_object
 
 import pyconll
 
@@ -123,6 +147,8 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
 def create_trees(config):
     internal_saves = config.get('settings', 'internal_saves')
     input_path = config.get('settings', 'input')
+    # internal_saves = filters['internal_saves']
+    # input_path = filters['input']
     hash_object = hashlib.sha1(input_path.encode('utf-8'))
     hex_dig = hash_object.hexdigest()
     trees_read_outputfile = os.path.join(internal_saves, hex_dig)
@@ -183,14 +209,16 @@ def create_trees(config):
                 raise Exception('No root element in sentence!')
             all_trees.append(root)
 
-
-        with open(trees_read_outputfile, 'wb') as output:
-            pickle.dump((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), output)
+        save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), trees_read_outputfile, protocol=2)
+        # with open(trees_read_outputfile, 'wb') as output:
+        #
+        #     pickle.dump((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), output)
     else:
         print('Reading trees:')
         print('Completed')
-        with open(trees_read_outputfile, 'rb') as pkl_file:
-            (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict) = pickle.load(pkl_file)
+        all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict = load_zipped_pickle(trees_read_outputfile)
+        # with open(trees_read_outputfile, 'rb') as pkl_file:
+        #     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict) = pickle.load(pkl_file)
 
     return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict
 
@@ -333,123 +361,8 @@ def create_ngrams_query_trees(n, trees):
     # tree['children'] = [{}]
     return trees
 
-
-def main():
-    parser = argparse.ArgumentParser()
-
-    ## Required parameters
-    parser.add_argument("--config_file",
-                        default=None,
-                        type=str,
-                        required=True,
-                        help="The input config file.")
-    args = parser.parse_args()
-
-    config = configparser.ConfigParser()
-    config.read(args.config_file)
-    # a = args.config_file
-    # config.read('config.ini')
-    # create queries
-    tree_size = 0
-
-    # 261 - 9 grams
-    # 647 - 10 grams
-    # 1622 - 11 grams
-    # 4126 - 12 grams
-    # 10598 - 13 grams
-    (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
-     feats_detailed_list) = create_trees(config)
-
-
-
-    # if config.getint('settings', 'tree_size') == 2:
-    #     tree_size = 2
-    #     query_tree = [{"children": [{}]}]
-    # elif config.getint('settings', 'tree_size') == 3:
-    #     tree_size = 3
-    #     query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
-    # elif config.getint('settings', 'tree_size') == 4:
-    #     tree_size = 4
-    #     query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
-    # elif config.getint('settings', 'tree_size') == 5:
-    #     tree_size = 5
-    #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
-    #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
-    #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
-    tree_size_range = config.get('settings', 'tree_size', fallback='0').split('-')
-    tree_size_range = [int(r) for r in tree_size_range]
-
-    if tree_size_range[0] > 1:
-        if len(tree_size_range) == 1:
-            query_tree = create_ngrams_query_trees(tree_size_range[0], [{}])
-        elif len(tree_size_range) == 2:
-            query_tree = []
-            for i in range(tree_size_range[0], tree_size_range[1] + 1):
-                query_tree.extend(create_ngrams_query_trees(i, [{}]))
-    else:
-        query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '', feats_detailed_list)]
-        # order_independent_queries(query_tree)
-
-
-    # set filters
-    node_types = config.get('settings', 'node_type').split('+')
-    create_output_string_functs = []
-    for node_type in node_types:
-        assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
-        cpu_cores = config.getint('settings', 'cpu_cores')
-        if node_type == 'deprel':
-            create_output_string_funct = create_output_string_deprel
-        elif node_type == 'lemma':
-            create_output_string_funct = create_output_string_lemma
-        elif node_type == 'upos':
-            create_output_string_funct = create_output_string_upos
-        elif node_type == 'xpos':
-            create_output_string_funct = create_output_string_xpos
-        elif node_type == 'feats':
-            create_output_string_funct = create_output_string_feats
-        else:
-            create_output_string_funct = create_output_string_form
-        create_output_string_functs.append(create_output_string_funct)
-
-    result_dict = {}
-    unigrams_dict = {}
-    filters = {}
-    filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
-    # filters['caching'] = config.getboolean('settings', 'caching')
-    filters['dependency_type'] = config.get('settings', 'dependency_type') == 'labeled'
-    if config.has_option('settings', 'label_whitelist'):
-        filters['label_whitelist'] = config.get('settings', 'label_whitelist').split('|')
-    else:
-        filters['label_whitelist'] = []
-
-    if config.has_option('settings', 'root_whitelist'):
-        # test
-        filters['root_whitelist'] = []
-
-        for option in config.get('settings', 'root_whitelist'). split('|'):
-            attribute_dict = {}
-            for attribute in option.split('&'):
-                value = attribute.split('=')
-                # assert value[0] in ['deprel', 'lemma', 'upos', 'xpos', 'form',
-                #                     'feats'], '"root_whitelist" is not set up correctly'
-                attribute_dict[value[0]] = value[1]
-            filters['root_whitelist'].append(attribute_dict)
-        # filters['root_whitelist'] = [{'upos': 'NOUN', 'Case': 'Nom'}, {'upos': 'ADJ', 'Degree': 'Sup'}]
-    else:
-        filters['root_whitelist'] = []
-
-    filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
-    filters['association_measures'] = config.getboolean('settings', 'association_measures')
-    filters['nodes_number'] = config.getboolean('settings', 'nodes_number')
-    filters['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold', fallback=0)
-    filters['lines_threshold'] = config.getint('settings', 'lines_threshold', fallback=0)
-    filters['print_root'] = config.getboolean('settings', 'print_root')
-
-
-    # for tree in all_trees[2:]:
-    # for tree in all_trees[1205:]:
+def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict):
     with Pool(cpu_cores) as p:
-        start_exe_time = time.time()
         # 1.25 s (16 cores)
         # chunked_trees = list(chunkify(all_trees, cpu_cores))
         # if cpu_cores > 1:
@@ -531,8 +444,133 @@ def main():
                         else:
                             result_dict[key] = {'object': r, 'number': 1}
 
-        print("Execution time:")
-        print("--- %s seconds ---" % (time.time() - start_exe_time))
+def read_filters(config, feats_detailed_list):
+    tree_size_range = config.get('settings', 'tree_size', fallback='0').split('-')
+    tree_size_range = [int(r) for r in tree_size_range]
+
+    if tree_size_range[0] > 1:
+        if len(tree_size_range) == 1:
+            query_tree = create_ngrams_query_trees(tree_size_range[0], [{}])
+        elif len(tree_size_range) == 2:
+            query_tree = []
+            for i in range(tree_size_range[0], tree_size_range[1] + 1):
+                query_tree.extend(create_ngrams_query_trees(i, [{}]))
+    else:
+        query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '', feats_detailed_list)]
+        # order_independent_queries(query_tree)
+
+    # set filters
+    node_types = config.get('settings', 'node_type').split('+')
+    create_output_string_functs = []
+    for node_type in node_types:
+        assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
+        cpu_cores = config.getint('settings', 'cpu_cores')
+        if node_type == 'deprel':
+            create_output_string_funct = create_output_string_deprel
+        elif node_type == 'lemma':
+            create_output_string_funct = create_output_string_lemma
+        elif node_type == 'upos':
+            create_output_string_funct = create_output_string_upos
+        elif node_type == 'xpos':
+            create_output_string_funct = create_output_string_xpos
+        elif node_type == 'feats':
+            create_output_string_funct = create_output_string_feats
+        else:
+            create_output_string_funct = create_output_string_form
+        create_output_string_functs.append(create_output_string_funct)
+
+    result_dict = {}
+    unigrams_dict = {}
+    filters = {}
+    filters['internal_saves'] = config.get('settings', 'internal_saves')
+    filters['input'] = config.get('settings', 'input')
+    filters['node_order'] = config.get('settings', 'node_order') == 'fixed'
+    # filters['caching'] = config.getboolean('settings', 'caching')
+    filters['dependency_type'] = config.get('settings', 'dependency_type') == 'labeled'
+    if config.has_option('settings', 'label_whitelist'):
+        filters['label_whitelist'] = config.get('settings', 'label_whitelist').split('|')
+    else:
+        filters['label_whitelist'] = []
+
+    if config.has_option('settings', 'root_whitelist'):
+        # test
+        filters['root_whitelist'] = []
+
+        for option in config.get('settings', 'root_whitelist').split('|'):
+            attribute_dict = {}
+            for attribute in option.split('&'):
+                value = attribute.split('=')
+                # assert value[0] in ['deprel', 'lemma', 'upos', 'xpos', 'form',
+                #                     'feats'], '"root_whitelist" is not set up correctly'
+                attribute_dict[value[0]] = value[1]
+            filters['root_whitelist'].append(attribute_dict)
+        # filters['root_whitelist'] = [{'upos': 'NOUN', 'Case': 'Nom'}, {'upos': 'ADJ', 'Degree': 'Sup'}]
+    else:
+        filters['root_whitelist'] = []
+
+    filters['complete_tree_type'] = config.get('settings', 'tree_type') == 'complete'
+    filters['association_measures'] = config.getboolean('settings', 'association_measures')
+    filters['nodes_number'] = config.getboolean('settings', 'nodes_number')
+    filters['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold', fallback=0)
+    filters['lines_threshold'] = config.getint('settings', 'lines_threshold', fallback=0)
+    filters['print_root'] = config.getboolean('settings', 'print_root')
+
+    return filters, query_tree, create_output_string_functs, cpu_cores, unigrams_dict, result_dict, tree_size_range, node_types
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    ## Required parameters
+    parser.add_argument("--config_file",
+                        default=None,
+                        type=str,
+                        required=True,
+                        help="The input config file.")
+    args = parser.parse_args()
+
+    config = configparser.ConfigParser()
+    config.read(args.config_file)
+
+
+
+    # a = args.config_file
+    # config.read('config.ini')
+    # create queries
+
+    # 261 - 9 grams
+    # 647 - 10 grams
+    # 1622 - 11 grams
+    # 4126 - 12 grams
+    # 10598 - 13 grams
+    (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
+     feats_detailed_list) = create_trees(config)
+
+    filters, query_tree, create_output_string_functs, cpu_cores, unigrams_dict, result_dict, tree_size_range, node_types = read_filters(config, feats_detailed_list)
+
+    # if config.getint('settings', 'tree_size') == 2:
+    #     tree_size = 2
+    #     query_tree = [{"children": [{}]}]
+    # elif config.getint('settings', 'tree_size') == 3:
+    #     tree_size = 3
+    #     query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
+    # elif config.getint('settings', 'tree_size') == 4:
+    #     tree_size = 4
+    #     query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
+    # elif config.getint('settings', 'tree_size') == 5:
+    #     tree_size = 5
+    #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
+    #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
+    #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
+
+
+
+    # for tree in all_trees[2:]:
+    # for tree in all_trees[1205:]:
+    start_exe_time = time.time()
+    count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict)
+
+    print("Execution time:")
+    print("--- %s seconds ---" % (time.time() - start_exe_time))
             # test 1 layer queries
             # # tree.r_children = []
             # # tree.children[1].children = []
