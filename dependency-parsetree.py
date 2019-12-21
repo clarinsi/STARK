@@ -27,6 +27,8 @@ import timeit
 from multiprocessing import Pool
 from pathlib import Path
 import gzip
+import sys
+sys.setrecursionlimit(25000)
 
 def save_zipped_pickle(obj, filename, protocol=-1):
     with gzip.open(filename, 'wb') as f:
@@ -378,7 +380,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
         #             else:
         #                 result_dict[r_k] = r_v
         # 1.02 s (16 cores)
-        if cpu_cores > 1:
+        if cpu_cores > 0:
             # input_data = (tree, query_tree, create_output_string_functs, filters)
             all_unigrams = p.map(get_unigrams, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
             for unigrams in all_unigrams:
