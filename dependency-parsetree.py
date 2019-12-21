@@ -25,6 +25,7 @@ import string
 import time
 import timeit
 from multiprocessing import Pool
+from pathlib import Path
 import gzip
 
 def save_zipped_pickle(obj, filename, protocol=-1):
@@ -144,16 +145,14 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
     return root
 
 
-def create_trees(config):
-    internal_saves = config.get('settings', 'internal_saves')
-    input_path = config.get('settings', 'input')
+def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
     # internal_saves = filters['internal_saves']
     # input_path = filters['input']
     hash_object = hashlib.sha1(input_path.encode('utf-8'))
     hex_dig = hash_object.hexdigest()
     trees_read_outputfile = os.path.join(internal_saves, hex_dig)
 
-    if not os.path.exists(trees_read_outputfile):
+    if not os.path.exists(trees_read_outputfile) or not save:
 
         train = pyconll.load_from_file(input_path)
 
@@ -161,7 +160,6 @@ def create_trees(config):
 
         all_trees = []
         corpus_size = 0
-        feats_detailed_dict = {}
 
         for sentence in train:
             root = None
@@ -206,10 +204,14 @@ def create_trees(config):
                     token.children_split = len(token.children)
 
             if root == None:
-                raise Exception('No root element in sentence!')
+                # print(input_path)
+                print('No root: ' + sentence.id)
+                continue
+                # raise Exception('No root element in sentence!')
             all_trees.append(root)
 
-        save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), trees_read_outputfile, protocol=2)
+        if save:
+            save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), trees_read_outputfile, protocol=2)
         # with open(trees_read_outputfile, 'wb') as output:
         #
         #     pickle.dump((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), output)
@@ -479,8 +481,6 @@ def read_filters(config, feats_detailed_list):
             create_output_string_funct = create_output_string_form
         create_output_string_functs.append(create_output_string_funct)
 
-    result_dict = {}
-    unigrams_dict = {}
     filters = {}
     filters['internal_saves'] = config.get('settings', 'internal_saves')
     filters['input'] = config.get('settings', 'input')
@@ -515,7 +515,7 @@ def read_filters(config, feats_detailed_list):
     filters['lines_threshold'] = config.getint('settings', 'lines_threshold', fallback=0)
     filters['print_root'] = config.getboolean('settings', 'print_root')
 
-    return filters, query_tree, create_output_string_functs, cpu_cores, unigrams_dict, result_dict, tree_size_range, node_types
+    return filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types
 
 def main():
     parser = argparse.ArgumentParser()
@@ -531,46 +531,87 @@ def main():
     config = configparser.ConfigParser()
     config.read(args.config_file)
 
-
+    internal_saves = config.get('settings', 'internal_saves')
+    input_path = config.get('settings', 'input')
 
     # a = args.config_file
     # config.read('config.ini')
     # create queries
 
+
+
+    if os.path.isdir(input_path):
+
+        checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
+        continuation_processing = config.getboolean('settings', 'continuation_processing', fallback=False)
+
+        if not checkpoint_path.exists() or not continuation_processing:
+            already_processed = set()
+            result_dict = {}
+            unigrams_dict = {}
+            corpus_size = 0
+            feats_detailed_list = {}
+            if checkpoint_path.exists():
+                os.remove(checkpoint_path)
+        else:
+            already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list = load_zipped_pickle(
+                checkpoint_path)
+
+        for path in os.listdir(input_path):
+            path_obj = Path(input_path, path)
+            pathlist = path_obj.glob('**/*.conllu')
+            if path_obj.name in already_processed:
+                continue
+            start_exe_time = time.time()
+            for path in pathlist:
+                # because path is object not string
+                path_str = str(path)
+
+                # print(path_in_str)
+
+                (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
+                 feats_detailed_list) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list, save=False)
+
+                corpus_size += sub_corpus_size
+
+                filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(
+                    config, feats_detailed_list)
+
+
+                count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict,
+                            result_dict)
+
+            already_processed.add(path_obj.name)
+
+            print("Execution time:")
+            print("--- %s seconds ---" % (time.time() - start_exe_time))
+
+            save_zipped_pickle(
+                (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
+                checkpoint_path, protocol=2)
+
+
+
+
+    else:
     # 261 - 9 grams
     # 647 - 10 grams
     # 1622 - 11 grams
     # 4126 - 12 grams
     # 10598 - 13 grams
-    (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
-     feats_detailed_list) = create_trees(config)
+        (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
+         feats_detailed_list) = create_trees(input_path, internal_saves)
 
-    filters, query_tree, create_output_string_functs, cpu_cores, unigrams_dict, result_dict, tree_size_range, node_types = read_filters(config, feats_detailed_list)
+        result_dict = {}
+        unigrams_dict = {}
 
-    # if config.getint('settings', 'tree_size') == 2:
-    #     tree_size = 2
-    #     query_tree = [{"children": [{}]}]
-    # elif config.getint('settings', 'tree_size') == 3:
-    #     tree_size = 3
-    #     query_tree = [{"children": [{}, {}]}, {"children": [{"children": [{}]}]}]
-    # elif config.getint('settings', 'tree_size') == 4:
-    #     tree_size = 4
-    #     query_tree = [{"children": [{}, {}, {}]}, {"children": [{"children": [{}, {}]}]}, {"children": [{"children": [{}]}, {}]}, {"children": [{"children": [{"children": [{}]}]}]}]
-    # elif config.getint('settings', 'tree_size') == 5:
-    #     tree_size = 5
-    #     query_tree = [{"children": [{}, {}, {}, {}]}, {"children": [{"children": [{}]}, {}, {}]}, {"children": [{"children": [{}, {}]}, {}]}, {"children": [{"children": [{}]}, {"children": [{}]}]},
-    #                   {"children": [{"children": [{"children": [{}]}]}, {}]}, {"children": [{"children": [{"children": [{}]}, {}]}]}, {"children": [{"children": [{"children": [{}, {}]}]}]},
-    #                   {"children": [{"children": [{"children": [{"children": [{}]}]}]}]}, {'children': [{'children': [{}, {}, {}]}]}]
+        filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(config, feats_detailed_list)
 
+        start_exe_time = time.time()
+        count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict)
 
-
-    # for tree in all_trees[2:]:
-    # for tree in all_trees[1205:]:
-    start_exe_time = time.time()
-    count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict)
-
-    print("Execution time:")
-    print("--- %s seconds ---" % (time.time() - start_exe_time))
+        print("Execution time:")
+        print("--- %s seconds ---" % (time.time() - start_exe_time))
             # test 1 layer queries
             # # tree.r_children = []
             # # tree.children[1].children = []
