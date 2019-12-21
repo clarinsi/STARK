@@ -151,7 +151,7 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
     hash_object = hashlib.sha1(input_path.encode('utf-8'))
     hex_dig = hash_object.hexdigest()
     trees_read_outputfile = os.path.join(internal_saves, hex_dig)
-
+    print(Path(input_path).name)
     if not os.path.exists(trees_read_outputfile) or not save:
 
         train = pyconll.load_from_file(input_path)
