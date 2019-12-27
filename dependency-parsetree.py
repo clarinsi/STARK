@@ -186,6 +186,10 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
                 corpus_size += 1
 
             for token_id, token in enumerate(token_nodes):
+                if isinstance(token.parent, int) or token.parent == '':
+                    root = None
+                    print('No parent: ' + sentence.id)
+                    break
                 if int(token.parent) == 0:
                     token.set_parent(None)
                 else:
@@ -380,7 +384,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
         #             else:
         #                 result_dict[r_k] = r_v
         # 1.02 s (16 cores)
-        if cpu_cores > 0:
+        if cpu_cores > 1:
             # input_data = (tree, query_tree, create_output_string_functs, filters)
             all_unigrams = p.map(get_unigrams, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
             for unigrams in all_unigrams:
@@ -559,16 +563,17 @@ def main():
             already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list = load_zipped_pickle(
                 checkpoint_path)
 
-        for path in os.listdir(input_path):
+        for path in sorted(os.listdir(input_path)):
             path_obj = Path(input_path, path)
             pathlist = path_obj.glob('**/*.conllu')
             if path_obj.name in already_processed:
                 continue
             start_exe_time = time.time()
-            for path in pathlist:
+            for path in sorted(pathlist):
                 # because path is object not string
                 path_str = str(path)
-
+                # if Path(path_str).name == 'GF0003946-dedup.conllu':
+                #     break
                 # print(path_in_str)
 
                 (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
@@ -585,9 +590,10 @@ def main():
 
             already_processed.add(path_obj.name)
 
+            # 15.26
             print("Execution time:")
             print("--- %s seconds ---" % (time.time() - start_exe_time))
-
+            # print(1 + 'asd')
             save_zipped_pickle(
                 (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
                 checkpoint_path, protocol=2)
