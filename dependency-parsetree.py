@@ -23,11 +23,13 @@ import pickle
 import re
 import string
 import time
-import timeit
 from multiprocessing import Pool
 from pathlib import Path
 import gzip
 import sys
+import pyconll
+from Tree import Tree
+from generic import get_collocabilities, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
 sys.setrecursionlimit(25000)
 
 def save_zipped_pickle(obj, filename, protocol=-1):
@@ -39,31 +41,6 @@ def load_zipped_pickle(filename):
         loaded_object = pickle.load(f)
         return loaded_object
 
-import pyconll
-
-from Tree import Tree, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
-
-# for separate searches of feats
-# feats_detailed_list = [
-#     # lexical features
-#     'PronType', 'NumType', 'Poss', 'Reflex', 'Foreign', 'Abbr',
-#
-#     # Inflectional features (nominal)
-#     'Gender', 'Animacy', 'NounClass', 'Number', 'Case', 'Definite', 'Degree',
-#
-#     # Inflectional features (verbal)
-#     'VerbForm', 'Mood', 'Tense', 'Aspect', 'Voice', 'Evident', 'Polarity', 'Person', 'Polite', 'Clusivity',
-#
-#     # Other
-#     'Variant', 'Number[psor]', 'Gender[psor]', 'NumForm'
-# ]
-
-# feats_detailed_list = []
-
-# feats_detailed_dict = {key: {} for key in feats_detailed_list}
-from generic import get_collocabilities
-
-
 def decode_query(orig_query, dependency_type, feats_detailed_list):
     new_query = False
 
@@ -72,7 +49,6 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
         new_query = True
         orig_query = orig_query[1:-1]
 
-    # if orig_query is '_' return {}
     if dependency_type != '':
         decoded_query = {'deprel': dependency_type}
     else:
@@ -88,19 +64,14 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
             if len(orig_query_split) > 1:
                 if orig_query_split[0] == 'L':
                     decoded_query['lemma'] = orig_query_split[1]
-                    # return decoded_query
                 elif orig_query_split[0] == 'upos':
                     decoded_query['upos'] = orig_query_split[1]
-                    # return decoded_query
                 elif orig_query_split[0] == 'xpos':
                     decoded_query['xpos'] = orig_query_split[1]
-                    # return decoded_query
                 elif orig_query_split[0] == 'form':
                     decoded_query['form'] = orig_query_split[1]
-                    # return decoded_query
                 elif orig_query_split[0] == 'feats':
                     decoded_query['feats'] = orig_query_split[1]
-                    # return decoded_query
                 elif orig_query_split[0] in feats_detailed_list:
                     decoded_query['feats_detailed'] = {}
                     decoded_query['feats_detailed'][orig_query_split[0]] = orig_query_split[1]
@@ -111,18 +82,11 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
                     print('???')
             elif not new_query:
                 decoded_query['form'] = orig_query_split_part
-                # return decoded_query
         return decoded_query
 
     # split over spaces if not inside braces
-    # PATTERN = re.compile(r'''((?:[^ ()]|\([^.]*\))+)''')
-    # all_orders = PATTERN.split(orig_query)
-    # PATTERN = re.compile(r"(?:[^ ()]|\([^.]*\))+")
-    # all_orders = re.findall(r"(?:[^ ()]|\([^]*\))+", orig_query)
     all_orders = re.split(r"\s+(?=[^()]*(?:\(|$))", orig_query)
 
-
-    # all_orders = orig_query.split()
     node_actions = all_orders[::2]
     priority_actions = all_orders[1::2]
     priority_actions_beginnings = [a[0] for a in priority_actions]
@@ -148,8 +112,6 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
 
 
 def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
-    # internal_saves = filters['internal_saves']
-    # input_path = filters['input']
     hash_object = hashlib.sha1(input_path.encode('utf-8'))
     hex_dig = hash_object.hexdigest()
     trees_read_outputfile = os.path.join(internal_saves, hex_dig)
@@ -165,13 +127,8 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
 
         for sentence in train:
             root = None
-            root_id = None
             token_nodes = []
             for token in sentence:
-                # token_feats = ''
-                # for k, v in token.feats.items():
-                #     token_feats += k + next(iter(v)) + '|'
-                # token_feats = token_feats[:-1]
                 if not token.id.isdigit():
                     continue
 
@@ -194,12 +151,6 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
                     token.set_parent(None)
                 else:
                     parent_id = int(token.parent) - 1
-                    # if token_id < parent_id:
-                    #     token_nodes[parent_id].add_l_child(token)
-                    # elif token_id > parent_id:
-                    #     token_nodes[parent_id].add_r_child(token)
-                    # else:
-                    #     raise Exception('Root element should not be here!')
                     if token_nodes[parent_id].children_split == -1 and token_id > parent_id:
                         token_nodes[parent_id].children_split = len(token_nodes[parent_id].children)
                     token_nodes[parent_id].add_child(token)
@@ -210,34 +161,18 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
                     token.children_split = len(token.children)
 
             if root == None:
-                # print(input_path)
                 print('No root: ' + sentence.id)
                 continue
-                # raise Exception('No root element in sentence!')
             all_trees.append(root)
 
         if save:
             save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), trees_read_outputfile, protocol=2)
-        # with open(trees_read_outputfile, 'wb') as output:
-        #
-        #     pickle.dump((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), output)
     else:
         print('Reading trees:')
         print('Completed')
         all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict = load_zipped_pickle(trees_read_outputfile)
-        # with open(trees_read_outputfile, 'rb') as pkl_file:
-        #     (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict) = pickle.load(pkl_file)
 
     return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict
-
-
-# def order_independent_queries(query_tree):
-#     all_children = query_tree['l_children'] + query_tree['r_children']
-#     if all_children > 0:
-#
-#     else:
-#         return query_tree
-#     pass
 
 def printable_answers(query):
     # all_orders = re.findall(r"(?:[^ ()]|\([^]*\))+", query)
@@ -291,11 +226,6 @@ def tree_calculations_chunks(input_data):
                 else:
                     result_dict[r] = 1
     return result_dict
-
-
-def chunkify(a, n):
-    k, m = divmod(len(a), n)
-    return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
 def add_node(tree):
@@ -362,30 +292,11 @@ def create_ngrams_query_trees(n, trees):
                     new_trees.append(new_tree)
 
         trees = new_trees
-        # delete_duplicates(trees)
-        # print('here')
-    # tree_grow(tree)
-    # tree_grow(tree)
-    # tree['children'] = [{}]
     return trees
 
 def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict):
     with Pool(cpu_cores) as p:
-        # 1.25 s (16 cores)
-        # chunked_trees = list(chunkify(all_trees, cpu_cores))
-        # if cpu_cores > 1:
-        #     part_results = p.map(tree_calculations_chunks,
-        #                          [(tree, query_tree, create_output_string_funct, filters) for tree in chunked_trees])
-        #
-        #     for part_result in part_results:
-        #         for r_k, r_v in part_result.items():
-        #             if r_k in result_dict:
-        #                 result_dict[r_k] += r_v
-        #             else:
-        #                 result_dict[r_k] = r_v
-        # 1.02 s (16 cores)
         if cpu_cores > 1:
-            # input_data = (tree, query_tree, create_output_string_functs, filters)
             all_unigrams = p.map(get_unigrams, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
             for unigrams in all_unigrams:
                 for unigram in unigrams:
@@ -396,24 +307,14 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
 
             all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
 
-            # for subtrees in all_subtrees:
             for tree_i, subtrees in enumerate(all_subtrees):
 
                 for query_results in subtrees:
                     for r in query_results:
-                        # if r.key == '(ne <advmod more >xcomp (se <expl izogniti) >punct .)':
-                        #     print('HERE')
-                        #     print(tree_i)
                         if filters['node_order']:
                             key = r.get_key() + r.order
                         else:
                             key = r.get_key()
-                        # if r == '(" < , < je < velik) < tem':
-                        #     print(tree_i)
-                        # if r in result_dict:
-                        #     result_dict[r] += 1
-                        # else:
-                        #     result_dict[r] = 1
                         if key in result_dict:
                             result_dict[key]['number'] += 1
                         else:
@@ -421,11 +322,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
 
         # 3.65 s (1 core)
         else:
-            # for tree_i, tree in enumerate(all_trees[-5:]):
             for tree_i, tree in enumerate(all_trees):
-            # for tree_i, tree in enumerate(all_trees[852:]):
-            # for tree_i, tree in enumerate(all_trees[1689:]):
-            # for tree_i, tree in enumerate(all_trees[1:3]):
                 input_data = (tree, query_tree, create_output_string_functs, filters)
                 if filters['association_measures']:
                     unigrams = get_unigrams(input_data)
@@ -434,10 +331,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                             unigrams_dict[unigram] += 1
                         else:
                             unigrams_dict[unigram] = 1
-            # for tree_i, tree in enumerate(all_trees[1:]):
-            # text = Če pa ostane odrasel otrok doma, se starši le težko sprijaznijo s tem, da je "velik", otrok pa ima ves čas občutek, da se njegovi starši po nepotrebnem vtikajo v njegovo življenje.
-            # for tree_i, tree in enumerate(all_trees[5170:]):
-            # for tree in all_trees:
+
                 subtrees = tree_calculations(input_data)
                 for query_results in subtrees:
                     for r in query_results:
@@ -445,8 +339,6 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                             key = r.get_key() + r.order
                         else:
                             key = r.get_key()
-                        # if r == '(" < , < je < velik) < tem':
-                        #     print(tree_i)
                         if key in result_dict:
                             result_dict[key]['number'] += 1
                         else:
@@ -465,7 +357,6 @@ def read_filters(config, feats_detailed_list):
                 query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
         query_tree = [decode_query('(' + config.get('settings', 'query') + ')', '', feats_detailed_list)]
-        # order_independent_queries(query_tree)
 
     # set filters
     node_types = config.get('settings', 'node_type').split('+')
@@ -506,11 +397,8 @@ def read_filters(config, feats_detailed_list):
             attribute_dict = {}
             for attribute in option.split('&'):
                 value = attribute.split('=')
-                # assert value[0] in ['deprel', 'lemma', 'upos', 'xpos', 'form',
-                #                     'feats'], '"root_whitelist" is not set up correctly'
                 attribute_dict[value[0]] = value[1]
             filters['root_whitelist'].append(attribute_dict)
-        # filters['root_whitelist'] = [{'upos': 'NOUN', 'Case': 'Nom'}, {'upos': 'ADJ', 'Degree': 'Sup'}]
     else:
         filters['root_whitelist'] = []
 
@@ -540,12 +428,6 @@ def main():
     internal_saves = config.get('settings', 'internal_saves')
     input_path = config.get('settings', 'input')
 
-    # a = args.config_file
-    # config.read('config.ini')
-    # create queries
-
-
-
     if os.path.isdir(input_path):
 
         checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
@@ -572,9 +454,6 @@ def main():
             for path in sorted(pathlist):
                 # because path is object not string
                 path_str = str(path)
-                # if Path(path_str).name == 'GF0003946-dedup.conllu':
-                #     break
-                # print(path_in_str)
 
                 (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
                  feats_detailed_list) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list, save=False)
@@ -593,7 +472,6 @@ def main():
             # 15.26
             print("Execution time:")
             print("--- %s seconds ---" % (time.time() - start_exe_time))
-            # print(1 + 'asd')
             save_zipped_pickle(
                 (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
                 checkpoint_path, protocol=2)
@@ -620,26 +498,6 @@ def main():
 
         print("Execution time:")
         print("--- %s seconds ---" % (time.time() - start_exe_time))
-            # test 1 layer queries
-            # # tree.r_children = []
-            # # tree.children[1].children = []
-            # # query = [{'children': [{}]}, {'children': [{}]}]
-            # # query = [{"children": [{}, {}]}, {"children": [{}]}, {"children": [{}, {}, {}]}]
-            # query = [{"children": [{'form': 'je'}, {}]}, {"children": [{'form': 'je'}]}, {"children": [{'form': 'je'}, {}, {}]}]
-            # # query = [{'q1':'', "children": [{'a1':''}, {'a2':''}]}, {'q2':'', "children": [{'b1':''}]}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}]}]
-            # _, _, subtrees = tree.get_subtrees(query, [], create_output_string_funct)
-            # # _, subtrees = tree.get_subtrees([{'q1':'', "children": [{'a1':''}, {'a2':''}], "children": []}, {'q2':'', "children": [{'b1':''}], "children": []}, {'q3':'', "children": [{'c1':''}, {'c2':''}, {'c3':''}], "children": []}], [])
-            # print('HERE!')
-
-            # test 2 layer queries
-            # tree.r_children = [Tree('je', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)]
-            # tree.l_children[1].l_children = []
-            # new_tree = Tree('bil', '', '', '', '', form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, None)
-            # new_tree.l_children = [tree]
-            # _, subtrees = new_tree.get_subtrees(
-            #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}]}]}], [])
-            # # _, subtrees = new_tree.get_subtrees(
-            # #     [{"l_children":[{"l_children": [{'a1': ''}, {'a2': ''}, {'a3': ''}, {'a4': ''}], "r_children": []}],  "r_children": []}], [])
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
     with open(config.get('settings', 'output'), "w", newline="") as f:
@@ -660,7 +518,6 @@ def main():
             header += ['Root node']
         if filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
-        # header = [" ".join(words[i:i + span]) for i in range(0, len(words), span)] + ['Absolute frequency']
         writer.writerow(header)
 
         if filters['lines_threshold']:
@@ -673,7 +530,6 @@ def main():
             if filters['frequency_threshold'] and filters['frequency_threshold'] > v['number']:
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
-            # words_only = printable_answers(k)
             row = [v['object'].get_key()[1:-1]] + words_only + [str(v['number'])]
             row += ['%.4f' % relative_frequency]
             if filters['node_order']:

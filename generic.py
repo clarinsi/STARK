@@ -45,7 +45,6 @@ def generate_key(node, create_output_strings, print_lemma=True):
     if len(array[0]) > 1:
         key = '&'.join(key_array[0])
     else:
-        # output_string = create_output_strings[0](node)
         key = key_array[0][0]
 
     return array, key
@@ -61,7 +60,6 @@ def generate_name(node, create_output_strings, print_lemma=True):
     if len(array) > 1:
         name = '&'.join(name_array)
     else:
-        # output_string = create_output_strings[0](node)
         name = name_array[0]
 
     return array, name
@@ -74,7 +72,6 @@ def get_collocabilities(ngram, unigrams_dict, corpus_size):
         if len(key_array) > 1:
             key = '&'.join(key_array)
         else:
-            # output_string = create_output_strings[0](node)
             key = key_array[0]
         sum_fwi += unigrams_dict[key]
         mul_fwi *= unigrams_dict[key]
