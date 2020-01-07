@@ -500,7 +500,7 @@ def main():
         print("--- %s seconds ---" % (time.time() - start_exe_time))
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
-    with open(config.get('settings', 'output'), "w", newline="") as f:
+    with open(config.get('settings', 'output'), "w", newline="", encoding="utf-8") as f:
         # header - use every second space as a split
         writer = csv.writer(f, delimiter='\t')
         if tree_size_range[-1]:
