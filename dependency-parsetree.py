@@ -18,6 +18,7 @@ import configparser
 import copy
 import csv
 import hashlib
+import math
 import os
 import pickle
 import re
@@ -420,6 +421,94 @@ def read_filters(config, args, feats_detailed_list):
 
     return filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types
 
+
+def process(input_path, internal_saves, config, args):
+    if os.path.isdir(input_path):
+
+        checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
+        continuation_processing = config.getboolean('settings', 'continuation_processing',
+                                                    fallback=False) if not args.continuation_processing else args.input
+
+        if not checkpoint_path.exists() or not continuation_processing:
+            already_processed = set()
+            result_dict = {}
+            unigrams_dict = {}
+            corpus_size = 0
+            feats_detailed_list = {}
+            if checkpoint_path.exists():
+                os.remove(checkpoint_path)
+        else:
+            already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list = load_zipped_pickle(
+                checkpoint_path)
+
+        for path in sorted(os.listdir(input_path)):
+            path_obj = Path(input_path, path)
+            pathlist = path_obj.glob('**/*.conllu')
+            if path_obj.name in already_processed:
+                continue
+            start_exe_time = time.time()
+            for path in sorted(pathlist):
+                # because path is object not string
+                path_str = str(path)
+
+                (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
+                 feats_detailed_list) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list,
+                                                     save=False)
+
+                corpus_size += sub_corpus_size
+
+                filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(
+                    config, args, feats_detailed_list)
+
+                count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict,
+                            result_dict)
+
+            already_processed.add(path_obj.name)
+
+            # 15.26
+            print("Execution time:")
+            print("--- %s seconds ---" % (time.time() - start_exe_time))
+            save_zipped_pickle(
+                (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
+                checkpoint_path, protocol=2)
+
+
+
+
+    else:
+        # 261 - 9 grams
+        # 647 - 10 grams
+        # 1622 - 11 grams
+        # 4126 - 12 grams
+        # 10598 - 13 grams
+        (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
+         feats_detailed_list) = create_trees(input_path, internal_saves)
+
+        result_dict = {}
+        unigrams_dict = {}
+
+        filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(config,
+                                                                                                                args,
+                                                                                                                feats_detailed_list)
+
+        start_exe_time = time.time()
+        count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict)
+
+        print("Execution time:")
+        print("--- %s seconds ---" % (time.time() - start_exe_time))
+
+    return result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types
+
+
+def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
+    E1 = count_A * (abs_freq_A + abs_freq_B) / (count_A + count_B)
+    E2 = count_B * (abs_freq_A + abs_freq_B) / (count_A + count_B)
+
+    LL = 2 * ((abs_freq_A * math.log(abs_freq_A / E1)) + (abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 'NaN'
+
+    return [LL]
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -447,6 +536,7 @@ def main():
     parser.add_argument("--print_root", default=None, type=bool, help="Print root.")
     parser.add_argument("--nodes_number", default=None, type=bool, help="Nodes number.")
     parser.add_argument("--continuation_processing", default=None, type=bool, help="Nodes number.")
+    parser.add_argument("--compare", default=None, type=str, help="Corpus with which we want to compare statistics.")
     args = parser.parse_args()
 
     config = configparser.ConfigParser()
@@ -455,76 +545,12 @@ def main():
     internal_saves = config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves
     input_path = config.get('settings', 'input') if not args.input else args.input
 
-    if os.path.isdir(input_path):
+    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process(input_path, internal_saves, config, args)
 
-        checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
-        continuation_processing = config.getboolean('settings', 'continuation_processing', fallback=False) if not args.continuation_processing else args.input
+    if args.compare is not None:
+        other_input_path = args.compare
+        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process(other_input_path, internal_saves, config, args)
 
-        if not checkpoint_path.exists() or not continuation_processing:
-            already_processed = set()
-            result_dict = {}
-            unigrams_dict = {}
-            corpus_size = 0
-            feats_detailed_list = {}
-            if checkpoint_path.exists():
-                os.remove(checkpoint_path)
-        else:
-            already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list = load_zipped_pickle(
-                checkpoint_path)
-
-        for path in sorted(os.listdir(input_path)):
-            path_obj = Path(input_path, path)
-            pathlist = path_obj.glob('**/*.conllu')
-            if path_obj.name in already_processed:
-                continue
-            start_exe_time = time.time()
-            for path in sorted(pathlist):
-                # because path is object not string
-                path_str = str(path)
-
-                (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
-                 feats_detailed_list) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list, save=False)
-
-                corpus_size += sub_corpus_size
-
-                filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(
-                    config, args, feats_detailed_list)
-
-
-                count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict,
-                            result_dict)
-
-            already_processed.add(path_obj.name)
-
-            # 15.26
-            print("Execution time:")
-            print("--- %s seconds ---" % (time.time() - start_exe_time))
-            save_zipped_pickle(
-                (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
-                checkpoint_path, protocol=2)
-
-
-
-
-    else:
-    # 261 - 9 grams
-    # 647 - 10 grams
-    # 1622 - 11 grams
-    # 4126 - 12 grams
-    # 10598 - 13 grams
-        (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
-         feats_detailed_list) = create_trees(input_path, internal_saves)
-
-        result_dict = {}
-        unigrams_dict = {}
-
-        filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(config, args, feats_detailed_list)
-
-        start_exe_time = time.time()
-        count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict)
-
-        print("Execution time:")
-        print("--- %s seconds ---" % (time.time() - start_exe_time))
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
     output = config.get('settings', 'output') if not args.output else args.output
@@ -547,6 +573,8 @@ def main():
             header += ['Root node']
         if filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
+        if args.compare:
+            header += ['LL']
         writer.writerow(header)
 
         if filters['lines_threshold']:
@@ -570,6 +598,9 @@ def main():
                 row += [v['object'].node.name]
             if filters['association_measures']:
                 row += get_collocabilities(v, unigrams_dict, corpus_size)
+            if args.compare:
+                other_abs_freq = other_result_dict[k]['number'] if k in other_result_dict else 0
+                row += get_keyness(v['number'], other_abs_freq, corpus_size, other_corpus_size)
             writer.writerow(row)
 
     return "Done"
