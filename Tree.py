@@ -8,7 +8,7 @@ from generic import generate_key
 
 
 class Tree(object):
-    def __init__(self, index, form, lemma, upos, xpos, deprel, feats, feats_detailed, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, head):
+    def __init__(self, index, form, lemma, upos, xpos, deprel, feats_detailed, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, head):
         if not hasattr(self, 'feats'):
             self.feats_detailed = {}
 
@@ -27,9 +27,6 @@ class Tree(object):
         if deprel not in deprel_dict:
             deprel_dict[deprel] = Value(deprel)
         self.deprel = deprel_dict[deprel]
-        if feats not in feats_dict:
-            feats_dict[feats] = Value(feats)
-        self.feats = feats_dict[feats]
         for feat in feats_detailed.keys():
             if feat not in feats_detailed_dict:
                 feats_detailed_dict[feat] = {}
@@ -81,7 +78,6 @@ class Tree(object):
 
             filter_passed = filter_passed and \
                             ('deprel' not in option or option['deprel'] == self.deprel.get_value()) and \
-                            ('feats' not in option or option['feats'] == self.feats.get_value()) and \
                             ('form' not in option or option['form'] == self.form.get_value()) and \
                             ('lemma' not in option or option['lemma'] == self.lemma.get_value()) and \
                             ('upos' not in option or option['upos'] == self.upos.get_value())
@@ -100,7 +96,6 @@ class Tree(object):
                ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value()) and \
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
                ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value()) and \
-               ('feats' not in query_tree or query_tree['feats'] == self.feats.get_value()) and \
                (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or ('children' in query_tree and len(self.children) == len(query_tree['children']))) and \
                self.fits_static_requirements_feats(query_tree)
 

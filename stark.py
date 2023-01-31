@@ -134,9 +134,8 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
                     continue
 
                 # TODO check if 5th place is always there for feats
-                feats = token._fields[5]
                 token_form = token.form if token.form is not None else '_'
-                node = Tree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token.deprel, feats, token.feats, form_dict,
+                node = Tree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token.deprel, token.feats, form_dict,
                             lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, token.head)
                 token_nodes.append(node)
                 if token.deprel == 'root':
@@ -351,7 +350,7 @@ def read_filters(config, args, feats_detailed_list):
     tree_size_range = tree_size.split('-')
     tree_size_range = [int(r) for r in tree_size_range]
 
-    if tree_size_range[0] > 1:
+    if tree_size_range[0] > 0:
         if len(tree_size_range) == 1:
             query_tree = create_ngrams_query_trees(tree_size_range[0], [{}])
         elif len(tree_size_range) == 2:
@@ -505,8 +504,12 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     E2 = count_B * (abs_freq_A + abs_freq_B) / (count_A + count_B)
 
     LL = 2 * ((abs_freq_A * math.log(abs_freq_A / E1)) + (abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 'NaN'
+    BIC = LL - math.log(count_A + count_B) if abs_freq_B > 0 else 'NaN'
+    log_ratio = math.log(((abs_freq_A/count_A)/(abs_freq_B/count_B)), 2) if abs_freq_B > 0 else 'NaN'
+    OR = (abs_freq_A/(count_A-abs_freq_A)) / (abs_freq_B/(count_B-abs_freq_B)) if abs_freq_B > 0 else 'NaN'
+    diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 'NaN'
 
-    return [LL]
+    return [abs_freq_B, abs_freq_B/count_B, LL, BIC, log_ratio, OR, diff]
 
 
 def main():
@@ -519,7 +522,7 @@ def main():
     parser.add_argument("--internal_saves", default=None, type=str, help="Location for internal_saves.")
     parser.add_argument("--cpu_cores", default=None, type=int, help="Number of cores used.")
 
-    parser.add_argument("--tree_size", default=None, type=int, help="Size of trees.")
+    parser.add_argument("--tree_size", default=None, type=str, help="Size of trees.")
     parser.add_argument("--tree_type", default=None, type=str, help="Tree type.")
     parser.add_argument("--dependency_type", default=None, type=str, help="Dependency type.")
     parser.add_argument("--node_order", default=None, type=str, help="Order of node.")
@@ -574,7 +577,7 @@ def main():
         if filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if args.compare:
-            header += ['LL']
+            header += ['Other absolute frequency', 'Other relative frequency', 'LL', 'BIC', 'Log ratio', 'OR', '%DIFF']
         writer.writerow(header)
 
         if filters['lines_threshold']:
@@ -587,7 +590,8 @@ def main():
             if filters['frequency_threshold'] and filters['frequency_threshold'] > v['number']:
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
-            row = [v['object'].get_key()[1:-1]] + words_only + [str(v['number'])]
+            key = [v['object'].get_key()[1:-1]] if v['object'].get_key()[0] == '(' and v['object'].get_key()[-1] == ')' else [v['object'].get_key()]
+            row = key + words_only + [str(v['number'])]
             row += ['%.4f' % relative_frequency]
             if filters['node_order']:
                 row += [v['object'].order]

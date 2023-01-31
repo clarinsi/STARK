@@ -23,7 +23,7 @@ def create_output_string_deprel(tree):
     return tree.deprel.get_value()
 
 def create_output_string_lemma(tree):
-    return tree.lemma.get_value()
+    return tree.lemma.get_value() if tree.lemma.get_value() is not None else '_'
 
 def create_output_string_upos(tree):
     return tree.upos.get_value()

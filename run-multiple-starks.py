@@ -14,4 +14,4 @@ for path in sorted(os.listdir(input_path)):
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         if not os.path.exists(file_name):
-            os.system("python /home/luka/Development/STARK/dependency-parsetree.py --config_file " + config_path + " --input " + str(path) + " --output " + file_name)
+            os.system("python /home/luka/Development/STARK/stark.py --config_file " + config_path + " --input " + str(path) + " --output " + file_name)
