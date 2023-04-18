@@ -72,7 +72,7 @@ The tool returns the resulting list of all relevant trees in the form of a tab-s
 ## Credits
 This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja and with financial support from [CLARIN.SI](https://www.clarin.si/).
 
-<a href="http://www.clarin.si/info/about/"><img src="https://gitea.cjvt.si/lkrsnik/dependency_parsing/raw/branch/master/logos/CLARIN.png" alt="drawing" height="150"/></a>
-<a href="https://www.cjvt.si/en/"><img src="https://gitea.cjvt.si/lkrsnik/dependency_parsing/raw/branch/master/logos/CJVT.png" alt="drawing" height="150"/></a>
-<a href="https://www.fri.uni-lj.si/en/about"><img src="https://gitea.cjvt.si/lkrsnik/dependency_parsing/raw/branch/master/logos/FRI.png" alt="drawing" height="150"/></a>
-<a href="http://www.ff.uni-lj.si/an/aboutFaculty/about_faculty"><img src="https://gitea.cjvt.si/lkrsnik/dependency_parsing/raw/branch/master/logos/FF.png" alt="drawing" height="150"/></a>
+<a href="http://www.clarin.si/info/about/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CLARIN.png" alt="drawing" height="150"/></a>
+<a href="https://www.cjvt.si/en/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CJVT.png" alt="drawing" height="150"/></a>
+<a href="https://www.fri.uni-lj.si/en/about"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/FRI.png" alt="drawing" height="150"/></a>
+<a href="http://www.ff.uni-lj.si/an/aboutFaculty/about_faculty"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/FF.png" alt="drawing" height="150"/></a>
