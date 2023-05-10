@@ -38,6 +38,19 @@ class ResultTree(object):
         self.order = None
         self.array = None
 
+    def get_grew(self):
+        nodes = [self.node]
+        links = []
+
+        if self.children:
+            for child in self.children:
+                links.append((self.node, child.node))
+                c_nodes, c_links = child.get_grew()
+                nodes.extend(c_nodes)
+                links.extend(c_links)
+
+        return nodes, links
+
     def get_key(self):
         if self.key:
             return self.key
@@ -178,3 +191,44 @@ class ResultTree(object):
         result.order = ''.join(order_letters)
         # TODO When tree is finalized create relative word order (alphabet)!
         return result
+
+    def get_location_mapper(self):
+        mapper = {}
+        location_array = self.get_array_location()
+        for i in range(len(location_array)):
+            mapper[location_array[i]] = string.ascii_uppercase[i]
+            # order_letters[ind] = string.ascii_uppercase[i]
+        # result = copy.copy(self)
+        # result.reset_params()
+        # mapper = {}
+        # # create order letters
+        # order = result.get_order()
+        # order_letters = [''] * len(result.order)
+        # for i in range(len(order)):
+        #     ind = order.index(min(order))
+        #     order_letters[ind] = string.ascii_uppercase[i]
+        #     mapper[order[ind]] = string.ascii_uppercase[i]
+        #     order[ind] = 10000
+        # result.order = ''.join(order_letters)
+        return mapper
+
+    def get_array_location(self):
+        # if array:
+        #     return self.array
+        array = []
+        write_self_node_to_result = False
+        if self.children:
+            for child in self.children:
+                if self.filters['node_order'] and child.node.location < self.node.location:
+                    array += child.get_array_location()
+                else:
+                    if not write_self_node_to_result:
+                        write_self_node_to_result = True
+                        array += [self.node.location]
+                    array += child.get_array_location()
+
+            if not write_self_node_to_result:
+                array += [self.node.location]
+        else:
+            array = [self.node.location]
+        return array

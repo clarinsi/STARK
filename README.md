@@ -56,7 +56,7 @@ The type of trees to be extracted can be defined through several parameters in t
 -	`tree_type`: extraction of all possible subtrees or full subtrees only (values *all* or *complete*)
 -	`dependency_type`: extraction of labeled or unlabeled trees (values *labeled* or *unlabeled*)
 -	`node_order`: extraction of trees by taking surface word order into account (values *free* or *fixed*)
--	`node_type`: type of nodes under investigation (values *form*, *lemma*, *upos*, *xpos*, *feats* or *deprel*)
+-	`node_type`: type of nodes under investigation - for multiple use '+' as a separator (values *form*, *lemma*, *upos*, *xpos*, *feats* or *deprel*)
 -	`label_whitelist`: predefined list of dependency labels allowed in the extracted tree
 -	`root_whitelist`: predefined characteristics of the root node
 -	`query`: predefined tree structure based on the modified Turku NLP [query language](http://bionlp.utu.fi/searchexpressions-new.html).  

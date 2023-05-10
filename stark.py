@@ -512,6 +512,50 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     return [abs_freq_B, abs_freq_B/count_B, LL, BIC, log_ratio, OR, diff]
 
 
+def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type):
+
+    assert nodes
+    node_result = {}
+    for node in nodes:
+        node_result[location_mapper[node.location]] = []
+        for node_type in node_types:
+            if node_type == 'deprel':
+                node_result[location_mapper[node.location]].append(f'deprel={node.deprel}')
+            elif node_type == 'lemma':
+                node_result[location_mapper[node.location]].append(f'lemma="{node.lemma}"')
+            elif node_type == 'upos':
+                node_result[location_mapper[node.location]].append(f'upos={node.upos}')
+            elif node_type == 'xpos':
+                node_result[location_mapper[node.location]].append(f'xpos={node.xpos}')
+            elif node_type == 'feats':
+                for k, v in node.feats.items():
+                    node_result[location_mapper[node.location]].append(f'{k}={v}')
+            else:
+                node_result[location_mapper[node.location]].append(f'form="{node.form}"')
+    link_result = []
+    order_result = []
+    for link in links:
+        link_result.append([location_mapper[link[0].location], location_mapper[link[1].location]])
+        if node_order:
+            if link[0].location < link[1].location:
+                order_result.append([location_mapper[link[0].location], location_mapper[link[1].location], '<<'])
+            else:
+                order_result.append([location_mapper[link[0].location], location_mapper[link[1].location], '>>'])
+    grew = 'pattern {'
+    grew += '; '.join([node_k + ' [' + ', '.join(v) + ']' for node_k, v in node_result.items()]) + '; '
+    grew += '; '.join([f'{link[0]} -[{link_node[1].deprel}]-> {link[1]}' for link, link_node in zip(link_result, links)]) if dependency_type else \
+        '; '.join([f'{link[0]} -> {link[1]}' for link in link_result])
+    grew += '; ' + '; '.join([f'{link[0]} {link[2]} {link[1]}' for link in order_result])
+    return grew + '}'
+
+
+def read_configs(config, args):
+    configs = {}
+    configs['internal_saves'] = config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves
+    configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
+    return configs
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -544,6 +588,8 @@ def main():
 
     config = configparser.ConfigParser()
     config.read(args.config_file)
+
+    configs = read_configs(config, args)
 
     internal_saves = config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves
     input_path = config.get('settings', 'input') if not args.input else args.input
@@ -590,8 +636,11 @@ def main():
             if filters['frequency_threshold'] and filters['frequency_threshold'] > v['number']:
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
-            key = [v['object'].get_key()[1:-1]] if v['object'].get_key()[0] == '(' and v['object'].get_key()[-1] == ')' else [v['object'].get_key()]
-            row = key + words_only + [str(v['number'])]
+            key = v['object'].get_key()[1:-1] if v['object'].get_key()[0] == '(' and v['object'].get_key()[-1] == ')' else v['object'].get_key()
+            grew_nodes, grew_links = v['object'].get_grew()
+            location_mapper = v['object'].get_location_mapper()
+            key = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper, filters['dependency_type'])
+            row = [key] + words_only + [str(v['number'])]
             row += ['%.4f' % relative_frequency]
             if filters['node_order']:
                 row += [v['object'].order]

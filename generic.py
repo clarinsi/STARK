@@ -32,7 +32,7 @@ def create_output_string_xpos(tree):
     return tree.xpos.get_value()
 
 def create_output_string_feats(tree):
-    return tree.feats.get_value()
+    return '|'.join([f'{k}={list(v.keys())[0]}' for k, v in tree.feats_detailed.items()])
 
 def generate_key(node, create_output_strings, print_lemma=True):
     array = [[create_output_string(node) for create_output_string in create_output_strings]]

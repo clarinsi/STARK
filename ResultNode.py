@@ -20,6 +20,14 @@ class ResultNode(object):
         self.name_parts, self.name = generate_name(node, create_output_strings)
         self.location = architecture_order
         self.deprel = node.deprel.get_value()
+        self.form = node.form.get_value()
+        self.lemma = node.lemma.get_value()
+        self.upos = node.upos.get_value()
+        self.xpos = node.xpos.get_value()
+        for k, v in node.feats_detailed.items():
+            assert len(v.keys()) == 1
+
+        self.feats = {k: list(v.keys())[0] for k, v in node.feats_detailed.items()}
 
     def __repr__(self):
         return self.name
