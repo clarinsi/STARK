@@ -24,7 +24,7 @@ import pickle
 import re
 import string
 import time
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from pathlib import Path
 import gzip
 import sys
@@ -345,8 +345,8 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                         else:
                             result_dict[key] = {'object': r, 'number': 1}
 
-def read_filters(config, args, feats_detailed_list):
-    tree_size = config.get('settings', 'tree_size', fallback='0') if not args.tree_size else args.tree_size
+def read_filters(configs, feats_detailed_list):
+    tree_size = configs['tree_size']
     tree_size_range = tree_size.split('-')
     tree_size_range = [int(r) for r in tree_size_range]
 
@@ -358,16 +358,16 @@ def read_filters(config, args, feats_detailed_list):
             for i in range(tree_size_range[0], tree_size_range[1] + 1):
                 query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
-        query = config.get('settings', 'query') if not args.query else args.query
+        query = configs['query']
         query_tree = [decode_query('(' + query + ')', '', feats_detailed_list)]
 
     # set filters
-    node_type = config.get('settings', 'node_type') if not args.node_type else args.node_type
+    node_type = configs['node_type']
     node_types = node_type.split('+')
     create_output_string_functs = []
     for node_type in node_types:
         assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
-        cpu_cores = config.getint('settings', 'cpu_cores') if not args.cpu_cores else args.cpu_cores
+        cpu_cores = configs['cpu_cores']
         if node_type == 'deprel':
             create_output_string_funct = create_output_string_deprel
         elif node_type == 'lemma':
@@ -383,25 +383,17 @@ def read_filters(config, args, feats_detailed_list):
         create_output_string_functs.append(create_output_string_funct)
 
     filters = {}
-    filters['internal_saves'] = config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves
-    filters['input'] = config.get('settings', 'input') if not args.input else args.input
-    node_order = config.get('settings', 'node_order') if not args.node_order else args.node_order
-    filters['node_order'] = node_order == 'fixed'
+    filters['internal_saves'] = configs['internal_saves']
+    filters['input'] = configs['input']
+    filters['node_order'] = configs['node_order']
     # filters['caching'] = config.getboolean('settings', 'caching')
-    dependency_type = config.get('settings', 'dependency_type') if not args.dependency_type else args.dependency_type
-    filters['dependency_type'] = dependency_type == 'labeled'
-    if config.has_option('settings', 'label_whitelist'):
-        label_whitelist = config.get('settings', 'label_whitelist') if not args.label_whitelist else args.label_whitelist
-        filters['label_whitelist'] = label_whitelist.split('|')
-    else:
-        filters['label_whitelist'] = []
-
-    root_whitelist = config.get('settings', 'root_whitelist') if not args.root_whitelist else args.root_whitelist
-    if root_whitelist:
+    filters['dependency_type'] = configs['dependency_type']
+    filters['label_whitelist'] = configs['label_whitelist']
+    if configs['root_whitelist']:
         # test
         filters['root_whitelist'] = []
 
-        for option in root_whitelist.split('|'):
+        for option in configs['root_whitelist']:
             attribute_dict = {}
             for attribute in option.split('&'):
                 value = attribute.split('=')
@@ -409,24 +401,21 @@ def read_filters(config, args, feats_detailed_list):
             filters['root_whitelist'].append(attribute_dict)
     else:
         filters['root_whitelist'] = []
-
-    tree_type = config.get('settings', 'tree_type') if not args.tree_type else args.tree_type
-    filters['complete_tree_type'] = tree_type == 'complete'
-    filters['association_measures'] = config.getboolean('settings', 'association_measures') if not args.association_measures else args.association_measures
-    filters['nodes_number'] = config.getboolean('settings', 'nodes_number') if not args.nodes_number else args.nodes_number
-    filters['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold', fallback=0) if not args.frequency_threshold else args.frequency_threshold
-    filters['lines_threshold'] = config.getint('settings', 'lines_threshold', fallback=0) if not args.lines_threshold else args.lines_threshold
-    filters['print_root'] = config.getboolean('settings', 'print_root') if not args.print_root else args.print_root
+    filters['complete_tree_type'] = configs['complete_tree_type']
+    filters['association_measures'] = configs['association_measures']
+    filters['nodes_number'] = configs['nodes_number']
+    filters['frequency_threshold'] = configs['frequency_threshold']
+    filters['lines_threshold'] = configs['lines_threshold']
+    filters['print_root'] = configs['print_root']
 
     return filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types
 
 
-def process(input_path, internal_saves, config, args):
+def process(input_path, internal_saves, configs):
     if os.path.isdir(input_path):
 
         checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
-        continuation_processing = config.getboolean('settings', 'continuation_processing',
-                                                    fallback=False) if not args.continuation_processing else args.input
+        continuation_processing = configs['continuation_processing']
 
         if not checkpoint_path.exists() or not continuation_processing:
             already_processed = set()
@@ -457,7 +446,7 @@ def process(input_path, internal_saves, config, args):
                 corpus_size += sub_corpus_size
 
                 filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(
-                    config, args, feats_detailed_list)
+                    configs, feats_detailed_list)
 
                 count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict,
                             result_dict)
@@ -486,8 +475,7 @@ def process(input_path, internal_saves, config, args):
         result_dict = {}
         unigrams_dict = {}
 
-        filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(config,
-                                                                                                                args,
+        filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types = read_filters(configs,
                                                                                                                 feats_detailed_list)
 
         start_exe_time = time.time()
@@ -551,8 +539,52 @@ def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_t
 
 def read_configs(config, args):
     configs = {}
-    configs['internal_saves'] = config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves
+    # mandatory parameters
+    configs['input'] = config.get('settings', 'input') if not args.input else args.input
     configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
+    configs['output'] = config.get('settings', 'output') if not args.output else args.output
+    configs['tree_size'] = config.get('settings', 'size', fallback='0') if not args.size else args.size
+    configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
+
+    # mandatory parameters with default value
+    configs['internal_saves'] = (config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves) if config.has_option('settings', 'internal_saves') else './internal_saves'
+    configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if not args.cpu_cores else args.cpu_cores) if config.has_option('settings', 'cpu_cores') else max(cpu_count() - 1, 1)
+    configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete else args.complete) if config.has_option('settings', 'complete') else True
+    configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled else args.labeled) if config.has_option('settings', 'labeled') else True
+    configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed) if config.has_option('settings', 'fixed') else True
+    configs['association_measures'] = (config.getboolean('settings',
+                                                        'association_measures') if not args.association_measures else args.association_measures) if config.has_option('settings', 'association_measures') else False
+
+    # optional parameters
+    if config.has_option('settings', 'labels'):
+        label_whitelist = config.get('settings',
+                                     'labels') if not args.labels else args.labels
+        configs['label_whitelist'] = label_whitelist.split('|')
+    else:
+        configs['label_whitelist'] = []
+
+    if config.has_option('settings', 'root'):
+        root_whitelist = config.get('settings',
+                                    'root') if not args.root else args.root
+        configs['root_whitelist'] = root_whitelist.split('|')
+    else:
+        configs['root_whitelist'] = []
+
+    if config.has_option('settings', 'query') or args.query:
+        configs['query'] = (config.get('settings', 'query') if not args.query else args.query)
+    configs['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold',
+                                                     fallback=0) if not args.frequency_threshold else args.frequency_threshold
+    configs['lines_threshold'] = config.getint('settings', 'max_lines',
+                                               fallback=0) if not args.max_lines else args.max_lines
+
+    configs['continuation_processing'] = config.getboolean('settings', 'continuation_processing',
+                                                fallback=False) if not args.continuation_processing else args.input
+
+    configs['nodes_number'] = True
+    configs['print_root'] = True
+
+    if args.compare is not None:
+        configs['other_input_path'] = args.compare
     return configs
 
 
@@ -566,22 +598,20 @@ def main():
     parser.add_argument("--internal_saves", default=None, type=str, help="Location for internal_saves.")
     parser.add_argument("--cpu_cores", default=None, type=int, help="Number of cores used.")
 
-    parser.add_argument("--tree_size", default=None, type=str, help="Size of trees.")
-    parser.add_argument("--tree_type", default=None, type=str, help="Tree type.")
-    parser.add_argument("--dependency_type", default=None, type=str, help="Dependency type.")
-    parser.add_argument("--node_order", default=None, type=str, help="Order of node.")
+    parser.add_argument("--size", default=None, type=str, help="Size of trees.")
+    parser.add_argument("--complete", default=None, type=str, help="Tree type.")
+    parser.add_argument("--labeled", default=None, type=str, help="Dependency type.")
+    parser.add_argument("--fixed", default=None, type=str, help="Order of node.")
     parser.add_argument("--node_type", default=None, type=str, help="Type of node.")
 
-    parser.add_argument("--label_whitelist", default=None, type=str, help="Label whitelist.")
-    parser.add_argument("--root_whitelist", default=None, type=str, help="Root whitelist.")
+    parser.add_argument("--labels", default=None, type=str, help="Label whitelist.")
+    parser.add_argument("--root", default=None, type=str, help="Root whitelist.")
 
     parser.add_argument("--query", default=None, type=str, help="Query.")
 
-    parser.add_argument("--lines_threshold", default=None, type=str, help="Lines treshold.")
+    parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
     parser.add_argument("--association_measures", default=None, type=bool, help="Association measures.")
-    parser.add_argument("--print_root", default=None, type=bool, help="Print root.")
-    parser.add_argument("--nodes_number", default=None, type=bool, help="Nodes number.")
     parser.add_argument("--continuation_processing", default=None, type=bool, help="Nodes number.")
     parser.add_argument("--compare", default=None, type=str, help="Corpus with which we want to compare statistics.")
     args = parser.parse_args()
@@ -591,31 +621,27 @@ def main():
 
     configs = read_configs(config, args)
 
-    internal_saves = config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves
-    input_path = config.get('settings', 'input') if not args.input else args.input
-
-    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process(input_path, internal_saves, config, args)
+    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process(configs['input_path'], configs['internal_saves'], configs)
 
     if args.compare is not None:
-        other_input_path = args.compare
-        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process(other_input_path, internal_saves, config, args)
+        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process(configs['other_input_path'], configs['internal_saves'], configs)
 
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
-    output = config.get('settings', 'output') if not args.output else args.output
-    with open(output, "w", newline="", encoding="utf-8") as f:
+    with open(configs['output'], "w", newline="", encoding="utf-8") as f:
         # header - use every second space as a split
         writer = csv.writer(f, delimiter='\t')
         if tree_size_range[-1]:
             len_words = tree_size_range[-1]
         else:
-            query = config.get('settings', 'query') if not args.query else args.query
-            len_words = int(len(query.split(" "))/2 + 1)
-        header = ["Structure"] + ["Node " + string.ascii_uppercase[i] + "-" + node_type for i in range(len_words) for node_type in node_types] + ['Absolute frequency']
+            len_words = int(len(configs['query'].split(" "))/2 + 1)
+        header = ["Tree"] + ["Node " + string.ascii_uppercase[i] for i in range(len_words) for node_type in node_types] + ['Absolute frequency']
         header += ['Relative frequency']
         if filters['node_order']:
             header += ['Order']
-            header += ['Free structure']
+        header += ['Grew-match query']
+        if filters['node_order']:
+            header += ['DepSearch query']
         if filters['nodes_number']:
             header += ['Number of nodes']
         if filters['print_root']:
@@ -639,11 +665,13 @@ def main():
             key = v['object'].get_key()[1:-1] if v['object'].get_key()[0] == '(' and v['object'].get_key()[-1] == ')' else v['object'].get_key()
             grew_nodes, grew_links = v['object'].get_grew()
             location_mapper = v['object'].get_location_mapper()
-            key = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper, filters['dependency_type'])
+            key_grew = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper, filters['dependency_type'])
             row = [key] + words_only + [str(v['number'])]
             row += ['%.4f' % relative_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
+            row += [key_grew]
+            if filters['node_order']:
                 row += [v['object'].get_key_sorted()[1:-1]]
             if filters['nodes_number']:
                 row += ['%d' % len(v['object'].array)]
