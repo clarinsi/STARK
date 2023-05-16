@@ -18,6 +18,7 @@ import configparser
 import copy
 import csv
 import hashlib
+import json
 import math
 import os
 import pickle
@@ -31,6 +32,7 @@ import sys
 import pyconll
 from Tree import Tree
 from generic import get_collocabilities, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
+import urllib.parse
 sys.setrecursionlimit(25000)
 
 def save_zipped_pickle(obj, filename, protocol=-1):
@@ -628,6 +630,13 @@ def main():
 
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
+    with open('codes_mapper.json', 'r') as f:
+        codes_mapper = json.load(f)
+    path = Path(configs['input']).name
+    lang = path.split('_')[0]
+    corpus_name = path.split('_')[1].split('-')[0].lower()
+    corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
+
     with open(configs['output'], "w", newline="", encoding="utf-8") as f:
         # header - use every second space as a split
         writer = csv.writer(f, delimiter='\t')
@@ -640,6 +649,8 @@ def main():
         if filters['node_order']:
             header += ['Order']
         header += ['Grew-match query']
+        if corpus:
+            header += ['Grew-match URL']
         if filters['node_order']:
             header += ['DepSearch query']
         if filters['nodes_number']:
@@ -671,6 +682,9 @@ def main():
             if filters['node_order']:
                 row += [v['object'].order]
             row += [key_grew]
+            if corpus:
+                url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
+                row += [url]
             if filters['node_order']:
                 row += [v['object'].get_key_sorted()[1:-1]]
             if filters['nodes_number']:

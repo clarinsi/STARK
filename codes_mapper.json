@@ -1,0 +1,521 @@
+{
+    "abq": {
+        "atb": "UD_Abaza-ATB"
+    },
+    "af": {
+        "afribooms": "UD_Afrikaans-AfriBooms"
+    },
+    "akk": {
+        "pisandub": "UD_Akkadian-PISANDUB",
+        "riao": "UD_Akkadian-RIAO"
+    },
+    "aqz": {
+        "tudet": "UD_Akuntsu-TuDeT"
+    },
+    "sq": {
+        "tsa": "UD_Albanian-TSA"
+    },
+    "am": {
+        "att": "UD_Amharic-ATT"
+    },
+    "grc": {
+        "proiel": "UD_Ancient_Greek-PROIEL",
+        "perseus": "UD_Ancient_Greek-Perseus"
+    },
+    "hbo": {
+        "ptnk": "UD_Ancient_Hebrew-PTNK"
+    },
+    "apu": {
+        "ufpa": "UD_Apurina-UFPA"
+    },
+    "ar": {
+        "nyuad": "UD_Arabic-NYUAD",
+        "padt": "UD_Arabic-PADT",
+        "pud": "UD_Arabic-PUD"
+    },
+    "hy": {
+        "armtdp": "UD_Armenian-ArmTDP",
+        "bsut": "UD_Armenian-BSUT"
+    },
+    "aii": {
+        "as": "UD_Assyrian-AS"
+    },
+    "bm": {
+        "crb": "UD_Bambara-CRB"
+    },
+    "eu": {
+        "bdt": "UD_Basque-BDT"
+    },
+    "bej": {
+        "nsc": "UD_Beja-NSC"
+    },
+    "be": {
+        "hse": "UD_Belarusian-HSE"
+    },
+    "bn": {
+        "bru": "UD_Bengali-BRU"
+    },
+    "bho": {
+        "bhtb": "UD_Bhojpuri-BHTB"
+    },
+    "br": {
+        "keb": "UD_Breton-KEB"
+    },
+    "bg": {
+        "btb": "UD_Bulgarian-BTB"
+    },
+    "bxr": {
+        "bdt": "UD_Buryat-BDT"
+    },
+    "yue": {
+        "hk": "UD_Cantonese-HK"
+    },
+    "ca": {
+        "ancora": "UD_Catalan-AnCora"
+    },
+    "ceb": {
+        "gja": "UD_Cebuano-GJA"
+    },
+    "zh": {
+        "cfl": "UD_Chinese-CFL",
+        "gsd": "UD_Chinese-GSD",
+        "gsdsimp": "UD_Chinese-GSDSimp",
+        "hk": "UD_Chinese-HK",
+        "patentchar": "UD_Chinese-PatentChar",
+        "pud": "UD_Chinese-PUD"
+    },
+    "ckt": {
+        "hse": "UD_Chukchi-HSE"
+    },
+    "lzh": {
+        "kyoto": "UD_Classical_Chinese-Kyoto"
+    },
+    "cop": {
+        "scriptorium": "UD_Coptic-Scriptorium"
+    },
+    "hr": {
+        "set": "UD_Croatian-SET"
+    },
+    "cs": {
+        "pdt": "UD_Czech-PDT",
+        "fictree": "UD_Czech-FicTree",
+        "pud": "UD_Czech-PUD",
+        "cac": "UD_Czech-CAC",
+        "cltt": "UD_Czech-CLTT"
+    },
+    "da": {
+        "ddt": "UD_Danish-DDT"
+    },
+    "nl": {
+        "alpino": "UD_Dutch-Alpino",
+        "lassysmall": "UD_Dutch-LassySmall"
+    },
+    "en": {
+        "atis": "UD_English-Atis",
+        "gum": "UD_English-GUM",
+        "gumreddit": "UD_English-GUMReddit",
+        "partut": "UD_English-ParTUT",
+        "pud": "UD_English-PUD",
+        "lines": "UD_English-LinES",
+        "pronouns": "UD_English-Pronouns",
+        "ewt": "UD_English-EWT",
+        "esl": "UD_English-ESL"
+    },
+    "myv": {
+        "jr": "UD_Erzya-JR"
+    },
+    "et": {
+        "edt": "UD_Estonian-EDT",
+        "ewt": "UD_Estonian-EWT"
+    },
+    "fo": {
+        "oft": "UD_Faroese-OFT",
+        "farpahc": "UD_Faroese-FarPaHC"
+    },
+    "fi": {
+        "tdt": "UD_Finnish-TDT",
+        "pud": "UD_Finnish-PUD",
+        "ftb": "UD_Finnish-FTB",
+        "ood": "UD_Finnish-OOD"
+    },
+    "fr": {
+        "partut": "UD_French-ParTUT",
+        "gsd": "UD_French-GSD",
+        "sequoia": "UD_French-Sequoia",
+        "fqb": "UD_French-FQB",
+        "rhapsodie": "UD_French-Rhapsodie",
+        "parisstories": "UD_French-ParisStories",
+        "pud": "UD_French-PUD",
+        "ftb": "UD_French-FTB"
+    },
+    "qfn": {
+        "fame": "UD_Frisian_Dutch-Fame"
+    },
+    "gl": {
+        "treegal": "UD_Galician-TreeGal",
+        "ctg": "UD_Galician-CTG"
+    },
+    "aln": {
+        "gps": "UD_Gheg-GPS"
+    },
+    "de": {
+        "hdt": "UD_German-HDT",
+        "gsd": "UD_German-GSD",
+        "pud": "UD_German-PUD",
+        "lit": "UD_German-LIT"
+    },
+    "got": {
+        "proiel": "UD_Gothic-PROIEL"
+    },
+    "el": {
+        "gdt": "UD_Greek-GDT"
+    },
+    "gub": {
+        "tudet": "UD_Guajajara-TuDeT"
+    },
+    "gn": {
+        "oldtudet": "UD_Guarani-OldTuDeT"
+    },
+    "he": {
+        "iahltwiki": "UD_Hebrew-IAHLTwiki",
+        "htb": "UD_Hebrew-HTB"
+    },
+    "hi": {
+        "hdtb": "UD_Hindi-HDTB",
+        "pud": "UD_Hindi-PUD"
+    },
+    "qhe": {
+        "hiencs": "UD_Hindi_English-HIENCS"
+    },
+    "hit": {
+        "hittb": "UD_Hittite-HitTB"
+    },
+    "hu": {
+        "szeged": "UD_Hungarian-Szeged"
+    },
+    "is": {
+        "gc": "UD_Icelandic-GC",
+        "pud": "UD_Icelandic-PUD",
+        "modern": "UD_Icelandic-Modern",
+        "icepahc": "UD_Icelandic-IcePaHC"
+    },
+    "id": {
+        "gsd": "UD_Indonesian-GSD",
+        "pud": "UD_Indonesian-PUD",
+        "csui": "UD_Indonesian-CSUI"
+    },
+    "ga": {
+        "cadhan": "UD_Irish-Cadhan",
+        "idt": "UD_Irish-IDT",
+        "twittirish": "UD_Irish-TwittIrish"
+    },
+    "it": {
+        "isdt": "UD_Italian-ISDT",
+        "vit": "UD_Italian-VIT",
+        "partut": "UD_Italian-ParTUT",
+        "twittiro": "UD_Italian-TWITTIRO",
+        "postwita": "UD_Italian-PoSTWITA",
+        "markit": "UD_Italian-MarkIT",
+        "parlamint": "UD_Italian-ParlaMint",
+        "pud": "UD_Italian-PUD",
+        "valico": "UD_Italian-Valico"
+    },
+    "ja": {
+        "gsd": "UD_Japanese-GSD",
+        "gsdluw": "UD_Japanese-GSDLUW",
+        "pud": "UD_Japanese-PUD",
+        "pudluw": "UD_Japanese-PUDLUW",
+        "modern": "UD_Japanese-Modern",
+        "bccwj": "UD_Japanese-BCCWJ",
+        "bccwjluw": "UD_Japanese-BCCWJLUW"
+    },
+    "jv": {
+        "csui": "UD_Javanese-CSUI"
+    },
+    "urb": {
+        "tudet": "UD_Kaapor-TuDeT"
+    },
+    "arr": {
+        "tudet": "UD_Karo-TuDeT"
+    },
+    "xnr": {
+        "kdtb": "UD_Kangri-KDTB"
+    },
+    "krl": {
+        "kkpp": "UD_Karelian-KKPP"
+    },
+    "kk": {
+        "ktb": "UD_Kazakh-KTB"
+    },
+    "kfm": {
+        "aha": "UD_Khunsari-AHA"
+    },
+    "quc": {
+        "iu": "UD_Kiche-IU"
+    },
+    "koi": {
+        "uh": "UD_Komi_Permyak-UH"
+    },
+    "kpv": {
+        "lattice": "UD_Komi_Zyrian-Lattice",
+        "ikdp": "UD_Komi_Zyrian-IKDP"
+    },
+    "ko": {
+        "kaist": "UD_Korean-Kaist",
+        "gsd": "UD_Korean-GSD",
+        "pud": "UD_Korean-PUD"
+    },
+    "kmr": {
+        "mg": "UD_Kurmanji-MG"
+    },
+    "la": {
+        "proiel": "UD_Latin-PROIEL",
+        "ittb": "UD_Latin-ITTB",
+        "llct": "UD_Latin-LLCT",
+        "perseus": "UD_Latin-Perseus",
+        "udante": "UD_Latin-UDante"
+    },
+    "lv": {
+        "lvtb": "UD_Latvian-LVTB"
+    },
+    "lij": {
+        "glt": "UD_Ligurian-GLT"
+    },
+    "lt": {
+        "alksnis": "UD_Lithuanian-ALKSNIS",
+        "hse": "UD_Lithuanian-HSE"
+    },
+    "olo": {
+        "kkpp": "UD_Livvi-KKPP"
+    },
+    "nds": {
+        "lsdc": "UD_Low_Saxon-LSDC"
+    },
+    "jaa": {
+        "jarawara": "UD_Madi-Jarawara"
+    },
+    "mpu": {
+        "tudet": "UD_Makurap-TuDeT"
+    },
+    "ml": {
+        "ufal": "UD_Malayalam-UFAL"
+    },
+    "mt": {
+        "mudt": "UD_Maltese-MUDT"
+    },
+    "gv": {
+        "cadhan": "UD_Manx-Cadhan"
+    },
+    "mr": {
+        "ufal": "UD_Marathi-UFAL"
+    },
+    "gun": {
+        "thomas": "UD_Mbya_Guarani-Thomas",
+        "dooley": "UD_Mbya_Guarani-Dooley"
+    },
+    "mdf": {
+        "jr": "UD_Moksha-JR"
+    },
+    "myu": {
+        "tudet": "UD_Munduruku-TuDeT"
+    },
+    "nap": {
+        "rb": "UD_Neapolitan-RB"
+    },
+    "pcm": {
+        "nsc": "UD_Naija-NSC"
+    },
+    "nyq": {
+        "aha": "UD_Nayini-AHA"
+    },
+    "yrl": {
+        "complin": "UD_Nheengatu-CompLin"
+    },
+    "sme": {
+        "giella": "UD_North_Sami-Giella"
+    },
+    "no": {
+        "bokmaal": "UD_Norwegian-Bokmaal",
+        "nynorsk": "UD_Norwegian-Nynorsk",
+        "nynorsklia": "UD_Norwegian-NynorskLIA"
+    },
+    "cu": {
+        "proiel": "UD_Old_Church_Slavonic-PROIEL"
+    },
+    "orv": {
+        "birchbark": "UD_Old_East_Slavic-Birchbark",
+        "ruthenian": "UD_Old_East_Slavic-Ruthenian",
+        "rnc": "UD_Old_East_Slavic-RNC",
+        "torot": "UD_Old_East_Slavic-TOROT"
+    },
+    "fro": {
+        "srcmf": "UD_Old_French-SRCMF"
+    },
+    "otk": {
+        "tonqq": "UD_Old_Turkish-Tonqq"
+    },
+    "fa": {
+        "seraji": "UD_Persian-Seraji",
+        "perdt": "UD_Persian-PerDT"
+    },
+    "pl": {
+        "pdb": "UD_Polish-PDB",
+        "lfg": "UD_Polish-LFG",
+        "pud": "UD_Polish-PUD"
+    },
+    "qpm": {
+        "philotis": "UD_Pomak-Philotis"
+    },
+    "pt": {
+        "bosque": "UD_Portuguese-Bosque",
+        "cintil": "UD_Portuguese-CINTIL",
+        "gsd": "UD_Portuguese-GSD",
+        "petrogold": "UD_Portuguese-PetroGold",
+        "pud": "UD_Portuguese-PUD"
+    },
+    "ro": {
+        "art": "UD_Romanian-ArT",
+        "nonstandard": "UD_Romanian-Nonstandard",
+        "simonero": "UD_Romanian-SiMoNERo",
+        "rrt": "UD_Romanian-RRT"
+    },
+    "ru": {
+        "gsd": "UD_Russian-GSD",
+        "taiga": "UD_Russian-Taiga",
+        "pud": "UD_Russian-PUD",
+        "syntagrus": "UD_Russian-SynTagRus"
+    },
+    "sa": {
+        "ufal": "UD_Sanskrit-UFAL",
+        "vedic": "UD_Sanskrit-Vedic"
+    },
+    "gd": {
+        "arcosg": "UD_Scottish_Gaelic-ARCOSG"
+    },
+    "sr": {
+        "set": "UD_Serbian-SET"
+    },
+    "si": {
+        "stb": "UD_Sinhala-STB"
+    },
+    "sms": {
+        "giellagas": "UD_Skolt_Sami-Giellagas"
+    },
+    "sk": {
+        "snk": "UD_Slovak-SNK"
+    },
+    "sl": {
+        "ssj": "UD_Slovenian-SSJ",
+        "sst": "UD_Slovenian-SST"
+    },
+    "soj": {
+        "aha": "UD_Soi-AHA"
+    },
+    "ajp": {
+        "madar": "UD_South_Levantine_Arabic-MADAR"
+    },
+    "es": {
+        "ancora": "UD_Spanish-AnCora",
+        "gsd": "UD_Spanish-GSD",
+        "pud": "UD_Spanish-PUD"
+    },
+    "sv": {
+        "talbanken": "UD_Swedish-Talbanken",
+        "lines": "UD_Swedish-LinES",
+        "pud": "UD_Swedish-PUD"
+    },
+    "swl": {
+        "sslc": "UD_Swedish_Sign_Language-SSLC"
+    },
+    "gsw": {
+        "uzh": "UD_Swiss_German-UZH"
+    },
+    "tl": {
+        "trg": "UD_Tagalog-TRG",
+        "ugnayan": "UD_Tagalog-Ugnayan"
+    },
+    "tt": {
+        "nmctt": "UD_Tatar-NMCTT"
+    },
+    "eme": {
+        "tudet": "UD_Teko-TuDeT"
+    },
+    "ta": {
+        "ttb": "UD_Tamil-TTB",
+        "mwtt": "UD_Tamil-MWTT"
+    },
+    "te": {
+        "mtg": "UD_Telugu-MTG"
+    },
+    "th": {
+        "pud": "UD_Thai-PUD"
+    },
+    "tpn": {
+        "tudet": "UD_Tupinamba-TuDeT"
+    },
+    "tr": {
+        "atis": "UD_Turkish-Atis",
+        "boun": "UD_Turkish-BOUN",
+        "framenet": "UD_Turkish-FrameNet",
+        "gb": "UD_Turkish-GB",
+        "imst": "UD_Turkish-IMST",
+        "kenet": "UD_Turkish-Kenet",
+        "pud": "UD_Turkish-PUD",
+        "penn": "UD_Turkish-Penn",
+        "tourism": "UD_Turkish-Tourism"
+    },
+    "qtd": {
+        "sagt": "UD_Turkish_German-SAGT"
+    },
+    "uk": {
+        "iu": "UD_Ukrainian-IU"
+    },
+    "xum": {
+        "ikuvina": "UD_Umbrian-IKUVINA"
+    },
+    "hsb": {
+        "ufal": "UD_Upper_Sorbian-UFAL"
+    },
+    "ur": {
+        "udtb": "UD_Urdu-UDTB"
+    },
+    "ug": {
+        "udt": "UD_Uyghur-UDT"
+    },
+    "vi": {
+        "vtb": "UD_Vietnamese-VTB"
+    },
+    "wbp": {
+        "ufal": "UD_Warlpiri-UFAL"
+    },
+    "cy": {
+        "ccg": "UD_Welsh-CCG"
+    },
+    "hyw": {
+        "armtdp": "UD_Western_Armenian-ArmTDP"
+    },
+    "nhi": {
+        "itml": "UD_Western_Sierra_Puebla_Nahuatl-ITML"
+    },
+    "wo": {
+        "wtb": "UD_Wolof-WTB"
+    },
+    "xav": {
+        "xdt": "UD_Xavante-XDT"
+    },
+    "sjo": {
+        "xdt": "UD_Xibe-XDT"
+    },
+    "sah": {
+        "yktdt": "UD_Yakut-YKTDT"
+    },
+    "yo": {
+        "ytb": "UD_Yoruba-YTB"
+    },
+    "ess": {
+        "sli": "UD_Yupik-SLI"
+    },
+    "say": {
+        "autogramm": "UD_Zaar-Autogramm"
+    }
+}
