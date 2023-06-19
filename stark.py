@@ -644,7 +644,7 @@ def main():
             len_words = tree_size_range[-1]
         else:
             len_words = int(len(configs['query'].split(" "))/2 + 1)
-        header = ["Tree"] + ["Node " + string.ascii_uppercase[i] for i in range(len_words) for node_type in node_types] + ['Absolute frequency']
+        header = ["Tree"] + ["Node " + string.ascii_uppercase[i] + "-" + node_type for i in range(len_words) for node_type in node_types] + ['Absolute frequency']
         header += ['Relative frequency']
         if filters['node_order']:
             header += ['Order']
