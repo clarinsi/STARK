@@ -36,6 +36,7 @@ import urllib.parse
 sys.setrecursionlimit(25000)
 
 def save_zipped_pickle(obj, filename, protocol=-1):
+    Path(filename).parent.mkdir(parents=True, exist_ok=True)
     with gzip.open(filename, 'wb') as f:
         pickle.dump(obj, f, protocol)
 
@@ -499,7 +500,7 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     OR = (abs_freq_A/(count_A-abs_freq_A)) / (abs_freq_B/(count_B-abs_freq_B)) if abs_freq_B > 0 else 'NaN'
     diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 'NaN'
 
-    return [abs_freq_B, abs_freq_B/count_B, LL, BIC, log_ratio, OR, diff]
+    return [abs_freq_B, abs_freq_B * 1000000.0/count_B, LL, BIC, log_ratio, OR, diff]
 
 
 def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type):
@@ -574,6 +575,12 @@ def read_configs(config, args):
 
     if config.has_option('settings', 'query') or args.query:
         configs['query'] = (config.get('settings', 'query') if not args.query else args.query)
+
+    if args.compare:
+        configs['compare'] = args.compare
+    else:
+        configs['compare'] = config.get('settings', 'compare') if config.has_option('settings', 'compare') else None
+
     configs['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold',
                                                      fallback=0) if not args.frequency_threshold else args.frequency_threshold
     configs['lines_threshold'] = config.getint('settings', 'max_lines',
@@ -585,8 +592,8 @@ def read_configs(config, args):
     configs['nodes_number'] = True
     configs['print_root'] = True
 
-    if args.compare is not None:
-        configs['other_input_path'] = args.compare
+    if configs['compare'] is not None:
+        configs['other_input_path'] = configs['compare']
     return configs
 
 
@@ -625,7 +632,7 @@ def main():
 
     result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process(configs['input_path'], configs['internal_saves'], configs)
 
-    if args.compare is not None:
+    if configs['compare'] is not None:
         other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process(configs['other_input_path'], configs['internal_saves'], configs)
 
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
@@ -634,7 +641,7 @@ def main():
         codes_mapper = json.load(f)
     path = Path(configs['input']).name
     lang = path.split('_')[0]
-    corpus_name = path.split('_')[1].split('-')[0].lower()
+    corpus_name = path.split('_')[1].split('-')[0].lower() if len(path.split('_')) > 1 else 'unknown'
     corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
 
     with open(configs['output'], "w", newline="", encoding="utf-8") as f:
@@ -659,8 +666,8 @@ def main():
             header += ['Root node']
         if filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
-        if args.compare:
-            header += ['Other absolute frequency', 'Other relative frequency', 'LL', 'BIC', 'Log ratio', 'OR', '%DIFF']
+        if configs['compare']:
+            header += ['Absolute frequency in compared treebank', 'Relative frequency in compared treebank', 'LL', 'BIC', 'Log ratio', 'OR', '%DIFF']
         writer.writerow(header)
 
         if filters['lines_threshold']:
@@ -693,7 +700,7 @@ def main():
                 row += [v['object'].node.name]
             if filters['association_measures']:
                 row += get_collocabilities(v, unigrams_dict, corpus_size)
-            if args.compare:
+            if configs['compare']:
                 other_abs_freq = other_result_dict[k]['number'] if k in other_result_dict else 0
                 row += get_keyness(v['number'], other_abs_freq, corpus_size, other_corpus_size)
             writer.writerow(row)
