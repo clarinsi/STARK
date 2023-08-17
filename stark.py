@@ -414,7 +414,7 @@ def read_filters(configs, feats_detailed_list):
     return filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types
 
 
-def process(input_path, internal_saves, configs):
+def process_trees(input_path, internal_saves, configs):
     if os.path.isdir(input_path):
 
         checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
@@ -597,11 +597,90 @@ def read_configs(config, args):
     return configs
 
 
-def main():
+def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types,
+          other_result_dict=None, other_corpus_size=None):
+    sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
+
+    with open('codes_mapper.json', 'r') as f:
+        codes_mapper = json.load(f)
+    path = Path(configs['input']).name
+    lang = path.split('_')[0]
+    corpus_name = path.split('_')[1].split('-')[0].lower() if len(path.split('_')) > 1 else 'unknown'
+    corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
+
+    with open(configs['output'], "w", newline="", encoding="utf-8") as f:
+        # header - use every second space as a split
+        writer = csv.writer(f, delimiter='\t')
+        if tree_size_range[-1]:
+            len_words = tree_size_range[-1]
+        else:
+            len_words = int(len(configs['query'].split(" ")) / 2 + 1)
+        header = ["Tree"] + ["Node " + string.ascii_uppercase[i] + "-" + node_type for i in range(len_words) for
+                             node_type in node_types] + ['Absolute frequency']
+        header += ['Relative frequency']
+        if filters['node_order']:
+            header += ['Order']
+        header += ['Grew-match query']
+        if corpus:
+            header += ['Grew-match URL']
+        if filters['node_order']:
+            header += ['DepSearch query']
+        if filters['nodes_number']:
+            header += ['Number of nodes']
+        if filters['print_root']:
+            header += ['Root node']
+        if filters['association_measures']:
+            header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
+        if configs['compare']:
+            header += ['Absolute frequency in compared treebank', 'Relative frequency in compared treebank', 'LL',
+                       'BIC', 'Log ratio', 'OR', '%DIFF']
+        writer.writerow(header)
+
+        if filters['lines_threshold']:
+            sorted_list = sorted_list[:filters['lines_threshold']]
+
+        # body
+        for k, v in sorted_list:
+            v['object'].get_array()
+            relative_frequency = v['number'] * 1000000.0 / corpus_size
+            if filters['frequency_threshold'] and filters['frequency_threshold'] > v['number']:
+                break
+            words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range(
+                (tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
+            key = v['object'].get_key()[1:-1] if v['object'].get_key()[0] == '(' and v['object'].get_key()[
+                -1] == ')' else v['object'].get_key()
+            grew_nodes, grew_links = v['object'].get_grew()
+            location_mapper = v['object'].get_location_mapper()
+            key_grew = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper,
+                                filters['dependency_type'])
+            row = [key] + words_only + [str(v['number'])]
+            row += ['%.4f' % relative_frequency]
+            if filters['node_order']:
+                row += [v['object'].order]
+            row += [key_grew]
+            if corpus:
+                url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
+                row += [url]
+            if filters['node_order']:
+                row += [v['object'].get_key_sorted()[1:-1]]
+            if filters['nodes_number']:
+                row += ['%d' % len(v['object'].array)]
+            if filters['print_root']:
+                row += [v['object'].node.name]
+            if filters['association_measures']:
+                row += get_collocabilities(v, unigrams_dict, corpus_size)
+            if configs['compare']:
+                other_abs_freq = other_result_dict[k]['number'] if k in other_result_dict else 0
+                row += get_keyness(v['number'], other_abs_freq, corpus_size, other_corpus_size)
+            writer.writerow(row)
+
+
+def parse_args():
     parser = argparse.ArgumentParser()
 
     ## Required parameters
-    parser.add_argument("--config_file", default=str(Path.joinpath(Path(__file__).parent, "config.ini")), type=str, help="The input config file.")
+    parser.add_argument("--config_file", default=str(Path.joinpath(Path(__file__).parent, "config.ini")), type=str,
+                        help="The input config file.")
     parser.add_argument("--input", default=None, type=str, help="The input file/folder.")
     parser.add_argument("--output", default=None, type=str, help="The output file.")
     parser.add_argument("--internal_saves", default=None, type=str, help="Location for internal_saves.")
@@ -625,87 +704,34 @@ def main():
     parser.add_argument("--compare", default=None, type=str, help="Corpus with which we want to compare statistics.")
     args = parser.parse_args()
 
+    return args
+
+
+def run(configs):
+    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process_trees(configs['input_path'],
+                                                                                                  configs[
+                                                                                                      'internal_saves'],
+                                                                                                  configs)
+
+    other_result_dict, other_corpus_size = None, None
+    if configs['compare'] is not None:
+        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process_trees(
+            configs['other_input_path'], configs['internal_saves'], configs)
+
+    write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types, other_result_dict,
+          other_corpus_size)
+
+
+def main():
+    args = parse_args()
+
     config = configparser.ConfigParser()
     config.read(args.config_file)
 
     configs = read_configs(config, args)
 
-    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process(configs['input_path'], configs['internal_saves'], configs)
+    run(configs)
 
-    if configs['compare'] is not None:
-        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process(configs['other_input_path'], configs['internal_saves'], configs)
-
-    sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
-
-    with open('codes_mapper.json', 'r') as f:
-        codes_mapper = json.load(f)
-    path = Path(configs['input']).name
-    lang = path.split('_')[0]
-    corpus_name = path.split('_')[1].split('-')[0].lower() if len(path.split('_')) > 1 else 'unknown'
-    corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
-
-    with open(configs['output'], "w", newline="", encoding="utf-8") as f:
-        # header - use every second space as a split
-        writer = csv.writer(f, delimiter='\t')
-        if tree_size_range[-1]:
-            len_words = tree_size_range[-1]
-        else:
-            len_words = int(len(configs['query'].split(" "))/2 + 1)
-        header = ["Tree"] + ["Node " + string.ascii_uppercase[i] + "-" + node_type for i in range(len_words) for node_type in node_types] + ['Absolute frequency']
-        header += ['Relative frequency']
-        if filters['node_order']:
-            header += ['Order']
-        header += ['Grew-match query']
-        if corpus:
-            header += ['Grew-match URL']
-        if filters['node_order']:
-            header += ['DepSearch query']
-        if filters['nodes_number']:
-            header += ['Number of nodes']
-        if filters['print_root']:
-            header += ['Root node']
-        if filters['association_measures']:
-            header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
-        if configs['compare']:
-            header += ['Absolute frequency in compared treebank', 'Relative frequency in compared treebank', 'LL', 'BIC', 'Log ratio', 'OR', '%DIFF']
-        writer.writerow(header)
-
-        if filters['lines_threshold']:
-            sorted_list = sorted_list[:filters['lines_threshold']]
-
-        # body
-        for k, v in sorted_list:
-            v['object'].get_array()
-            relative_frequency = v['number'] * 1000000.0 / corpus_size
-            if filters['frequency_threshold'] and filters['frequency_threshold'] > v['number']:
-                break
-            words_only = [word_att for word in v['object'].array for word_att in word] + ['' for i in range((tree_size_range[-1] - len(v['object'].array)) * len(v['object'].array[0]))]
-            key = v['object'].get_key()[1:-1] if v['object'].get_key()[0] == '(' and v['object'].get_key()[-1] == ')' else v['object'].get_key()
-            grew_nodes, grew_links = v['object'].get_grew()
-            location_mapper = v['object'].get_location_mapper()
-            key_grew = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper, filters['dependency_type'])
-            row = [key] + words_only + [str(v['number'])]
-            row += ['%.4f' % relative_frequency]
-            if filters['node_order']:
-                row += [v['object'].order]
-            row += [key_grew]
-            if corpus:
-                url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
-                row += [url]
-            if filters['node_order']:
-                row += [v['object'].get_key_sorted()[1:-1]]
-            if filters['nodes_number']:
-                row += ['%d' % len(v['object'].array)]
-            if filters['print_root']:
-                row += [v['object'].node.name]
-            if filters['association_measures']:
-                row += get_collocabilities(v, unigrams_dict, corpus_size)
-            if configs['compare']:
-                other_abs_freq = other_result_dict[k]['number'] if k in other_result_dict else 0
-                row += get_keyness(v['number'], other_abs_freq, corpus_size, other_corpus_size)
-            writer.writerow(row)
-
-    return "Done"
 
 
 if __name__ == "__main__":
