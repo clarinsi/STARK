@@ -31,6 +31,9 @@ import gzip
 import sys
 import pyconll
 
+from os import path
+here = path.abspath(path.dirname(__file__))
+
 from stark.generic import get_collocabilities, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
 import urllib.parse
 
@@ -646,7 +649,7 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
           other_result_dict=None, other_corpus_size=None):
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
-    with open('stark/codes_mapper.json', 'r') as f:
+    with open(os.path.join(here, 'codes_mapper.json'), 'r') as f:
         codes_mapper = json.load(f)
     path = Path(configs['input']).name
     lang = path.split('_')[0]
