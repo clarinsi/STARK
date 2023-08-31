@@ -16,6 +16,8 @@ setup(name='stark',
   author_email='info@clarin.si',
   license='Apache 2.0',
   packages=find_packages(),
+  package_data={'': ['stark/codes_mapper.json']},
+  include_package_data=True,
   install_requires=[
     'pyconll>=3.1.0',
   ],
