@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from generic import generate_key, generate_name
+from stark.generic import generate_key, generate_name
 
 
 class ResultNode(object):

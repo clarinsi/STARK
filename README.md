@@ -37,12 +37,12 @@ cd <PATH TO PROJECT DIRECTORY>
 
 And later executing script with:
 ```bash
-python3 dependency-parsetree.py --config_file=<PATH TO .ini file>
+python3 stark.py --config_file=<PATH TO .ini file>
 ```
 
 Example:
 ```bash
-python3 dependency-parsetree.py --config_file=config.ini
+python3 stark.py --config_file=config.ini
 ```
 
 ## Parameter settings

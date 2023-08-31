@@ -10,3 +10,4 @@ gui/designer/
 build
 dist
 *.spec
+*.sage.py
