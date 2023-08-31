@@ -9,5 +9,6 @@ configs/
 gui/designer/
 build
 dist
+stark.egg-info
 *.spec
 *.sage.py
