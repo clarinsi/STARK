@@ -3,7 +3,10 @@ venv/
 internal_saves/
 __pycache__/
 results/
-data/
+data
 config2.ini
 configs/
 gui/designer/
+build
+dist
+*.spec
