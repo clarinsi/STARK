@@ -127,9 +127,9 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
 def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
     hash_object = hashlib.sha1(input_path.encode('utf-8'))
     hex_dig = hash_object.hexdigest()
-    trees_read_outputfile = os.path.join(internal_saves, hex_dig)
+    trees_read_outputfile = os.path.join(internal_saves, hex_dig) if internal_saves is not None else None
     print(Path(input_path).name)
-    if not os.path.exists(trees_read_outputfile) or not save:
+    if trees_read_outputfile is None or not os.path.exists(trees_read_outputfile) or not save:
 
         train = pyconll.load_from_file(input_path)
 
@@ -178,7 +178,7 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
                 continue
             all_trees.append(root)
 
-        if save:
+        if trees_read_outputfile is not None and save:
             save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), trees_read_outputfile, protocol=2)
     else:
         print('Reading trees:')
@@ -401,7 +401,7 @@ def read_filters(configs, feats_detailed_list):
 
     filters = {}
     filters['internal_saves'] = configs['internal_saves']
-    filters['input'] = configs['input']
+    filters['input'] = configs['input_path']
     filters['node_order'] = configs['node_order']
     # filters['caching'] = config.getboolean('settings', 'caching')
     filters['dependency_type'] = configs['dependency_type']
@@ -431,16 +431,16 @@ def read_filters(configs, feats_detailed_list):
 def process_trees(input_path, internal_saves, configs):
     if os.path.isdir(input_path):
 
-        checkpoint_path = Path(internal_saves, 'checkpoint.pkl')
+        checkpoint_path = Path(internal_saves, 'checkpoint.pkl') if internal_saves is not None else None
         continuation_processing = configs['continuation_processing']
 
-        if not checkpoint_path.exists() or not continuation_processing:
+        if checkpoint_path is None or not checkpoint_path.exists() or not continuation_processing:
             already_processed = set()
             result_dict = {}
             unigrams_dict = {}
             corpus_size = 0
             feats_detailed_list = {}
-            if checkpoint_path.exists():
+            if checkpoint_path is not None and checkpoint_path.exists():
                 os.remove(checkpoint_path)
         else:
             already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list = load_zipped_pickle(
@@ -554,7 +554,6 @@ def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_t
 def create_default_configs():
     configs = {}
     # mandatory parameters
-    configs['input'] = 'data/sl_ssj-ud_v2.4.conllu'
     configs['input_path'] = 'data/sl_ssj-ud_v2.4.conllu'
     configs['output'] = 'results/out_official.tsv'
     configs['tree_size'] = '2-4'
@@ -591,7 +590,6 @@ def create_default_configs():
 def read_configs(config, args):
     configs = {}
     # mandatory parameters
-    configs['input'] = config.get('settings', 'input') if not args.input else args.input
     configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
     configs['output'] = config.get('settings', 'output') if not args.output else args.output
     configs['tree_size'] = config.get('settings', 'size', fallback='0') if not args.size else args.size
@@ -651,7 +649,7 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
 
     with open(os.path.join(here, 'codes_mapper.json'), 'r') as f:
         codes_mapper = json.load(f)
-    path = Path(configs['input']).name
+    path = Path(configs['input_path']).name
     lang = path.split('_')[0]
     corpus_name = path.split('_')[1].split('-')[0].lower() if len(path.split('_')) > 1 else 'unknown'
     corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
