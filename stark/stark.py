@@ -598,11 +598,14 @@ def read_configs(config, args):
     # mandatory parameters with default value
     configs['internal_saves'] = (config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves) if config.has_option('settings', 'internal_saves') else './internal_saves'
     configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if not args.cpu_cores else args.cpu_cores) if config.has_option('settings', 'cpu_cores') else max(cpu_count() - 1, 1)
-    configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete else args.complete) if config.has_option('settings', 'complete') else True
-    configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled else args.labeled) if config.has_option('settings', 'labeled') else True
-    configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed) if config.has_option('settings', 'fixed') else True
+    configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete else args.complete == 'yes') if config.has_option('settings', 'complete') else True
+    configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled else args.labeled == 'yes') if config.has_option('settings', 'labeled') else True
+    configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed == 'yes') if config.has_option('settings', 'fixed') else True
     configs['association_measures'] = (config.getboolean('settings',
-                                                        'association_measures') if not args.association_measures else args.association_measures) if config.has_option('settings', 'association_measures') else False
+                                                        'association_measures') if not args.association_measures else args.association_measures == 'yes') if config.has_option('settings', 'association_measures') else False
+
+    configs['grew_match'] = (config.getboolean('settings', 'grew_match') if not args.grew_match else args.grew_match == 'yes') if config.has_option('settings', 'grew_match') else True
+    configs['depsearch'] = (config.getboolean('settings', 'depsearch') if not args.depsearch else args.depsearch == 'yes') if config.has_option('settings', 'depsearch') else True
 
     # optional parameters
     if config.has_option('settings', 'labels'):
@@ -666,10 +669,11 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
         header += ['Relative frequency']
         if filters['node_order']:
             header += ['Order']
-        header += ['Grew-match query']
-        if corpus:
+        if configs['grew_match']:
+            header += ['Grew-match query']
+        if corpus and configs['grew_match']:
             header += ['Grew-match URL']
-        if filters['node_order']:
+        if filters['node_order'] and configs['depsearch']:
             header += ['DepSearch query']
         if filters['nodes_number']:
             header += ['Number of nodes']
@@ -703,11 +707,12 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
             row += ['%.4f' % relative_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
-            row += [key_grew]
-            if corpus:
+            if configs['grew_match']:
+                row += [key_grew]
+            if corpus and configs['grew_match']:
                 url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
                 row += [url]
-            if filters['node_order']:
+            if filters['node_order'] and configs['depsearch']:
                 row += [v['object'].get_key_sorted()[1:-1]]
             if filters['nodes_number']:
                 row += ['%d' % len(v['object'].array)]

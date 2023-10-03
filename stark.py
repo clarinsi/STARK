@@ -29,6 +29,10 @@ def parse_args():
 
     parser.add_argument("--query", default=None, type=str, help="Query.")
 
+    # output settings
+    parser.add_argument("--grew_match", default=None, type=str, help="Output setting for printing query and url.")
+    parser.add_argument("--depsearch", default=None, type=str, help="Output setting for printing depsearch query.")
+
     parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
     parser.add_argument("--association_measures", default=None, type=bool, help="Association measures.")
