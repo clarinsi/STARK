@@ -604,8 +604,8 @@ def read_configs(config, args):
     configs['association_measures'] = (config.getboolean('settings',
                                                         'association_measures') if not args.association_measures else args.association_measures == 'yes') if config.has_option('settings', 'association_measures') else False
 
-    configs['grew_match'] = (config.getboolean('settings', 'grew_match') if not args.grew_match else args.grew_match == 'yes') if config.has_option('settings', 'grew_match') else True
-    configs['depsearch'] = (config.getboolean('settings', 'depsearch') if not args.depsearch else args.depsearch == 'yes') if config.has_option('settings', 'depsearch') else True
+    configs['grew_match'] = (config.getboolean('settings', 'grew_match') if not args.grew_match else args.grew_match == 'yes') if config.has_option('settings', 'grew_match') else False
+    configs['depsearch'] = (config.getboolean('settings', 'depsearch') if not args.depsearch else args.depsearch == 'yes') if config.has_option('settings', 'depsearch') else False
 
     # optional parameters
     if config.has_option('settings', 'labels'):
