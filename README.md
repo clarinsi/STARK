@@ -1,23 +1,17 @@
 # STARK: a tool for dependency-tree extraction and analysis
 STARK is a highly-customizable open-source tool that extracts various types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of node association and their keyness in comparison to another treebank. It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
 
-## Windows installation and execution
-### Installation
+## Installation and execution
+### Windows users
 Install Python 3 on your system (https://www.python.org/downloads/).
 
 Download pip installation file (https://bootstrap.pypa.io/get-pip.py) and install it by double clicking on it.
 
 Install other libraries necessary for running by going into program directory and double clicking on `install.bat`. If windows defender is preventing execution of this file you might have to unblock that file by `right-clicking on .bat file -> Properties -> General -> Security -> Select Unblock -> Select Apply`.
 
-### Execution
-Set up search parameters in `.ini` file.
-
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
-Optionally modify run.bat by pointing it to another .ini file. This can be done by editing run.bat file (changing parameter --config_file).
 
-
-## Linux installation and execution
-### Installation
+### Linux users
 Install Python 3 on your system (https://www.python.org/downloads/). 
 
 Install pip and other libraries required by program, by running the following commands in terminal:
@@ -27,9 +21,6 @@ cd <PATH TO PROJECT DIRECTORY>
 pip3 install -r requirements.txt
 ```
 
-### Execution
-Set up search parameters in `.ini` file.
-
 Execute extraction by first moving to project directory with:
 ```bash
 cd <PATH TO PROJECT DIRECTORY>
@@ -37,12 +28,7 @@ cd <PATH TO PROJECT DIRECTORY>
 
 And later executing script with:
 ```bash
-python3 stark.py --config_file=<PATH TO .ini file>
-```
-
-Example:
-```bash
-python3 stark.py --config_file=config.ini
+python3 stark.py 
 ```
 
 ## Parameter settings
