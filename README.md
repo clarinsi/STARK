@@ -27,7 +27,20 @@ Execute extraction by running `run.bat` (in case it is blocked repeat the same p
 ### Default settings
 By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the settings in the `config.ini` file, i.e. all noun-headed trees occurring with part-of-speech tags as nodes. For more information on how to change the input file, the type of trees to be extracted and all other customizible parameters, see the [Settings](#Settings) section below.
 
-## Parameter settings
+## Output
+
+STARK produces a tab-separated (.tsv) file with a frequency list of all the trees matching the input criteria, as illustrated by the first few lines of the default output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root. For adding other types of information to the output, such as additional statistics and in-text examples, see Settings below.
+
+|Tree | Node A | Node B | Node C | Abs. Freq. | Rel. Freq. | Order | Nodes | Root Node|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| DET <det NOUN | DET | NOUN |  | 1345 | 10773.0138 | AB | 2 | NOUN| 
+| ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.2528 | ABC | 3 | NOUN| 
+| ADP <case NOUN | ADP | NOUN |  | 1090 | 8730.5465 | AB | 2 | NOUN| 
+| PRON <nmod:poss NOUN | PRON | NOUN |  | 487 | 3900.7121 | AB | 2 | NOUN| 
+| CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.6056 | AB | 2 | NOUN| 
+
+
+## Settings
 The type of trees to be extracted can be defined through several parameters in the `config.ini` configuration file.
 
 -	`input`: location of the input file or directory (parsed corpus in .conllu)
