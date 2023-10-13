@@ -17,6 +17,8 @@ Execute extraction by first moving to project directory and executing the script
 python3 stark.py 
 ```
 
+By default, the program extracts trees from the `sample.conllu` file as defined by the settings in the `config.ini` file, i.e. all noun-headed trees occurring with part-of-speech tags as nodes. For more information on how to change the input file, the type of trees to be extracted and all other customizible parameters, see the [Settings](#Settings) section below.
+
 ### Windows users
 Install Python 3 on your system (https://www.python.org/downloads/).
 
@@ -25,7 +27,6 @@ Download pip installation file (https://bootstrap.pypa.io/get-pip.py) and instal
 Install other libraries necessary for running by going into program directory and double clicking on `install.bat`. If windows defender is preventing execution of this file you might have to unblock that file by `right-clicking on .bat file -> Properties -> General -> Security -> Select Unblock -> Select Apply`.
 
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
-
 
 
 ## Parameter settings
