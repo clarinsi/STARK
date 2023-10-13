@@ -1,5 +1,5 @@
-# STARK: a tool for statistical analysis of dependency-parsed corpora
-STARK is a python-based command-line tool for extraction of dependency trees from parsed corpora based on various user-defined criteria. It is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other corpus in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
+# STARK: a tool for dependency-tree extraction and analysis
+STARK is a highly-customizible open-source tool that extracts various types of dependency trees from parsed corpora and quantifies them with respect to frequency, association strength and keyness. It is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
 
 ## Windows installation and execution
 ### Installation
