@@ -35,11 +35,11 @@ STARK produces a tab-separated (.tsv) file with a frequency list of all the tree
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | Nodes | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DET <det NOUN | DET | NOUN |  | 1345 | 10773.0138 | AB | 2 | NOUN| 
-| ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.2528 | ABC | 3 | NOUN| 
-| ADP <case NOUN | ADP | NOUN |  | 1090 | 8730.5465 | AB | 2 | NOUN| 
-| PRON <nmod:poss NOUN | PRON | NOUN |  | 487 | 3900.7121 | AB | 2 | NOUN| 
-| CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.6056 | AB | 2 | NOUN| 
+| DET <det NOUN | DET | NOUN |  | 1345 | 10773.01 | AB | 2 | NOUN| 
+| ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.25 | ABC | 3 | NOUN| 
+| ADP <case NOUN | ADP | NOUN |  | 1090 | 8730.54 | AB | 2 | NOUN| 
+| PRON <nmod:poss NOUN | PRON | NOUN |  | 487 | 3900.71 | AB | 2 | NOUN| 
+| CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.61 | AB | 2 | NOUN| 
 
 
 ## Settings
