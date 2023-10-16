@@ -1,5 +1,7 @@
 # STARK: a tool for dependency-tree extraction and analysis
-STARK is a highly-customizable open-source tool that extracts various types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of node association and their keyness in comparison to another treebank. It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
+STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree, and the tree's keyness in comparison to another treebank.
+
+It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
 
 ## Installation and execution
 Install Python 3 on your system (https://www.python.org/downloads/). 
@@ -31,7 +33,7 @@ By default, running the program as described above extracts trees from the `samp
 
 STARK produces a tab-separated (.tsv) file with a frequency list of all the trees matching the input criteria, as illustrated by the first few lines of the default output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root. For adding other types of information to the output, such as additional statistics and in-text examples, see Settings below.
 
-|Tree | Node A | Node B | Node C | Abs. Freq. | Rel. Freq. | Order | Nodes | Root Node|
+|Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | Nodes | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | DET <det NOUN | DET | NOUN |  | 1345 | 10773.0138 | AB | 2 | NOUN| 
 | ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.2528 | ABC | 3 | NOUN| 
