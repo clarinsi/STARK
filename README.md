@@ -27,7 +27,7 @@ Install other libraries necessary for running by going into program directory an
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
 
 ### Default settings
-By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the settings in the `config.ini` file, i.e. all noun-headed trees occurring with part-of-speech tags as nodes. For more information on how to change the input file, the type of trees to be extracted and all other customizible parameters, see the [Settings](Settings) section below.
+By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the settings in the `config.ini` file, i.e. all noun-headed trees occurring with part-of-speech tags as nodes. For more information on how to change the input file, the type of trees to be extracted and all other customizable parameters, see the [Settings](Settings) section below.
 
 ## Output
 
