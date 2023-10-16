@@ -63,7 +63,7 @@ Statistics:
 
 Additional visualization:
 - `grew_match`: describes the trees structure using the [grew](https://grew.fr/doc/request/) query language and provides links to in-text examples in [Grew-match](https://universal.grew.fr/)
-- `dep_search`: describes the tree structure using the [DepSearch](https://orodja.cjvt.si/drevesnik/help/en/) query language
+- `depsearch`: describes the tree structure using the [DepSearch](https://orodja.cjvt.si/drevesnik/help/en/) query language
 
 Output size:
 -	`frequency_threshold`: minimum frequency of the tree in the treebank
