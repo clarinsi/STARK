@@ -62,7 +62,7 @@ Statistics:
 - `compare`: calculates the keyness of a tree in comparison to another treebank by LL, BIC, log ratio, odds ratio and %DIFF scores (reference treebank in .conllu)
 
 Additional visualization:
-- `grew_match`: describes the trees structure using the [grew](https://grew.fr/doc/request/) query language and links to UD treebank examples at https://universal.grew.fr/
+- `grew_match`: describes the trees structure using the [grew](https://grew.fr/doc/request/) query language and provides links to in-text examples in [Grew-match](https://universal.grew.fr/)
 - `dep_search`: describes the tree structure using the [DepSearch](https://orodja.cjvt.si/drevesnik/help/en/) query language
 
 Output size:
