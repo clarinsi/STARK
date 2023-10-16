@@ -26,14 +26,23 @@ Install other libraries necessary for running by going into program directory an
 
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
 
-### Default settings
-By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the settings in the `config.ini` file, i.e. all noun-headed trees occurring with part-of-speech tags as nodes. For more information on how to change the input file, the type of trees to be extracted and all other customizable parameters, see the [Settings](Settings) section below.
+## Changing the settings
+By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the settings in the `config.ini` file, i.e. all noun-headed trees occurring with part-of-speech tags as nodes. [Settings](#list-of-settings) can be changed by either either modifying the default configuration file named `config.ini` or by creating your own configuration file, which is passed as an argument when running the script. 
+
+```bash
+python3 stark.py --config_file my_specific_settings.ini
+```
+Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default settings specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my_specific_treebank.conllu`.
+
+```bash
+python3 stark.py --input my_specific_treebank.conllu --size 3 --root upos=VERB
+```
 
 ## Output
 
 STARK produces a tab-separated (.tsv) file with a frequency-ranked list of all the trees matching the input criteria, as illustrated by the first few lines of the default output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root.
 
-For adding other types of information to the output, such as additional statistics and links to visualised examples, see [Settings](Settings) below.
+For adding other types of information to the output, such as additional statistics and links to visualised examples, see [Settings](#list-of-settings) below.
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | Nodes | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -44,7 +53,7 @@ For adding other types of information to the output, such as additional statisti
 | CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.61 | AB | 2 | NOUN| 
 
 
-## Settings
+## List of settings
 The types of trees to be extracted and the associated output information can be defined through the parameters listed below and described in [more detail here](settings.md).
 
 General settings:
@@ -75,22 +84,9 @@ Output size:
 -	`frequency_threshold`: minimum frequency of the tree in the treebank
 -	`max_lines`: maximum number of trees in the output file
 
-### Changing the settings
-Settings can be changed by either either modifying the default configuration file named `config.ini` or by creating your own configuration file, which is passed as an argument when running the script. (Or specified in the `run.bat` file if you are a Windows user).
-
-```bash
-python3 stark.py --config_file my_specific_settings.ini
-```
-Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default settings specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my_specific_treebank.conllu`.
-
-```bash
-python3 stark.py --input my_specific_treebank.conllu --size 3 --root upos=VERB
-```
-
-
 
 ## Acknowledgment
-This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development _grant.
+This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
 
 
 <p align="center">
