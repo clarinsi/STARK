@@ -69,7 +69,7 @@ Statistics:
 
 Additional visualization:
 - `grew_match`: describes the trees structure using the [grew](https://grew.fr/doc/request/) query language and links to UD treebank examples at https://universal.grew.fr/
-- `dep_search`: describes the tree structure using the [DepSearch(https://orodja.cjvt.si/drevesnik/help/en/) query language
+- `dep_search`: describes the tree structure using the [DepSearch](https://orodja.cjvt.si/drevesnik/help/en/) query language
 
 Output size:
 -	`frequency_threshold`: minimum frequency of the tree in the treebank
@@ -79,10 +79,11 @@ Output size:
 
 
 ## Acknowledgment
-This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja and with financial support from [CLARIN.SI](https://www.clarin.si/).
+This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si).
 
-<a href="http://www.clarin.si/info/about/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CLARIN.png" alt="drawing" height="150"/></a>
-<a href="https://www.cjvt.si/en/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CJVT.png" alt="drawing" height="150"/></a>
-<a href="https://www.fri.uni-lj.si/en/about"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/FRI.png" alt="drawing" height="150"/></a>
-<a href="https://www.ff.uni-lj.si/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/FF.png" alt="drawing" height="150"/></a>
-<a href="https://www.arrs.si/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/ARRS.png" alt="drawing" height="150"/></a>
+<p align="center">
+<a href="http://www.clarin.si/info/about/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CLARIN.png" alt="drawing" height="90"/></a>
+<a href="https://www.arrs.si/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/ARRS.png" alt="drawing" height="110"/></a>
+<a href="https://www.cjvt.si/en/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CJVT.png" alt="drawing" height="70"/></a>
+</p>
+
