@@ -1,5 +1,5 @@
 # STARK: a tool for dependency-tree extraction and analysis
-STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree, and the tree's keyness in comparison to another treebank.
+STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree or its keyness in comparison to another treebank.
 
 It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
 
