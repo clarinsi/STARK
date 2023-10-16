@@ -90,7 +90,8 @@ python3 stark.py --input my_specific_treebank.conllu --size 3 --root upos=VERB
 
 
 ## Acknowledgment
-This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si).
+This program was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development _grant.
+
 
 <p align="center">
 <a href="http://www.clarin.si/info/about/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CLARIN.png" alt="drawing" height="90"/></a>
