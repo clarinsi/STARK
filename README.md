@@ -31,7 +31,9 @@ By default, running the program as described above extracts trees from the `samp
 
 ## Output
 
-STARK produces a tab-separated (.tsv) file with a frequency-ranked list of all the trees matching the input criteria, as illustrated by the first few lines of the default output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root. For adding other types of information to the output, such as additional statistics and links to visualised examples, see [Settings](Settings) below.
+STARK produces a tab-separated (.tsv) file with a frequency-ranked list of all the trees matching the input criteria, as illustrated by the first few lines of the default output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root.
+
+For adding other types of information to the output, such as additional statistics and links to visualised examples, see [Settings](Settings) below.
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | Nodes | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
