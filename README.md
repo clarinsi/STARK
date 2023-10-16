@@ -76,6 +76,17 @@ Output size:
 -	`max_lines`: maximum number of trees in the output file
 
 ### Changing the settings
+Settings can be changed by either either modifying the default configuration file named `config.ini` or by creating your own configuration file, which is passed as an argument when running the script. (Or specified in the `run.bat` file if you are a Windows user).
+
+```bash
+python3 stark.py --config_file my_specific_settings.ini
+```
+Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default settings specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my_specific_treebank.conllu`.
+
+```bash
+python3 stark.py --input my_specific_treebank.conllu --size 3 --root upos=VERB
+```
+
 
 
 ## Acknowledgment
