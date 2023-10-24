@@ -43,7 +43,7 @@ The optional `--labels` parameter defines a list of dependency relations that ar
 
 Similarly, the optional `--root` parameter allows the users to define specific constraints on the root node (i.e. the word that all other words in the tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, `upos=NOUN` would only return trees with nouns as heads (nominal phrases) and discard trees spanning from other part-of-speech categories.
 
-Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the DepSearch query language. For example, the query `NOUN >amod (_ >advmod _)` would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. 
+Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the DepSearch query language. For example, the query `upos=NOUN >amod (_ >advmod _)` would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=NOUN_, _form=give_)
 
 ## Statistics
 By default, STARK produces a list of trees with the absolute frequency (raw count) and the relative frequency (normalized count per million tokens) of the trees in the input treebank. In addition, two optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena.
