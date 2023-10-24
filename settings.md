@@ -33,7 +33,8 @@ The obligatory `labeled` parameter specifies whether trees should be differentia
 ## Word order
 The obligatory `--fixed` parameter allows the users to specify whether they consider the order of the nodes in the tree to be a distinctive feature of the tres (value `yes`) or not (value `no`). For example, if our input treebank consisted of the sentences ‘_John gave the apple to Mary_’ and ‘_John the apple gave to Mary_’ (an odd example in English but typical in languages with free word order), using the `yes` option would extract the '_gave > apple_' and '_apple < gave_' as two distinct trees, while the `no` option would consider them as two instances of the same tree ('_gave > apple_'). 
 
-Note that with the `fixed=no` option, the structure of the tree in the first column is always described in the order-agnostic form with heads always preceding dependent, i.e. the arrows always pointing to the right (e.g. '_gave > apple_').
+Note that each of the two options is associated with specific formatting of the output. When choosing the `fixed=yes` option, the tree description in the first column reflects the word order of the nodes on the surface (e.g. _(seemingly < easy) < example_'), which is also explicitely given in an additional column (e.g. _ABC_ for nodes A, B and C). On the other hand, when choosing the `fixed=no` option, the description of the tree in the first column is order-agnostic, with heads always preceding the dependents, i.e. all the arrows always pointing to the right (e.g. '_example > (easy > seemingly)_'.
+
 
 ## Restriction to specific structures
 In contrast to the obligatory settings above specifying the criteria for defining the _types_ of trees to be extracted, STARK also allows the users to restrict the extraction procedure to _specific_ trees through the three options presented below.
