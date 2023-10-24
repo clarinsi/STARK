@@ -50,7 +50,7 @@ By default, STARK produces a list of trees with the absolute frequency (raw coun
 
 The optional `--association_measures` parameter (value `yes`) produces information on the strength of statistical association between the nodes of the tree by computing several common association scores (MI, MI3 , Dice, logDice, t-score, simple-LL). This is a particularly useful feature for treebank-driven collocation extraction and lexical analysis.
 
-In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing its frequency to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the reference treebank as input (e.g. `second_treebank.conllu`) to compute several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF).
+In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing its frequency to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the reference treebank as input (e.g. `second_treebank.conllu`) to compute the frequencies in both treebanks and compare them using several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF).
 
 ## Limiting the size of the output
 To limit the number of trees in the output file, the optional `--frequency_threshold` parameter can be used to limit the extraction to trees occurring above a given threshold by specifying the minimal absolute frequency of the tree in the treebank (e.g. `5` to to limit the search to trees occurring 5 or more times).
