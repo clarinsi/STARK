@@ -30,9 +30,10 @@ The obligatory `--complete` parameter defines whether STARK, for a given tree si
 ## (Un)labeled relations
 The obligatory `labeled` parameter specifies whether trees should be differentiated based on the syntactic relations (dependency labels) between the nodes of the tree (value `yes`, or not (value `no`). For example, if the first option differentiates between trees '_NOUN <nsubj VERB_' and '_NOUN <obj VERB_', the second option considers them as the instances of the same, '_NOUN < VERB_' tree.
 
-
 ## Word order
-The obligatory `--fixed` parameter allows the users to specify whether they consider the order of the nodes in the tree to be a distinctive feature of the tres (value `yes`) or not (value `no`). For example, if our input treebank consisted of the sentences ‘_John gave the apple to Mary_’ and ‘_John the apple gave to Mary_’ (an odd example in English but typical in languages with free word order), using the `yes` option would extract the '_gave > apple_' and '_apple < gave_' as two distinct trees, while the `no` option would consider them as two instances of the same tree. 
+The obligatory `--fixed` parameter allows the users to specify whether they consider the order of the nodes in the tree to be a distinctive feature of the tres (value `yes`) or not (value `no`). For example, if our input treebank consisted of the sentences ‘_John gave the apple to Mary_’ and ‘_John the apple gave to Mary_’ (an odd example in English but typical in languages with free word order), using the `yes` option would extract the '_gave > apple_' and '_apple < gave_' as two distinct trees, while the `no` option would consider them as two instances of the same tree ('_gave > apple_'). 
+
+Note that with the `fixed=no` option, the structure of the tree in the first column is always described in the order-agnostic form with heads always preceding dependent, i.e. the arrows always pointing to the right (e.g. '_gave > apple_').
 
 ## Restriction to specific structures
 In contrast to the obligatory settings above specifying the criteria for defining the _types_ of trees to be extracted, STARK also allows the users to restrict the extraction procedure to _specific_ trees through the three options presented below.
@@ -56,7 +57,7 @@ To limit the number of trees in the output file, the optional `--frequency_thres
 Similarly, the optional `--max_lines` parameter defines the maximum number of trees (lines) in the output frequency-ranked list. For example, value `100` returns only the 100 most frequent trees matching the input criteria.
 
 ## Visualising the trees online
-In addition to the default description of the trees featured in the first column of the output, which was inspired by DepSearch query language and is relatively easy to read (e.g. _ADJ <amod NOUN_), STARK can also produce two alternative ways of describing a tree that also enable the users to visualisize specific instances of the trees in related treebank-browsing services.
+In addition to the default description of the trees featured in the first column of the output, which is based on the DepSearch query language and is relatively easy to read (e.g. _ADJ <amod NOUN_), STARK can also produce two alternative ways of describing a tree that also enable the users to visualisize specific instances of the trees in related treebank-browsing services.
 
 First, the optional `--depsearch` parameter (value `yes`) produces trees in accordance with the DepSearch query language (e.g. _NOUN >amod ADJ_) used by the SETS online service, which, unfortunately, is no longer maintained.
 
