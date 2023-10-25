@@ -511,7 +511,7 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     OR = (abs_freq_A/(count_A-abs_freq_A)) / (abs_freq_B/(count_B-abs_freq_B)) if abs_freq_B > 0 else 'NaN'
     diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 'NaN'
 
-    return [abs_freq_B, abs_freq_B * 1000000.0/count_B, LL, BIC, log_ratio, OR, diff]
+    return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0/count_B), LL, BIC, log_ratio, OR, diff]
 
 
 def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type):
@@ -604,9 +604,6 @@ def read_configs(config, args):
     configs['association_measures'] = (config.getboolean('settings',
                                                         'association_measures') if not args.association_measures else args.association_measures == 'yes') if config.has_option('settings', 'association_measures') else False
 
-    configs['grew_match'] = (config.getboolean('settings', 'grew_match') if not args.grew_match else args.grew_match == 'yes') if config.has_option('settings', 'grew_match') else False
-    configs['depsearch'] = (config.getboolean('settings', 'depsearch') if not args.depsearch else args.depsearch == 'yes') if config.has_option('settings', 'depsearch') else False
-
     # optional parameters
     if config.has_option('settings', 'labels'):
         label_whitelist = config.get('settings',
@@ -637,6 +634,11 @@ def read_configs(config, args):
 
     configs['continuation_processing'] = config.getboolean('settings', 'continuation_processing',
                                                 fallback=False) if not args.continuation_processing else args.input
+
+    configs['grew_match'] = config.getboolean('settings',
+                                              'grew_match', fallback=False) if not args.grew_match else args.grew_match == 'yes'
+    configs['depsearch'] = config.getboolean('settings',
+                                             'depsearch', fallback=False) if not args.depsearch else args.depsearch == 'yes'
 
     configs['nodes_number'] = True
     configs['print_root'] = True
@@ -704,7 +706,7 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
             key_grew = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper,
                                 filters['dependency_type'])
             row = [key] + words_only + [str(v['number'])]
-            row += ['%.4f' % relative_frequency]
+            row += ['%.1f' % relative_frequency]
             if filters['node_order']:
                 row += [v['object'].order]
             if configs['grew_match']:
