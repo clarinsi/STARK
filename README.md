@@ -93,7 +93,7 @@ The description of the trees given in the first column is based on the DepSearch
   -   A > (B > C) means that A governs B that, in turn, governs C, e.g. _read > (newspapers > interesting)_ for 'read interesting newspapers'
   
 ## Acknowledgment
-This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
+This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank-Driven Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
 
 
 <p align="center">
