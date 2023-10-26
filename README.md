@@ -27,7 +27,7 @@ Install other libraries necessary for running by going into program directory an
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
 
 ## Changing the settings
-By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
+By default, running the program as described above extracts trees from the sample `en_ewt-ud-dev.conllu` file as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
 
 ```bash
 python3 stark.py --config_file my-settings.ini
@@ -68,17 +68,17 @@ For a detailed explanation of these and other settings, see the [settings docume
 
 ## Output
 
-STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the sample output below.
+STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](sample\output.tsv) below.
 
 The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the root. For adding other types of information to the output, such as other useful statistics and links to visualised examples, see the [list of settings](#list-of-settings) above.
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DET <det NOUN | DET | NOUN |  | 1345 | 10773.01 | AB | 2 | NOUN| 
-| ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.25 | ABC | 3 | NOUN| 
-| ADP <case NOUN | ADP | NOUN |  | 1090 | 8730.54 | AB | 2 | NOUN| 
-| PRON <nmod:poss NOUN | PRON | NOUN |  | 487 | 3900.71 | AB | 2 | NOUN| 
-| CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.61 | AB | 2 | NOUN|
+| DET <det NOUN | DET | NOUN |  |  |  | 320 | 12724.2 | AB | 2 | NOUN
+| ADP <case DET <det NOUN | ADP | DET | NOUN |  |  | 190 | 7555.0 | ABC | 3 | NOUN
+| ADP <case NOUN | ADP | NOUN |  |  |  | 165 | 6560.9 | AB | 2 | NOUN
+| ADJ <amod NOUN | ADJ | NOUN |  |  |  | 126 | 5010.1 | AB | 2 | NOUN
+| PRON <nmod:poss NOUN | PRON | NOUN |  |  |  | 78 | 3101.5 | AB | 2 | NOUN
 
 ### Description of tree structure
 The description of the trees given in the first column is based on the DepSearch query language, which is simple to learn and easy to read.
