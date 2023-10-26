@@ -68,7 +68,7 @@ For a detailed explanation of these and other settings, see the [settings docume
 
 ## Output
 
-STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](sample/output.tsv) below.
+STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](/sample/output.tsv) below.
 
 The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the root. For adding other types of information to the output, such as other useful statistics and links to visualised examples, see the [list of settings](#list-of-settings) above.
 
