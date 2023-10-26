@@ -64,7 +64,7 @@ To limit the number of trees in the output file, the optional `--frequency_thres
 Similarly, the optional `--max_lines` parameter defines the maximum number of trees (lines) in the output frequency-ranked list. For example, value _100_ returns only the top-100 most frequent trees matching the input criteria.
 
 ## Visualising the trees online
-In addition to the default description of the trees featured in the first column of the output, which is based on the DepSearch query language and is relatively easy to read (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree that also enable the users to visualisize specific instances of the trees in related treebank-browsing services.
+In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the DepSearch query language and is relatively easy to read (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree that also enable the users to visualisize specific instances of the trees in related treebank-browsing services.
 
 ### Grew-match
 First, the optional `--grew_match` parameter (value _yes_) produces trees in accordance with the [Grew](https://grew.fr/doc/request/) query language (e.g. 'pattern {A [upos="NOUN"]; B [upos="ADJ"]; A -[amod]-> B }') used by [Grew-match](https://universal.grew.fr/) online service which supports browsing the latest collections of UD treebanks available in more than 240 languages. 
