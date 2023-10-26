@@ -30,12 +30,12 @@ Execute extraction by running `run.bat` (in case it is blocked repeat the same p
 By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
 
 ```bash
-python3 stark.py --config_file my_specific_settings.ini
+python3 stark.py --config_file my-settings.ini
 ```
-Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my_treebank.conllu`, while all other options remain the same as in the configuration file.
+Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my-treebank.conllu`, while all other options remain the same as in the configuration file.
 
 ```bash
-python3 stark.py --input my_treebank.conllu --size 3 --root upos=VERB
+python3 stark.py --input my-treebank.conllu --size 3 --root upos=VERB
 ```
 
 ## List of settings
@@ -78,7 +78,12 @@ For adding other types of information to the output, such as additional statisti
 | ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.25 | ABC | 3 | NOUN| 
 | ADP <case NOUN | ADP | NOUN |  | 1090 | 8730.54 | AB | 2 | NOUN| 
 | PRON <nmod:poss NOUN | PRON | NOUN |  | 487 | 3900.71 | AB | 2 | NOUN| 
-| CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.61 | AB | 2 | NOUN| 
+| CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.61 | AB | 2 | NOUN|
+
+<p align="center">
+<sub>Add your tiny text</sub>
+</p>
+
 
 
 
