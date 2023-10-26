@@ -66,12 +66,14 @@ Similarly, the optional `--max_lines` parameter defines the maximum number of tr
 ## Visualising the trees online
 In addition to the default description of the trees featured in the first column of the output, which is based on the DepSearch query language and is relatively easy to read (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree that also enable the users to visualisize specific instances of the trees in related treebank-browsing services.
 
-### DepSearch-based services
-First, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the DepSearch query language (e.g. 'NOUN >amod ADJ') used by the SETS online service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist (e.g. https://orodja.cjvt.si/drevesnik/).
-
 ### Grew-match
-Second, the optional `--grew_match` parameter (value _yes_) produces trees in accordance with the [Grew](https://grew.fr/doc/request/) query language (e.g. 'pattern {A [upos="NOUN"]; B [upos="ADJ"]; A -[amod]-> B }') used by [Grew-match](https://universal.grew.fr/) online service which supports browsing the latest collections of UD treebanks available in more than 240 languages. 
+First, the optional `--grew_match` parameter (value _yes_) produces trees in accordance with the [Grew](https://grew.fr/doc/request/) query language (e.g. 'pattern {A [upos="NOUN"]; B [upos="ADJ"]; A -[amod]-> B }') used by [Grew-match](https://universal.grew.fr/) online service which supports browsing the latest collections of UD treebanks available in more than 240 languages. 
 
 If the name of the input treebank begins with the standard declaration of the language code and the treebank name (e.g. _en_gum-ud..._, _fr_rhapsodie-ud..._, _sl_ssj-ud..._), the _grew_match=yes_ option will also produce direct URL links to the instances of the tree in the latest version of the given input treebank (e.g. http://universal.grew.fr/?corpus=UD_English-GUM&request=pattern%20%7BB%20%5Bupos%3DNOUN%5D%3B%20A%20%5Bupos%3DADJ%5D%3B%20B%20-%5Bamod%5D-%3E%20A%3B%20B%20%3E%3E%20A%7D for the 'ADJ <amod NOUN' case at hand).
+
+### DepSearch-based services
+Second, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ') used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist (e.g. https://orodja.cjvt.si/drevesnik/).
+
+
 
 
