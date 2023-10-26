@@ -27,7 +27,7 @@ Install other libraries necessary for running by going into program directory an
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
 
 ## Changing the settings
-By default, running the program as described above extracts trees from the sample `en_ewt-ud-dev.conllu` file as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
+By default, running the program as described above extracts trees from the sample `en_ewt-ud-dev.conllu` file (taken from the [English EWT](https://universaldependencies.org/treebanks/en_ewt/index.html)) as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
 
 ```bash
 python3 stark.py --config_file my-settings.ini
