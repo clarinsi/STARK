@@ -74,11 +74,11 @@ The description of the tree is given in the first column, while subsequent colum
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DET <det NOUN | DET | NOUN |  |  |  | 320 | 12724.2 | AB | 2 | NOUN
-| ADP <case DET <det NOUN | ADP | DET | NOUN |  |  | 190 | 7555.0 | ABC | 3 | NOUN
-| ADP <case NOUN | ADP | NOUN |  |  |  | 165 | 6560.9 | AB | 2 | NOUN
-| ADJ <amod NOUN | ADJ | NOUN |  |  |  | 126 | 5010.1 | AB | 2 | NOUN
-| PRON <nmod:poss NOUN | PRON | NOUN |  |  |  | 78 | 3101.5 | AB | 2 | NOUN
+| DET <det NOUN | DET | NOUN |  |  320 | 12724.2 | AB | 2 | NOUN
+| ADP <case DET <det NOUN | ADP | DET | NOUN | 190 | 7555.0 | ABC | 3 | NOUN
+| ADP <case NOUN | ADP | NOUN |  |165 | 6560.9 | AB | 2 | NOUN
+| ADJ <amod NOUN | ADJ | NOUN |  | 126 | 5010.1 | AB | 2 | NOUN
+| PRON <nmod:poss NOUN | PRON | NOUN |  | 78 | 3101.5 | AB | 2 | NOUN
 
 ### Description of tree structure
 The description of the trees given in the first column is based on the DepSearch query language, which is simple to learn and easy to read.
