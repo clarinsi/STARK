@@ -39,43 +39,40 @@ python3 stark.py --input my_treebank.conllu --size 3 --root upos=VERB
 ```
 
 ## List of settings
-The types of trees to be extracted and the associated output information can be defined through the parameters listed below and **described in [more detail here](settings.md)**.
+The types of trees to be extracted and the associated output information can be defined through the parameters listed below and **[described in more detail here](settings.md)**.
 
 General settings:
--	`input`: location of the input file or directory (parsed corpus in .conllu)
--	`output`: location of the output file (frequency list in .tsv)
+-	`input`: location of the input file or directory (parsed corpus in _.conllu_)
+-	`output`: location of the output file (list of trees in _.tsv_)
 
 Tree specification:
 -	`size`: number of nodes in the tree (integer or range)
-- `node_type`: node characteristic under investigation (*form*, *lemma*, *upos* or *xpos*, *feats* or *deprel*)
--	`complete`: extraction of full subtrees only (i.e. heads with all dependents) rather than all possible subtrees (values *yes* or *no*)
+- `node_type`: node characteristic under investigation (*form*, *lemma*, *upos*, *xpos*, *feats* or *deprel*)
+-	`complete`: extraction of full trees only (i.e. heads with all their dependents) rather than all possible subtrees (values *yes* or *no*)
 -	`labeled`: extraction of labeled or unlabeled trees (values *yes* or *no*)
 -	`fixed`: differentiating trees by surface word order (values *yes* or *no*)
 
 Tree restrictions:
--	`root`: predefined characteristics of the root node (e.g. upos=NOUN)
+-	`root`: predefined characteristics of the root node (e.g. _upos=NOUN_)
 -	`labels`: predefined list of dependency labels allowed in the extracted tree (values *yes* or *no*)
--	`query`: predefined tree structure based on the [DepSearch](https://orodja.cjvt.si/drevesnik/help/en/) query language(e.g. _ >obl NOUN).
+-	`query`: predefined tree structure based on the DepSearch query language (e.g. _VERB >obl NOUN_).
 
 Statistics: 
 -	`association_measures`: calculates the strength of association between nodes by MI, MI3, t-test, logDice, Dice and simple-LL scores (values *yes* or *no*)
-- `compare`: calculates the keyness of a tree in comparison to another treebank by LL, BIC, log ratio, odds ratio and %DIFF scores (reference treebank in .conllu)
+- `compare`: calculates the keyness of a tree in comparison to another treebank by LL, BIC, log ratio, odds ratio and %DIFF scores (reference treebank in _.conllu_)
 
 Additional visualization:
-- `grew_match`: describes the trees structure using the [grew](https://grew.fr/doc/request/) query language and provides links to in-text examples in [Grew-match](https://universal.grew.fr/)
-- `depsearch`: describes the tree structure using the [DepSearch](https://orodja.cjvt.si/drevesnik/help/en/) query language
+- `grew_match`: describes the trees structure using the grew query language and provides links to examples in [Grew-match](https://universal.grew.fr/)
 
-Output size:
--	`frequency_threshold`: minimum frequency of the tree in the treebank
--	`max_lines`: maximum number of trees in the output file
+For a detailed explanation of these and other settings, see the [settings documentation here](settings.md).
 
 ## Output
 
-STARK produces a tab-separated (.tsv) file with a frequency-ranked list of all the trees matching the input criteria, as illustrated by the first few lines of the default output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root.
+STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the sample output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root.
 
 For adding other types of information to the output, such as additional statistics and links to visualised examples, see [Settings](#list-of-settings) above.
 
-|Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | Nodes | Root |
+|Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | DET <det NOUN | DET | NOUN |  | 1345 | 10773.01 | AB | 2 | NOUN| 
 | ADP <case DET <det NOUN | ADP | DET | NOUN | 1163 | 9315.25 | ABC | 3 | NOUN| 
