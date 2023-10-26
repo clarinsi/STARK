@@ -1,5 +1,5 @@
 # STARK: a tool for dependency-tree extraction and analysis
-STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree or its keyness in comparison to another treebank.
+STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree, or its significance in comparison to another treebank.
 
 It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
 
@@ -7,14 +7,14 @@ It is primarily aimed at processing treebanks based on the [Universal Dependenci
 Install Python 3 on your system (https://www.python.org/downloads/). 
 
 ### Linux users
-Install pip and other libraries required by program, by running the following commands in terminal:
+Install pip and other libraries required by the program, by running the following commands in the terminal:
 ```bash
 sudo apt install python3-pip
 cd <PATH TO PROJECT DIRECTORY>
 pip3 install -r requirements.txt
 ```
 
-Execute extraction by first moving to project directory and executing the script with:
+Execute extraction by first moving to the project directory and executing the script with:
 ```bash
 python3 stark.py 
 ```
@@ -27,19 +27,19 @@ Install other libraries necessary for running by going into program directory an
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
 
 ## Changing the settings
-By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the script. 
+By default, running the program as described above extracts trees from the `sample.conllu` file as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
 
 ```bash
 python3 stark.py --config_file my_specific_settings.ini
 ```
-Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default settings specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my_specific_treebank.conllu`.
+Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my_treebank.conllu`, while all other options remain the same as in the configuration file.
 
 ```bash
-python3 stark.py --input my_specific_treebank.conllu --size 3 --root upos=VERB
+python3 stark.py --input my_treebank.conllu --size 3 --root upos=VERB
 ```
 
 ## List of settings
-The types of trees to be extracted and the associated output information can be defined through the parameters listed below and described in [more detail here](settings.md).
+The types of trees to be extracted and the associated output information can be defined through the parameters listed below and **described in [more detail here](settings.md)**.
 
 General settings:
 -	`input`: location of the input file or directory (parsed corpus in .conllu)
