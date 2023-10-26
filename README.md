@@ -70,7 +70,7 @@ For a detailed explanation of these and other settings, see the [settings docume
 
 STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the sample output below. The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, and the root.
 
-For adding other types of information to the output, such as additional statistics and links to visualised examples, see [Settings](#list-of-settings) above.
+For adding other types of information to the output, such as additional statistics and links to visualised examples, see the [list of settings](#list-of-settings) above.
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Root |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -79,13 +79,6 @@ For adding other types of information to the output, such as additional statisti
 | ADP <case NOUN | ADP | NOUN |  | 1090 | 8730.54 | AB | 2 | NOUN| 
 | PRON <nmod:poss NOUN | PRON | NOUN |  | 487 | 3900.71 | AB | 2 | NOUN| 
 | CCONJ <cc NOUN | CCONJ | NOUN |  | 476 | 3812.61 | AB | 2 | NOUN|
-
-<p align="center">
-<sub>Add your tiny text</sub>
-</p>
-
-
-
 
 ## Acknowledgment
 This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
