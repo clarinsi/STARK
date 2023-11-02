@@ -511,10 +511,12 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     OR = (abs_freq_A/(count_A-abs_freq_A)) / (abs_freq_B/(count_B-abs_freq_B)) if abs_freq_B > 0 else 'NaN'
     diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 'NaN'
 
-    return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0/count_B), LL, BIC, log_ratio, OR, diff]
+    if abs_freq_B <= 0:
+        return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), LL, BIC, log_ratio, OR, diff]
+    return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0/count_B), '%.2f' % LL, '%.2f' % BIC, '%.2f' % log_ratio, '%.2f' % OR, '%.2f' % diff]
 
 
-def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type):
+def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type, complete):
 
     assert nodes
     node_result = {}
@@ -548,6 +550,17 @@ def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_t
     grew += '; '.join([f'{link[0]} -[{link_node[1].deprel}]-> {link[1]}' for link, link_node in zip(link_result, links)]) if dependency_type else \
         '; '.join([f'{link[0]} -> {link[1]}' for link in link_result])
     grew += '; ' + '; '.join([f'{link[0]} {link[2]} {link[1]}' for link in order_result])
+
+    # TODO
+    # if smthing:
+    #    return 'without {A -> X}'
+    if complete:
+        without_statements = []
+        for i, key in enumerate(node_result.keys()):
+            # without_statements.append('without {' + f'{key} -> X{i}' + '}')
+            without_statements.append(f'without {{{key} -> X{i}}}')
+
+        return grew + '} ' + ' '.join(without_statements)
     return grew + '}'
 
 
@@ -588,6 +601,7 @@ def create_default_configs():
 
 
 def read_configs(config, args):
+    a = vars(args)
     configs = {}
     # mandatory parameters
     configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
@@ -676,7 +690,7 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
         if corpus and configs['grew_match']:
             header += ['Grew-match URL']
         if filters['node_order'] and configs['depsearch']:
-            header += ['DepSearch query']
+            header += ['Depsearch tree query']
         if filters['nodes_number']:
             header += ['Number of nodes']
         if filters['print_root']:
@@ -704,7 +718,8 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
             grew_nodes, grew_links = v['object'].get_grew()
             location_mapper = v['object'].get_location_mapper()
             key_grew = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper,
-                                filters['dependency_type'])
+                                filters['dependency_type'], filters['complete_tree_type'])
+            filters['complete_tree_type'] = False
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]
             if filters['node_order']:

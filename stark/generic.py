@@ -38,7 +38,7 @@ def generate_key(node, create_output_strings, print_lemma=True):
     array = [[create_output_string(node) for create_output_string in create_output_strings]]
     if create_output_string_lemma in create_output_strings and print_lemma:
         key_array = [[create_output_string(
-            node) if create_output_string != create_output_string_lemma else 'L=' + create_output_string(node) for
+            node) if create_output_string != create_output_string_lemma else create_output_string(node) for
                       create_output_string in create_output_strings]]
     else:
         key_array = array
@@ -53,7 +53,7 @@ def generate_name(node, create_output_strings, print_lemma=True):
     array = [create_output_string(node) for create_output_string in create_output_strings]
     if create_output_string_lemma in create_output_strings and print_lemma:
         name_array = [create_output_string(
-            node) if create_output_string != create_output_string_lemma else 'L=' + create_output_string(node) for
+            node) if create_output_string != create_output_string_lemma else create_output_string(node) for
                       create_output_string in create_output_strings]
     else:
         name_array = array
@@ -94,4 +94,4 @@ def get_collocabilities(ngram, unigrams_dict, corpus_size):
     logdice = 14 + math.log(dice, 2)
     tscore = (O - E) / math.sqrt(O)
     simplell = 2 * (O * math.log10(O / E) - (O - E))
-    return ['%.4f' % mi, '%.4f' % mi3, '%.4f' % dice, '%.4f' % logdice, '%.4f' % tscore, '%.4f' % simplell]
+    return ['%.2f' % mi, '%.2f' % mi3, '%.2f' % dice, '%.2f' % logdice, '%.2f' % tscore, '%.2f' % simplell]
