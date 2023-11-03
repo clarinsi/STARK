@@ -375,6 +375,8 @@ def read_filters(configs, feats_detailed_list):
             for i in range(tree_size_range[0], tree_size_range[1] + 1):
                 query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
+        if tree_size_range[0] == 0 and 'query' not in configs:
+            raise ValueError('You should specify either tree_size or query!')
         query = configs['query']
         query_tree = [decode_query('(' + query + ')', '', feats_detailed_list)]
 
@@ -505,11 +507,11 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     E1 = count_A * (abs_freq_A + abs_freq_B) / (count_A + count_B)
     E2 = count_B * (abs_freq_A + abs_freq_B) / (count_A + count_B)
 
-    LL = 2 * ((abs_freq_A * math.log(abs_freq_A / E1)) + (abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 'NaN'
-    BIC = LL - math.log(count_A + count_B) if abs_freq_B > 0 else 'NaN'
-    log_ratio = math.log(((abs_freq_A/count_A)/(abs_freq_B/count_B)), 2) if abs_freq_B > 0 else 'NaN'
-    OR = (abs_freq_A/(count_A-abs_freq_A)) / (abs_freq_B/(count_B-abs_freq_B)) if abs_freq_B > 0 else 'NaN'
-    diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 'NaN'
+    LL = 2 * ((abs_freq_A * math.log(abs_freq_A / E1)) + (abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 0
+    BIC = LL - math.log(count_A + count_B) if abs_freq_B > 0 else 0
+    log_ratio = math.log(((abs_freq_A/count_A)/(abs_freq_B/count_B)), 2) if abs_freq_B > 0 else 0
+    OR = (abs_freq_A/(count_A-abs_freq_A)) / (abs_freq_B/(count_B-abs_freq_B)) if abs_freq_B > 0 else 0
+    diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 0
 
     if abs_freq_B <= 0:
         return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), LL, BIC, log_ratio, OR, diff]
@@ -517,7 +519,6 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
 
 
 def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type, complete):
-
     assert nodes
     node_result = {}
     for node in nodes:
@@ -601,7 +602,6 @@ def create_default_configs():
 
 
 def read_configs(config, args):
-    a = vars(args)
     configs = {}
     # mandatory parameters
     configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
@@ -610,13 +610,13 @@ def read_configs(config, args):
     configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
 
     # mandatory parameters with default value
-    configs['internal_saves'] = (config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves) if config.has_option('settings', 'internal_saves') else './internal_saves'
+    configs['internal_saves'] = (config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves) if config.has_option('settings', 'internal_saves') else None
     configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if not args.cpu_cores else args.cpu_cores) if config.has_option('settings', 'cpu_cores') else max(cpu_count() - 1, 1)
-    configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete else args.complete == 'yes') if config.has_option('settings', 'complete') else True
-    configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled else args.labeled == 'yes') if config.has_option('settings', 'labeled') else True
-    configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed == 'yes') if config.has_option('settings', 'fixed') else True
+    configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete else args.complete == 'yes')
+    configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled else args.labeled == 'yes')
+    configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed == 'yes')
     configs['association_measures'] = (config.getboolean('settings',
-                                                        'association_measures') if not args.association_measures else args.association_measures == 'yes') if config.has_option('settings', 'association_measures') else False
+                                                        'association_measures') if not args.association_measures else args.association_measures == 'yes')
 
     # optional parameters
     if config.has_option('settings', 'labels'):
@@ -634,6 +634,7 @@ def read_configs(config, args):
         configs['root_whitelist'] = []
 
     if config.has_option('settings', 'query') or args.query:
+        # configs['tree_size'] = '0'
         configs['query'] = (config.get('settings', 'query') if not args.query else args.query)
 
     if args.compare:
@@ -641,18 +642,16 @@ def read_configs(config, args):
     else:
         configs['compare'] = config.get('settings', 'compare') if config.has_option('settings', 'compare') else None
 
-    configs['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold',
-                                                     fallback=0) if not args.frequency_threshold else args.frequency_threshold
-    configs['lines_threshold'] = config.getint('settings', 'max_lines',
-                                               fallback=0) if not args.max_lines else args.max_lines
+    configs['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold') if not args.frequency_threshold else args.frequency_threshold
+    configs['lines_threshold'] = config.getint('settings', 'max_lines') if not args.max_lines else args.max_lines
 
     configs['continuation_processing'] = config.getboolean('settings', 'continuation_processing',
                                                 fallback=False) if not args.continuation_processing else args.input
 
     configs['grew_match'] = config.getboolean('settings',
-                                              'grew_match', fallback=False) if not args.grew_match else args.grew_match == 'yes'
+                                              'grew_match') if not args.grew_match else args.grew_match == 'yes'
     configs['depsearch'] = config.getboolean('settings',
-                                             'depsearch', fallback=False) if not args.depsearch else args.depsearch == 'yes'
+                                             'depsearch') if not args.depsearch else args.depsearch == 'yes'
 
     configs['nodes_number'] = True
     configs['print_root'] = True
