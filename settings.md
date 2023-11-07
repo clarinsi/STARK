@@ -43,7 +43,7 @@ In contrast to the obligatory settings above specifying the criteria for definin
 ### Restrict search to specific labels
 The optional `--labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list, separated by the '|' operator. For example, specifying _=obj|iobj|nsubj_ would only extract trees featuring these three relations and ignore all others.
 
-### Restrict search to specific nodes
+### Restrict search to specific root nodes
 Similarly, the optional `--root` parameter allows the users to define specific constraints on the root node (i.e. the word that all other words in the tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from other part-of-speech categories.
 
 ### Restrict search to specific trees
