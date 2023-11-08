@@ -504,6 +504,8 @@ def process_trees(input_path, internal_saves, configs):
 
 
 def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
+    if abs_freq_B <= 0:
+        abs_freq_B = 0.000000000000000001
     E1 = count_A * (abs_freq_A + abs_freq_B) / (count_A + count_B)
     E2 = count_B * (abs_freq_A + abs_freq_B) / (count_A + count_B)
 
@@ -514,8 +516,8 @@ def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
     diff = (((abs_freq_A/count_A)*1000000 - (abs_freq_B/count_B)*1000000)*100) / ((abs_freq_B/count_B)*1000000) if abs_freq_B > 0 else 0
 
     if abs_freq_B <= 0:
-        return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), LL, BIC, log_ratio, OR, diff]
-    return [abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0/count_B), '%.2f' % LL, '%.2f' % BIC, '%.2f' % log_ratio, '%.2f' % OR, '%.2f' % diff]
+        return ['%.0f' %abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), LL, BIC, log_ratio, OR, diff]
+    return ['%.0f' %abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0/count_B), '%.2f' % LL, '%.2f' % BIC, '%.2f' % log_ratio, '%.2f' % OR, '%.2f' % diff]
 
 
 def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type, complete):
