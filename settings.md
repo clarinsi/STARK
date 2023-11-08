@@ -43,7 +43,7 @@ In contrast to the obligatory settings above specifying the criteria for definin
 ### Restrict search to specific labels
 The optional `--labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list, separated by the '|' operator. For example, specifying _=obj|iobj|nsubj_ would only extract trees featuring these three relations and ignore all others.
 
-### Restrict search to specific nodes
+### Restrict search to specific root nodes
 Similarly, the optional `--root` parameter allows the users to define specific constraints on the root node (i.e. the word that all other words in the tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from other part-of-speech categories.
 
 ### Restrict search to specific trees
@@ -56,7 +56,7 @@ By default, STARK produces a list of trees with the absolute frequency (raw coun
 The optional `--association_measures` parameter (value _yes_) produces information on the strength of statistical association between the nodes of the tree by computing several common association scores (MI, MI3 , Dice, logDice, t-score, simple-LL). This is a particularly useful feature for treebank-driven collocation extraction and lexical analysis.
 
 ### Keyness
-In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing its frequency to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the reference treebank as input (e.g. _second_treebank.conllu_) to compute the frequencies in both treebanks and compare them using several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF).
+In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing its frequency to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the second, reference treebank as input (e.g. _sl_ssj-ud-dev.conllu_) to compute the frequencies in both treebanks and compare them using several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF). This feature is particularly useful for research on language- or genre-specific syntactic phenomena.
 
 ## Limiting the size of the output
 To limit the number of trees in the output file, the optional `--frequency_threshold` parameter can be used to limit the extraction to trees occurring above a given threshold by specifying the minimal absolute frequency of the tree in the treebank (e.g. _5_ to to limit the search to trees occurring 5 or more times).
