@@ -5,13 +5,13 @@ Below is a list of customizable settings that can be used to define the type of 
 |General | Tree specification | Tree restrictions | Statistics | Other |
 | --- | --- | --- | --- | --- | 
 | [input](#general-settings) | [size](#tree-size) | [labels](#restrict-search-to-specific-labels) | [association_measures](#association) | [max_lines](#limiting-the-size-of-the-output) |
-| [output](#general-settings) | [node_type](#node-type) | [root](#restrict-search-to-specific-nodes) | [compare](#keyness) | [frequency_threshold](#limiting-the-size-of-the-output) |
+| [output](#general-settings) | [node_type](#node-type) | [head](#restrict-search-to-specific-nodes) | [compare](#keyness) | [frequency_threshold](#limiting-the-size-of-the-output) |
 | [internal_saves](#general-settings) | [complete](#incomplete-trees) | [query](#restrict-search-to-specific-trees) |  | [grew_match](#grew-match) |
 | [cpu_cores](#general-settings) | [labeled](#unlabeled-relations) |  |  | [depsearch](#depsearch-based-services) |
 | | [fixed](#word-order) |  |  |  |
 
 ## General settings
-The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the CONLL-U format. The only condition is that there is exactly one root node per sentence (named _root_). 
+The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the [CONLL-U](https://universaldependencies.org/format.html) format. The only condition is that there is exactly one root node per sentence (named _root_). 
 
 Regardless of the input settings, STARK produces a single tab-separated file (.tsv) as output, the name and the location of which is defined using the `--output` setting.
 
@@ -21,10 +21,10 @@ Performance-related settings include the specification of the folder for interna
 
 ### Tree size
 
-The obligatory `--size` parameter is defined as the number of tokens (typically words) in the trees to be extracted, which can either be specified as an integer number (e.g. _1, 2, 3_ … ) or a range (e.g. _2-5_). Note that trees containing a higher number of tokens may necessitate additional processing time.
+The obligatory `--size` parameter is defined as the number of tokens (typically words) in the trees under investigation, which can either be specified as an integer number (e.g. _1, 2, 3_ … ) or a range (e.g. _2-5_). Note that trees containing a higher number of tokens (i.e. 10 or more) may necessitate additional processing time.
 
 ### Node type
-The obligatory `--node_type` parameter specifies which characteristics of the tokens should be considered when extracting and counting the trees: word form (value _form_, e.g. 'went'), lemma (_lemma_, e.g. 'go'), part-of-speech tag (_upos_, e.g. 'VERB'), morphological features (_feats_, e.g. 'Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin'), language-specific tag (_xpos_, e.g. 'VBD'), dependency role (_deprel_, e.g. 'root') or a combination of them signalled by the '+' operator (e.g. _lemma+upos_). For example, while the option _form_ returns trees of the type 'Mary <nsubj went', the option _upos_ returns trees of the type 'PROPN <nsubj VERB'.
+The obligatory `--node_type` parameter specifies which characteristics of the tokens should be considered when extracting and counting the trees: word form (value _form_, e.g. 'went'), lemma (_lemma_, e.g. 'go'), part-of-speech tag (_upos_, e.g. 'VERB'), morphological features (_feats_, e.g. 'Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin'), language-specific tag (_xpos_, e.g. 'VBD'), dependency role (_deprel_, e.g. 'obj') or a combination of them signalled by the '+' operator (e.g. _lemma+upos_). For example, while the option _form_ returns trees of the type 'Mary <nsubj went', the option _upos_ returns trees of the type 'PROPN <nsubj VERB'.
 
 ### (In)complete trees
 The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract only complete trees encompassing the head and all its (in)direct dependants (value _yes_), or all possible subtrees spanning from the head, i.e. all possible combinations of the head and its dependants (value _no_). Naturally, the second option places a significantly higher computational demand and should be used with caution.
@@ -43,8 +43,8 @@ In contrast to the obligatory settings above specifying the criteria for definin
 ### Restrict search to specific labels
 The optional `--labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list, separated by the '|' operator. For example, specifying _=obj|iobj|nsubj_ would only extract trees featuring these three relations and ignore all others.
 
-### Restrict search to specific root nodes
-Similarly, the optional `--root` parameter allows the users to define specific constraints on the root node (i.e. the word that all other words in the tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from other part-of-speech categories.
+### Restrict search to specific head nodes
+Similarly, the optional `--head` parameter allows the users to define specific constraints on the head node (i.e. the word that all other words in the (sub-)tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR) and '&' (AND) parameters, e.g. _upos=NOUN&Case=Acc|upos=NOUN&Case=Nom_ to extract trees governed by nouns in accusative or nominative case. 
 
 ### Restrict search to specific trees
 Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the DepSearch query language. For example, the query _upos=NOUN >amod (_ >advmod _)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_).
@@ -56,10 +56,10 @@ By default, STARK produces a list of trees with the absolute frequency (raw coun
 The optional `--association_measures` parameter (value _yes_) produces information on the strength of statistical association between the nodes of the tree by computing several common association scores (MI, MI3 , Dice, logDice, t-score, simple-LL). This is a particularly useful feature for treebank-driven collocation extraction and lexical analysis.
 
 ### Keyness
-In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing its frequency to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the second, reference treebank as input (e.g. _sl_ssj-ud-dev.conllu_) to compute the frequencies in both treebanks and compare them using several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF). This feature is particularly useful for research on language- or genre-specific syntactic phenomena.
+In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing the frequency of the extracted trees to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the second, reference treebank as input (e.g. _sl_ssj-ud-dev.conllu_) to compute the frequencies in both treebanks and compare them using several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF). This feature is particularly useful for research on language- or genre-specific syntactic phenomena. If a tree occurring in the first treebank is absent from the second treebank (i.e. its frequency is 0), one quadrillionth (0.000000000000000001) is used as a proxy for zero when computing the keyness score to avoid complications arising from division with zero.
 
 ## Limiting the size of the output
-To limit the number of trees in the output file, the optional `--frequency_threshold` parameter can be used to limit the extraction to trees occurring above a given threshold by specifying the minimal absolute frequency of the tree in the treebank (e.g. _5_ to to limit the search to trees occurring 5 or more times).
+To limit the number of trees in the output file, the optional `--frequency_threshold` parameter can be used to limit the extraction to trees occurring above a given threshold by specifying the minimal absolute frequency of the tree in the treebank (e.g. _5_ to to limit the search to trees occurring 5 or more times). 
 
 Similarly, the optional `--max_lines` parameter defines the maximum number of trees (lines) in the output frequency-ranked list. For example, value _100_ returns only the top-100 most frequent trees matching the input criteria.
 
