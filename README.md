@@ -1,7 +1,5 @@
 # STARK: a tool for dependency-tree extraction and analysis
-STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree, or its significance in comparison to another treebank.
-
-It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
+STARK is a highly-customizable tool that extracts different types of syntactic trees from parsed corpora (treebanks) and quantifies them with respect to frequency and other useful statistics, such as the strength of association between the nodes of a tree, or its significance in comparison to another treebank. It is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other single-root dependency treebank in the [CONLL-U](https://universaldependencies.org/format.html) format as input. 
 
 ## Installation and execution
 Install Python 3 on your system (https://www.python.org/downloads/). 
@@ -27,15 +25,15 @@ Install other libraries necessary for running by going into program directory an
 Execute extraction by running `run.bat` (in case it is blocked repeat the same procedure as for `install.bat`).
 
 ## Changing the settings
-By default, running the program as described above extracts trees from the sample `en_ewt-ud-dev.conllu` file (taken from the [English EWT](https://universaldependencies.org/treebanks/en_ewt/index.html)) UD treebank as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify this file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or signalled in the `run.bat` file. 
+By default, running the program as described above extracts trees from the sample `en_ewt-ud-dev.conllu` file (taken from the [English EWT](https://universaldependencies.org/treebanks/en_ewt/index.html)) UD treebank as defined by the parameter settings in the `config.ini` file. To modify the [settings](#list-of-settings) you can modify the `config.ini` file directly or create your own configuration file, which is then passed as an argument when running the program in the terminal (example below) or specified in the `run.bat` file. 
 
 ```bash
 python3 stark.py --config_file my-settings.ini
 ```
-Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my-treebank.conllu`, while all other options remain the same as in the configuration file.
+Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the `config.ini` configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my-treebank.conllu`, while all other options remain the same as in the default configuration file.
 
 ```bash
-python3 stark.py --input my-treebank.conllu --size 3 --root upos=VERB
+python3 stark.py --input my-treebank.conllu --size 3 --head upos=VERB
 ```
 
 ## List of settings
@@ -53,7 +51,7 @@ Tree specification:
 -	`fixed`: differentiating trees by surface word order (values *yes* or *no*)
 
 Tree restrictions:
--	`root`: predefined characteristics of the root node (e.g. _upos=NOUN_)
+-	`head`: predefined characteristics of the head node (e.g. _upos=NOUN_)
 -	`labels`: predefined list of dependency labels allowed in the extracted tree (values *yes* or *no*)
 -	`query`: predefined tree structure based on the DepSearch query language (e.g. _VERB >obl NOUN_).
 
@@ -70,9 +68,9 @@ For a detailed explanation of these and other settings, see the [settings docume
 
 STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](/sample/output.tsv) below.
 
-The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the root. For adding other types of information to the output, such as other useful statistics and links to visualised examples, see the [list of settings](#list-of-settings) above.
+The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the head. For adding other types of information to the output, such as other useful statistics and links to visualised examples, see the [list of settings](#list-of-settings) above or the [detailed settings documentation here](settings.md).
 
-|Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Root |
+|Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Head |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | DET <det NOUN | DET | NOUN |  |  320 | 12724.2 | AB | 2 | NOUN
 | ADP <case DET <det NOUN | ADP | DET | NOUN | 190 | 7555.0 | ABC | 3 | NOUN
@@ -81,7 +79,7 @@ The description of the tree is given in the first column, while subsequent colum
 | PRON <nmod:poss NOUN | PRON | NOUN |  | 78 | 3101.5 | AB | 2 | NOUN
 
 ### Description of tree structure
-The description of the trees given in the first column is based on the DepSearch query language, which is simple to learn and easy to read.
+The description of the trees given in the first column of the output is based on the DepSearch query language, which is simple to learn and easy to read:
 - Dependencies are expressed using < and > operators, which mimick the "arrows" in the dependency graph.
   - A < B means that token A is governed by token B, e.g. _rainy < morning_
   - A > B means that token A governs token B, e.g. _read > newspapers_
@@ -89,8 +87,8 @@ The description of the trees given in the first column is based on the DepSearch
   - A <amod B means that token A is the adjectival modifier of token B, e.g. _rainy <amod morning_
   - A >obj B means that token B is the direct object of token A, e.g. _read >obj newspapers_
 - Priority is marked using parentheses:
-  -   A > B > C means that A governs both B and C in parallel, e.g. _read > newspapers > people)_ for 'people read newspapers'
-  -   A > (B > C) means that A governs B that, in turn, governs C, e.g. _read > (newspapers > interesting)_ for 'read interesting newspapers'
+  -   A > B > C means that A governs both B and C in parallel, e.g. _read > newspapers > people_ for 'people read newspapers'
+  -   A > (B > C) means that A governs B which, in turn, governs C, e.g. _read > (newspapers > interesting)_ for 'read interesting newspapers'
   
 ## Acknowledgment
 This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank-Driven Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
