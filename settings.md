@@ -4,11 +4,11 @@ Below is a list of customizable settings that can be used to define the type of 
 
 |General | Tree specification | Tree restrictions | Statistics | Visualisation | Other |
 | --- | --- | --- | --- | --- |  --- | 
-| [input](#--input) | [size](#tree-size) | [labels](#restrict-search-to-specific-labels) | [association_measures](#association) | [grew_match](#grew-match) | [max_lines](#limiting-the-size-of-the-output) |
-| [output](#general-settings) | [node_type](#node-type) | [head](#restrict-search-to-specific-nodes) | [compare](#keyness) | [depsearch](#depsearch-based-services) | [frequency_threshold](#limiting-the-size-of-the-output) |
-|  | [complete](#incomplete-trees) | [query](#restrict-search-to-specific-trees) | |  | [internal_saves](#general-settings) |
-|  | [labeled](#unlabeled-relations) |  |  | | [cpu_cores](#general-settings) |
-| | [fixed](#word-order) |  |  |  | |
+| [input](#--input) | [size](#--size) | [labels](#--labels) | [association_measures](#--association_measures) | [grew_match](#--grew_match) | [max_lines](#--max_lines) |
+| [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [depsearch](#--depsearch) | [frequency_threshold](#--frequency_threshold) |
+|  | [complete](#--complete) | [query](#--query) | |  | [internal_saves](#--internal_saves) |
+|  | [labeled](#--labeled) |  |  | | [cpu_cores](#--cpu_cores) |
+| | [fixed](#--fixed) |  |  |  | |
 
 
 ## General settings
