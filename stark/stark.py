@@ -475,9 +475,10 @@ def process_trees(input_path, internal_saves, configs):
             # 15.26
             print("Execution time:")
             print("--- %s seconds ---" % (time.time() - start_exe_time))
-            save_zipped_pickle(
-                (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
-                checkpoint_path, protocol=2)
+            if checkpoint_path:
+                save_zipped_pickle(
+                    (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
+                    checkpoint_path, protocol=2)
 
     else:
         # 261 - 9 grams
@@ -554,13 +555,9 @@ def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_t
         '; '.join([f'{link[0]} -> {link[1]}' for link in link_result])
     grew += '; ' + '; '.join([f'{link[0]} {link[2]} {link[1]}' for link in order_result])
 
-    # TODO
-    # if smthing:
-    #    return 'without {A -> X}'
     if complete:
         without_statements = []
         for i, key in enumerate(node_result.keys()):
-            # without_statements.append('without {' + f'{key} -> X{i}' + '}')
             without_statements.append(f'without {{{key} -> X{i}}}')
 
         return grew + '} ' + ' '.join(without_statements)
@@ -628,9 +625,9 @@ def read_configs(config, args):
     else:
         configs['label_whitelist'] = []
 
-    if config.has_option('settings', 'root'):
+    if config.has_option('settings', 'head'):
         root_whitelist = config.get('settings',
-                                    'root') if not args.root else args.root
+                                    'head') if not args.head else args.head
         configs['root_whitelist'] = root_whitelist.split('|')
     else:
         configs['root_whitelist'] = []
@@ -644,8 +641,8 @@ def read_configs(config, args):
     else:
         configs['compare'] = config.get('settings', 'compare') if config.has_option('settings', 'compare') else None
 
-    configs['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold') if not args.frequency_threshold else args.frequency_threshold
-    configs['lines_threshold'] = config.getint('settings', 'max_lines') if not args.max_lines else args.max_lines
+    configs['frequency_threshold'] = config.getfloat('settings', 'frequency_threshold', fallback=0) if not args.frequency_threshold else args.frequency_threshold
+    configs['lines_threshold'] = config.getint('settings', 'max_lines', fallback=0) if not args.max_lines else args.max_lines
 
     configs['continuation_processing'] = config.getboolean('settings', 'continuation_processing',
                                                 fallback=False) if not args.continuation_processing else args.input
@@ -695,11 +692,11 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
         if filters['nodes_number']:
             header += ['Number of nodes']
         if filters['print_root']:
-            header += ['Root node']
+            header += ['Head node']
         if filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if configs['compare']:
-            header += ['Absolute frequency in compared treebank', 'Relative frequency in compared treebank', 'LL',
+            header += ['Absolute frequency in second treebank', 'Relative frequency in second treebank', 'LL',
                        'BIC', 'Log ratio', 'OR', '%DIFF']
         writer.writerow(header)
 
@@ -720,7 +717,6 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
             location_mapper = v['object'].get_location_mapper()
             key_grew = get_grew(grew_nodes, grew_links, node_types, filters['node_order'], location_mapper,
                                 filters['dependency_type'], filters['complete_tree_type'])
-            filters['complete_tree_type'] = False
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]
             if filters['node_order']:

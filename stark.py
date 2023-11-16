@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument("--node_type", default=None, type=str, help="Type of node.")
 
     parser.add_argument("--labels", default=None, type=str, help="Label whitelist.")
-    parser.add_argument("--root", default=None, type=str, help="Root whitelist.")
+    parser.add_argument("--head", default=None, type=str, help="Head whitelist.")
 
     parser.add_argument("--query", default=None, type=str, help="Query.")
 
