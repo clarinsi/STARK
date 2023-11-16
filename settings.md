@@ -2,6 +2,7 @@
 
 Below is a list of customizable settings that can be used to define the type of trees to be extracted and the associated information in the output. The default values are visible in the [`config.ini`](/config.ini) file and can be modified by following these [instructions](/#changing-the-settings).
 
+
 |General | Tree specification | Tree restrictions | Statistics | Visualisation | Other |
 | --- | --- | --- | --- | --- |  --- | 
 | [input](#--input) | [size](#--size) | [labels](#--labels) | [association_measures](#--association_measures) | [grew_match](#--grew_match) | [max_lines](#--max_lines) |
