@@ -1,4 +1,4 @@
-Tree	Node A-upos	Node B-upos	Node C-upos	Node D-upos	Node E-upos	Absolute frequency	Relative frequency	Order	Number of nodes	Root node
+Tree	Node A-upos	Node B-upos	Node C-upos	Node D-upos	Node E-upos	Absolute frequency	Relative frequency	Order	Number of nodes	Head node
 DET <det NOUN	DET	NOUN				320	12724.1640	AB	2	NOUN
 ADP <case DET <det NOUN	ADP	DET	NOUN			190	7554.9724	ABC	3	NOUN
 ADP <case NOUN	ADP	NOUN				165	6560.8971	AB	2	NOUN
