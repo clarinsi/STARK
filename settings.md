@@ -4,7 +4,7 @@ Below is a list of customizable settings that can be used to define the type of 
 
 |General | Tree specification | Tree restrictions | Statistics | Visualisation | Other |
 | --- | --- | --- | --- | --- |  --- | 
-| [input](#general-settings) | [size](#tree-size) | [labels](#restrict-search-to-specific-labels) | [association_measures](#association) | [grew_match](#grew-match) | [max_lines](#limiting-the-size-of-the-output) |
+| [input](#--input) | [size](#tree-size) | [labels](#restrict-search-to-specific-labels) | [association_measures](#association) | [grew_match](#grew-match) | [max_lines](#limiting-the-size-of-the-output) |
 | [output](#general-settings) | [node_type](#node-type) | [head](#restrict-search-to-specific-nodes) | [compare](#keyness) | [depsearch](#depsearch-based-services) | [frequency_threshold](#limiting-the-size-of-the-output) |
 |  | [complete](#incomplete-trees) | [query](#restrict-search-to-specific-trees) | |  | [internal_saves](#general-settings) |
 |  | [labeled](#unlabeled-relations) |  |  | | [cpu_cores](#general-settings) |
