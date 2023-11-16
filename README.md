@@ -62,13 +62,13 @@ Statistics:
 Additional visualization:
 - `grew_match`: describes the trees structure using the grew query language and provides links to examples in [Grew-match](https://universal.grew.fr/)
 
-For a detailed explanation of these and other settings, see the [settings documentation here](settings.md).
+For a detailed explanation of these and other settings, see the **[settings documentation here]**(settings.md).
 
 ## Output
 
 STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](/sample/output.tsv) below that shows the 5-most frequent trees occurring in the sample `en_ewt-ud-dev.conllu` treebank.
 
-The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the head. For adding other types of information to the output, such as other useful statistics and links to visualised examples, see the [list of settings](#list-of-settings) above or the [detailed settings documentation here](settings.md).
+The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the head. For adding other types of information to the output, such as other useful statistics and links to visualised examples, see the list of settings above or the [detailed settings documentation here](settings.md).
 
 |Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Head |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
