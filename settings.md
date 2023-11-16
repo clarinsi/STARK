@@ -14,26 +14,28 @@ Below is a list of customizable settings that can be used to define the type of 
 ## General settings
 
 ### `--input`
-**Value:** \<path to the input file or directory\>
+**Value:** _\<path to the input file or directory\>_
 
 The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the [CONLL-U](https://universaldependencies.org/format.html) format. The only condition is that there is exactly one root node per sentence (named _root_). 
 
 ### `--output`
-**Value:** \<path to the output file\>
+**Value:**_ \<path to the output file\>_
 
 Regardless of the input settings, STARK produces a single tab-separated file (.tsv) as output, the name and the location of which is defined using the `--output` setting. The output file gives a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the [sample output file](sample/output.tsv).
 
 ## Tree specification
 
 ### `--size`
-**Value:** \<integer number or range\>
+**Value:** _\<integer number or range\>_
 
 The obligatory `--size` parameter is defined as the number of tokens (typically words) in the trees under investigation, which can either be specified as an integer number (e.g. _1, 2, 3_ … ) or a range (e.g. _2-5_). Note that trees containing a higher number of tokens (i.e. 10 or more) may necessitate additional processing time.
 
 ### `--node_type`
 **Values:** _form, lemma, upos, xpos, feats, deprel_
 
-The obligatory `--node_type` parameter specifies which characteristics of the tokens should be considered when extracting and counting the trees: word form (value _form_, e.g. 'went'), lemma (_lemma_, e.g. 'go'), part-of-speech tag (_upos_, e.g. 'VERB'), morphological features (_feats_, e.g. 'Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin'), language-specific tag (_xpos_, e.g. 'VBD'), dependency role (_deprel_, e.g. 'obj') or a combination of them signalled by the '+' operator (e.g. _lemma+upos_). For example, while the option _form_ returns trees of the type 'Mary <nsubj went', the option _upos_ returns trees of the type 'PROPN <nsubj VERB'.
+The obligatory `--node_type` parameter specifies which characteristics of the tokens should be considered when extracting and counting the trees: word form (value _form_, e.g. 'went'), lemma (_lemma_, e.g. 'go'), part-of-speech tag (_upos_, e.g. 'VERB'), morphological features (_feats_, e.g. 'Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin'), language-specific tag (_xpos_, e.g. 'VBD'), dependency role (_deprel_, e.g. 'obj') or a combination of them signalled by the '+' operator (e.g. _lemma+upos_). 
+
+For example, while the option _form_ returns trees of the type 'Mary <nsubj went', the option _upos_ returns trees of the type 'PROPN <nsubj VERB'.
 
 ### `--complete`
 **Values:** _yes, no_
@@ -50,23 +52,25 @@ The obligatory `--labeled` parameter specifies whether trees should be different
 
 The obligatory `--fixed` parameter allows the users to specify whether they consider the order of the nodes in the tree, i.e. the surface word order, to be a distinctive feature of the trees (value _yes_) or not (value _no_). For example, if the input treebank contained sentences ‘_John gave the apple to Mary_’ and ‘_John the apple gave to Mary_’ (an odd example in English but typical in languages with free word order), using the _yes_ option would extract the 'gave > apple' and 'apple < gave' as two distinct trees, while the _no_ option would consider them as two instances of the same tree, i.e. 'gave > apple'. 
 
-Note that each of the two options is associated with specific formatting of the trees in the output. When choosing the _fixed = yes_ option, the tree description in the first column reflects the word order of the nodes on the surface (e.g. '(seemingly < easy) < example'). On the other hand, when choosing the _fixed = no_ option, the description of the tree in the first column is order-agnostic, with heads always preceding their dependents, i.e. all the arrows always pointing to the right (e.g. 'example > (easy > seemingly)'. The latter order-agnostic tree description can also be produced regardless of the word order setting, by using the `--depsearch` option (value _yes_), which, for example, might be useful for users investigating word order variation. 
+Note that each of the two options is associated with specific formatting of the trees in the output. When choosing the _fixed = yes_ option, the tree description in the first column reflects the word order of the nodes on the surface (e.g. '(seemingly < easy) < example'). On the other hand, when choosing the _fixed = no_ option, the description of the tree in the first column is order-agnostic, with heads always preceding their dependents, i.e. all the arrows always pointing to the right (e.g. 'example > (easy > seemingly)'. 
+
+The second, order-agnostic description of a tree can also be produced by using the `--depsearch` option (value _yes_), which, in combination with _fixed = yes_, might be useful for users investigating word order variation. 
 
 ## Restriction to specific structures
 In contrast to the obligatory settings above specifying the criteria for defining the _types_ of trees to be extracted, STARK also allows the users to restrict the extraction procedure to _specific_ trees through the three options presented below.
 
 ### `--labels`
-**Value:** \<list of allowed dependency relations\>
+**Value:** _\<list of allowed dependency relations\>_
 
 The optional `--labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. For example, specifying _labels = obj|iobj|nsubj_ only extracts trees featuring these three relations and ignores all others.
 
 ### `--head`
-**Value:** \<list of allowed head characteristics\>
+**Value:** _\<list of allowed head characteristics\>_
 
-Similarly, the optional `--head` parameter allows the users to define specific constraints on the head node (i.e. the word that all other words in the (sub-)tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR) and '&' (AND) operators, e.g. _upos=NOUN&Case=Acc|upos=NOUN&Case=Nom_ to extract trees governed by nouns in accusative or nominative case. 
+Similarly, the optional `--head` parameter allows the users to define specific constraints on the head node (i.e. the word that all other words in the (sub-)tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR) and '&' (AND) operators, e.g. _upos=NOUN&Case=Acc|upos=NOUN&Case=Nom_ to extract trees governed by nouns in either accusative or nominative case. 
 
 ### `--query`
-**Value:** \<pre-defined tree query\>
+**Value:** _\<pre-defined tree query\>_
 
 Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/). For example, the query _upos=NOUN >amod (_ >advmod _)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_).
 
