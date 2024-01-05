@@ -54,6 +54,36 @@ def load_zipped_pickle(filename):
         return loaded_object
 
 
+def split_query_text(input_string):
+    """
+    Splits query by ignoring everything in brackets and otherwise splitting by spaces.
+    :param input_string: Raw query in string
+    :return: Split string
+    """
+
+    replacements = {}
+    brackets_count = 1
+    brackets_depth = 0
+    replace_string = ''
+
+    for char in input_string:
+        if char == '(':
+            brackets_depth += 1
+
+        if brackets_depth >= 1:
+            replace_string += char
+
+        if char == ')':
+            brackets_depth -= 1
+            if brackets_depth == 0:
+                input_string = input_string.replace(replace_string, f'<BRACKET{brackets_count}>', 1)
+                replacements[f'<BRACKET{brackets_count}>'] = replace_string
+                brackets_count += 1
+                replace_string = ''
+
+    return [el if el not in replacements else replacements[el] for el in input_string.split()]
+
+
 def decode_query(orig_query, dependency_type, feats_detailed_list):
     new_query = False
 
@@ -98,7 +128,7 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
         return decoded_query
 
     # split over spaces if not inside braces
-    all_orders = re.split(r"\s+(?=[^()]*(?:\(|$))", orig_query)
+    all_orders = split_query_text(orig_query)
 
     node_actions = all_orders[::2]
     priority_actions = all_orders[1::2]
@@ -746,6 +776,8 @@ def run(configs):
                                                                                                       'internal_saves'],
                                                                                                   configs)
 
+    tree_n = sum([v['number'] for k,v in result_dict.items()])
+    print(tree_n)
     other_result_dict, other_corpus_size = None, None
     if configs['compare'] is not None:
         other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process_trees(
