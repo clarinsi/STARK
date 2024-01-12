@@ -24,6 +24,7 @@ class ResultTree(object):
         self.key = None
         self.order_key = None
         self.order = None
+        self.order_ids = None
         self.array = None
 
     def __repr__(self):
@@ -183,13 +184,13 @@ class ResultTree(object):
 
         # create order letters
         order = result.get_order()
+        result.order_ids = order.copy()
         order_letters = [''] * len(result.order)
         for i in range(len(order)):
             ind = order.index(min(order))
             order[ind] = 10000
             order_letters[ind] = string.ascii_uppercase[i]
         result.order = ''.join(order_letters)
-        # TODO When tree is finalized create relative word order (alphabet)!
         return result
 
     def get_location_mapper(self):
@@ -213,8 +214,6 @@ class ResultTree(object):
         return mapper
 
     def get_array_location(self):
-        # if array:
-        #     return self.array
         array = []
         write_self_node_to_result = False
         if self.children:

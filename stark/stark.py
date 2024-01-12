@@ -22,6 +22,7 @@ import json
 import math
 import os
 import pickle
+import random
 import re
 import string
 import time
@@ -167,10 +168,11 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
 
         all_trees = []
         corpus_size = 0
-
+        sentence_statistics = []
         for sentence in train:
             root = None
             token_nodes = []
+            tokens = []
             for token in sentence:
                 if not token.id.isdigit():
                     continue
@@ -180,11 +182,13 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
                 node = Tree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token.deprel, token.feats, form_dict,
                             lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, token.head)
                 token_nodes.append(node)
+                space_after = token.misc['SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc else True
+                tokens.append((token_form, space_after))
                 if token.deprel == 'root':
                     root = node
 
                 corpus_size += 1
-
+            sentence_statistics.append({'id': sentence.id, 'tokens': tokens})
             for token_id, token in enumerate(token_nodes):
                 if isinstance(token.parent, int) or token.parent == '':
                     root = None
@@ -209,22 +213,18 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
             all_trees.append(root)
 
         if trees_read_outputfile is not None and save:
-            save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict), trees_read_outputfile, protocol=2)
+            save_zipped_pickle((all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict, sentence_statistics), trees_read_outputfile, protocol=2)
     else:
         print('Reading trees:')
         print('Completed')
-        all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict = load_zipped_pickle(trees_read_outputfile)
+        all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict, sentence_statistics = load_zipped_pickle(trees_read_outputfile)
 
-    return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict
+    return all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size, feats_detailed_dict, sentence_statistics
 
 
 def printable_answers(query):
-    # all_orders = re.findall(r"(?:[^ ()]|\([^]*\))+", query)
     all_orders = re.split(r"\s+(?=[^()]*(?:\(|$))", query)
-
-    # all_orders = orig_query.split()
     node_actions = all_orders[::2]
-    # priority_actions = all_orders[1::2]
 
     if len(node_actions) > 1:
         res = []
@@ -341,7 +341,20 @@ def create_ngrams_query_trees(n, trees):
     return trees
 
 
-def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict):
+def recreate_sentence(sentence, r):
+    recreated_sentence = ''
+    for token_i, token in enumerate(sentence['tokens']):
+        if token_i + 1 in r.order_ids:
+            letter_position = r.order_ids.index(token_i + 1)
+            recreated_sentence += f'{r.order[letter_position]}[{token[0]}]'
+        else:
+            recreated_sentence += token[0]
+        if token[1]:
+            recreated_sentence += ' '
+    return recreated_sentence
+
+
+def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict, sentence_statistics):
     with Pool(cpu_cores) as p:
         if cpu_cores > 1:
             all_unigrams = p.map(get_unigrams, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
@@ -354,8 +367,8 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
 
             all_subtrees = p.map(tree_calculations, [(tree, query_tree, create_output_string_functs, filters) for tree in all_trees])
 
-            for tree_i, subtrees in enumerate(all_subtrees):
-
+            for subtrees, sentence in zip(all_subtrees, sentence_statistics):
+                sentence['count'] = {}
                 for query_results in subtrees:
                     for r in query_results:
                         if filters['node_order']:
@@ -363,9 +376,25 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                         else:
                             key = r.get_key()
                         if key in result_dict:
+                            if filters['detailed_results_file']:
+                                recreated_sentence = recreate_sentence(sentence, r)
+                                result_dict[key]['sentence'].append((sentence['id'], recreated_sentence))
+                            elif filters['example'] and random.random() < 1.0 - (result_dict[key]['number']/(result_dict[key]['number']+1)):
+                                recreated_sentence = recreate_sentence(sentence, r)
+                                result_dict[key]['sentence'] = [recreated_sentence]
                             result_dict[key]['number'] += 1
                         else:
                             result_dict[key] = {'object': r, 'number': 1}
+
+                            # recreate example sentence with shown positions of subtree
+                            if filters['example'] or filters['detailed_results_file']:
+                                recreated_sentence = recreate_sentence(sentence, r)
+                                result_dict[key]['sentence'] = [(sentence['id'], recreated_sentence)]
+                        if filters['sentence_count_file']:
+                            if key in sentence['count']:
+                                sentence['count'][key] += 1
+                            else:
+                                sentence['count'][key] = 1
 
         # 3.65 s (1 core)
         else:
@@ -438,6 +467,9 @@ def read_filters(configs, feats_detailed_list):
     # filters['caching'] = config.getboolean('settings', 'caching')
     filters['dependency_type'] = configs['dependency_type']
     filters['label_whitelist'] = configs['label_whitelist']
+    filters['example'] = configs['example']
+    filters['sentence_count_file'] = configs['sentence_count_file']
+    filters['detailed_results_file'] = configs['detailed_results_file']
     if configs['root_whitelist']:
         # test
         filters['root_whitelist'] = []
@@ -472,10 +504,11 @@ def process_trees(input_path, internal_saves, configs):
             unigrams_dict = {}
             corpus_size = 0
             feats_detailed_list = {}
+            complete_sentence_statistics = []
             if checkpoint_path is not None and checkpoint_path.exists():
                 os.remove(checkpoint_path)
         else:
-            already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list = load_zipped_pickle(
+            already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list, complete_sentence_statistics = load_zipped_pickle(
                 checkpoint_path)
 
         for path in sorted(os.listdir(input_path)):
@@ -489,7 +522,7 @@ def process_trees(input_path, internal_saves, configs):
                 path_str = str(path)
 
                 (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
-                 feats_detailed_list) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list,
+                 feats_detailed_list, sentence_statistics) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list,
                                                      save=False)
 
                 corpus_size += sub_corpus_size
@@ -498,7 +531,8 @@ def process_trees(input_path, internal_saves, configs):
                     configs, feats_detailed_list)
 
                 count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict,
-                            result_dict)
+                            result_dict, sentence_statistics)
+                complete_sentence_statistics.extend(sentence_statistics)
 
             already_processed.add(path_obj.name)
 
@@ -507,7 +541,7 @@ def process_trees(input_path, internal_saves, configs):
             print("--- %s seconds ---" % (time.time() - start_exe_time))
             if checkpoint_path:
                 save_zipped_pickle(
-                    (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list),
+                    (already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list, complete_sentence_statistics),
                     checkpoint_path, protocol=2)
 
     else:
@@ -517,7 +551,7 @@ def process_trees(input_path, internal_saves, configs):
         # 4126 - 12 grams
         # 10598 - 13 grams
         (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
-         feats_detailed_list) = create_trees(input_path, internal_saves)
+         feats_detailed_list, sentence_statistics) = create_trees(input_path, internal_saves)
 
         result_dict = {}
         unigrams_dict = {}
@@ -526,12 +560,12 @@ def process_trees(input_path, internal_saves, configs):
                                                                                                                 feats_detailed_list)
 
         start_exe_time = time.time()
-        count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict)
-
+        count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, filters, unigrams_dict, result_dict, sentence_statistics)
+        complete_sentence_statistics = sentence_statistics
         print("Execution time:")
         print("--- %s seconds ---" % (time.time() - start_exe_time))
 
-    return result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types
+    return result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types, complete_sentence_statistics
 
 
 def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
@@ -679,6 +713,19 @@ def read_configs(config, args):
 
     configs['grew_match'] = config.getboolean('settings',
                                               'grew_match') if not args.grew_match else args.grew_match == 'yes'
+    configs['example'] = config.getboolean('settings',
+                                              'example') if not args.example else args.example == 'yes'
+
+    if args.sentence_count_file:
+        configs['sentence_count_file'] = args.sentence_count_file
+    else:
+        configs['sentence_count_file'] = config.get('settings', 'sentence_count_file') if config.has_option('settings', 'sentence_count_file') else None
+
+    if args.detailed_results_file:
+        configs['detailed_results_file'] = args.detailed_results_file
+    else:
+        configs['detailed_results_file'] = config.get('settings', 'detailed_results_file') if config.has_option('settings', 'detailed_results_file') else None
+
     configs['depsearch'] = config.getboolean('settings',
                                              'depsearch') if not args.depsearch else args.depsearch == 'yes'
 
@@ -691,7 +738,7 @@ def read_configs(config, args):
 
 
 def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types,
-          other_result_dict=None, other_corpus_size=None):
+          other_result_dict=None, other_corpus_size=None, sentence_statistics=None):
     sorted_list = sorted(result_dict.items(), key=lambda x: x[1]['number'], reverse=True)
 
     with open(os.path.join(here, 'codes_mapper.json'), 'r') as f:
@@ -700,6 +747,24 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
     lang = path.split('_')[0]
     corpus_name = path.split('_')[1].split('-')[0].lower() if len(path.split('_')) > 1 else 'unknown'
     corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
+
+    if configs['sentence_count_file']:
+        if os.path.exists(configs['sentence_count_file']):
+            os.remove(configs['sentence_count_file'])
+        with open(configs['sentence_count_file'], "a", newline="", encoding="utf-8") as wf:
+            key_list = [k for k, v in result_dict.items()]
+            header = ['Sentence_id'] + key_list
+            wf.write('\t'.join(header)+'\n')
+            for sentance in sentence_statistics:
+                wf.write(sentance['id']+'\t'+'\t'.join([str(sentance['count'][k]) if k in sentance['count'] else '0' for k in key_list]) + '\n')
+
+    if configs['detailed_results_file']:
+        if os.path.exists(configs['detailed_results_file']):
+            os.remove(configs['detailed_results_file'])
+        with open(configs['detailed_results_file'], "a", newline="", encoding="utf-8") as wf:
+            for k, v in result_dict.items():
+                for s in v['sentence']:
+                    wf.write(k + '\t' + s[0] + '\t' + s[1] + '\n')
 
     with open(configs['output'], "w", newline="", encoding="utf-8") as f:
         # header - use every second space as a split
@@ -723,6 +788,8 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
             header += ['Number of nodes']
         if filters['print_root']:
             header += ['Head node']
+        if filters['example']:
+            header += ['Example']
         if filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if configs['compare']:
@@ -762,6 +829,9 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
                 row += ['%d' % len(v['object'].array)]
             if filters['print_root']:
                 row += [v['object'].node.name]
+            if filters['example']:
+                random_sentence_position = int(len(v['sentence']) * random.random())
+                row += [v['sentence'][random_sentence_position][1]]
             if filters['association_measures']:
                 row += get_collocabilities(v, unigrams_dict, corpus_size)
             if configs['compare']:
@@ -771,17 +841,16 @@ def write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_
 
 
 def run(configs):
-    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types = process_trees(configs['input_path'],
-                                                                                                  configs[
-                                                                                                      'internal_saves'],
-                                                                                                  configs)
+    result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types, sentence_statistics \
+        = process_trees(configs['input_path'],
+          configs[
+              'internal_saves'],
+          configs)
 
-    tree_n = sum([v['number'] for k,v in result_dict.items()])
-    print(tree_n)
     other_result_dict, other_corpus_size = None, None
     if configs['compare'] is not None:
-        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types = process_trees(
+        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types, other_sentence_statistics = process_trees(
             configs['other_input_path'], configs['internal_saves'], configs)
 
     write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types, other_result_dict,
-          other_corpus_size)
+          other_corpus_size, sentence_statistics)

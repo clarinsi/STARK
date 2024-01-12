@@ -272,8 +272,7 @@ class Tree(object):
             i_question += 1
 
         for i in range(len(active_permanent_query_trees)):
-            # TODO FINALIZE RESULT
-            # erase first and last braclets when adding new query result
+            # erase first and last brackets when adding new query result
             add_subtree = [subtree.finalize_result() for subtree in merged_partial_answers[i]]
             complete_answers[i].extend(add_subtree)
 

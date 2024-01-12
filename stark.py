@@ -32,6 +32,9 @@ def parse_args():
     # output settings
     parser.add_argument("--grew_match", default=None, type=str, help="Output setting for printing query and url.")
     parser.add_argument("--depsearch", default=None, type=str, help="Output setting for printing depsearch query.")
+    parser.add_argument("--example", default=None, type=str, help="Print one example in a separate column.")
+    parser.add_argument("--sentence_count_file", default=None, type=str, help="Path to a file where counts of queries will be stored per sentence.")
+    parser.add_argument("--detailed_results_file", default=None, type=str, help="Path to a file where all examples will be stored.")
 
     parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
