@@ -478,7 +478,10 @@ def read_filters(configs, feats_detailed_list):
             attribute_dict = {}
             for attribute in option.split('&'):
                 value = attribute.split('=')
-                attribute_dict[value[0]] = value[1]
+                if len(value) == 1:
+                    attribute_dict['form'] = value[0]
+                else:
+                    attribute_dict[value[0]] = value[1]
             filters['root_whitelist'].append(attribute_dict)
     else:
         filters['root_whitelist'] = []
@@ -673,8 +676,8 @@ def read_configs(config, args):
     configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
 
     # mandatory parameters with default value
-    configs['internal_saves'] = (config.get('settings', 'internal_saves') if not args.internal_saves else args.internal_saves) if config.has_option('settings', 'internal_saves') else None
-    configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if not args.cpu_cores else args.cpu_cores) if config.has_option('settings', 'cpu_cores') else max(cpu_count() - 1, 1)
+    configs['internal_saves'] = (config.get('settings', 'internal_saves') if config.has_option('settings', 'internal_saves') else None) if not args.internal_saves else args.internal_saves
+    configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if config.has_option('settings', 'cpu_cores') else max(cpu_count() - 1, 1)) if not args.cpu_cores else args.cpu_cores
     configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete else args.complete == 'yes')
     configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled else args.labeled == 'yes')
     configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed == 'yes')
