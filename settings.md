@@ -107,10 +107,7 @@ Second, the optional `--depsearch` parameter (value _yes_) produces trees in acc
 ### `--example`
 **Values:** _yes, no_
 
-Additionaly, using the `--example` parameter (value _yes_) produces an additional column with one random sentence containing the tree, in which the nodes of the tree are explicitely marked, e.g. a sentence _We went to see \[the\]A new trains._, for the tree 'A > B > C'
-
-, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
-
+Additionaly, using the `--example` parameter (value _yes_) produces an additional column with one random sentence containing the tree, in which the nodes of the tree are explicitely marked, e.g. a sentence _We went to see \[the\]<sub>A</sub> \[new\]<sub>B</sub> \[trains\]<sub>C</sub>._, for a tree of the type 'DET < ADJ < NOUN'.
 
 ## Threshold settings
 
