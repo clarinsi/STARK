@@ -37,7 +37,7 @@ python3 stark.py --input my-treebank.conllu --size 3 --head upos=VERB
 ```
 
 ## List of settings
-The types of trees to be extracted and the associated output information can be defined through the parameters listed below and **[described in more detail here]**(settings.md).
+The types of trees to be extracted and the associated output information can be defined through the parameters listed below and [described in more detail here](**settings.md).
 
 General settings:
 -	`input`: location of the input file or directory (parsed corpus in _.conllu_)
@@ -63,7 +63,7 @@ Additional visualization:
 - `example`: prints a random sentence containing the tree
 - `grew_match`: describes the trees structure using the grew query language and provides links to examples in [Grew-match](https://universal.grew.fr/)
 
-For a detailed explanation of these and other settings, see the **[settings documentation here]**(settings.md).
+For a detailed explanation of these and other settings, see the [settings documentation here](settings.md).
 
 ## Output
 
