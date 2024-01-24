@@ -3,14 +3,15 @@
 Below is a list of customizable settings that can be used to define the type of trees to be extracted and the associated information in the output. The default values are visible in the [`config.ini`](/config.ini) file and can be modified by following [these instructions](/#changing-the-settings).
 
 
-|General | Tree specification | Tree restrictions | Statistics | Visualisation | Other |
+|General | Tree specification | Tree restrictions | Statistics | Visualisation | Threshold |
 | --- | --- | --- | --- | --- |  --- | 
-| [input](#--input) | [size](#--size) | [labels](#--labels) | [association_measures](#--association_measures) | [grew_match](#--grew_match) | [max_lines](#--max_lines) |
-| [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [depsearch](#--depsearch) | [frequency_threshold](#--frequency_threshold) |
-|  | [complete](#--complete) | [query](#--query) | |  | [internal_saves](#--internal_saves) |
-|  | [labeled](#--labeled) |  |  | | [cpu_cores](#--cpu_cores) |
+| [input](#--input) | [size](#--size) | [labels](#--labels) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
+| [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
+|  | [complete](#--complete) | [query](#--query) | | [depsearch](#--depsearch) | |
+|  | [labeled](#--labeled) |  |  |  |  |
 | | [fixed](#--fixed) |  |  |  | |
 
+For details on the settings pertaining to the tool performance and testing see [advanced settings](/advanced.md).
 
 ## General settings
 
@@ -103,8 +104,15 @@ If the name of the input treebank begins with the standard declaration of the la
 
 Second, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
 
+### `--example`
+**Values:** _yes, no_
 
-## Other settings
+Additionaly, using the `--example` parameter (value _yes_) produces an additional column with one random sentence containing the tree, in which the nodes of the tree are explicitely marked, e.g. a sentence _We went to see \[the\]A new trains._, for the tree 'A > B > C'
+
+, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
+
+
+## Threshold settings
 
 ### `--frequency_threshold`
 **Value:** _\<minimum number of tree occurrances in the input treebank\>_
@@ -115,16 +123,6 @@ To limit the number of trees in the output file, the optional `--frequency_thres
 **Value:** _\<maximum number of lines in the output file\>_
 
 Similarly, the optional `--max_lines` parameter defines the maximum number of trees (lines) in the output file, which gives a frequency-ranked list of trees. For example, value _100_ returns only the top-100 most frequent trees matching the input criteria.
-
-### `--internal_saves`
-**Value:** _\<path to folder for internal storage\>_
-
-The optional `--internal_saves` parameter speeds up performance for users repeating several different queries on the same treebank, as it avoids repeating same parts of the execution twice. To test it, simply uncomment the parameter in the `config.ini` file or provide a different path for the internal data storage.
-
-### `--cpu_cores`
-**Value:** _\<integer number\>_
-
-By default, STARK uses all available processors except one. The optional `--cpu_core` parameter allows the users to define a specific number of processors to be used in the process, for example to boost the tool's performance by running it on all available CPU cores.
 
 
 
