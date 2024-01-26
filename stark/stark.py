@@ -381,7 +381,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                                 result_dict[key]['sentence'].append((sentence['id'], recreated_sentence))
                             elif filters['example'] and random.random() < 1.0 - (result_dict[key]['number']/(result_dict[key]['number']+1)):
                                 recreated_sentence = recreate_sentence(sentence, r)
-                                result_dict[key]['sentence'] = [recreated_sentence]
+                                result_dict[key]['sentence'] = [(sentence['id'], recreated_sentence)]
                             result_dict[key]['number'] += 1
                         else:
                             result_dict[key] = {'object': r, 'number': 1}
