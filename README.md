@@ -37,7 +37,7 @@ python3 stark.py --input my-treebank.conllu --size 3 --head upos=VERB
 ```
 
 ## List of settings
-The types of trees to be extracted and the associated output information can be defined through the parameters listed below and **[described in more detail here](settings.md)**.
+The types of trees to be extracted and the associated output information can be defined through the parameters listed below and [described in more detail here](settings.md).
 
 General settings:
 -	`input`: location of the input file or directory (parsed corpus in _.conllu_)
@@ -60,9 +60,10 @@ Statistics:
 - `compare`: calculates the keyness of a tree in comparison to another treebank by LL, BIC, log ratio, odds ratio and %DIFF scores (reference treebank in _.conllu_)
 
 Additional visualization:
+- `example`: prints a random sentence containing the tree
 - `grew_match`: describes the trees structure using the grew query language and provides links to examples in [Grew-match](https://universal.grew.fr/)
 
-For a detailed explanation of these and other settings, see the **[settings documentation here]**(settings.md).
+For a detailed explanation of these and other settings, see the [settings documentation here](settings.md).
 
 ## Output
 
@@ -91,12 +92,11 @@ The description of the trees given in the first column of the output is based on
   -   A > (B > C) means that A governs B which, in turn, governs C, e.g. _read > (newspapers > interesting)_ for 'read interesting newspapers'
   
 ## Acknowledgment
-This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by [Slovenian Research and Innovation Agency](https://www.aris-rs.si/),  [CLARIN.SI](https://www.clarin.si/) and [CJVT UL](https://www.cjvt.si) as part of the research projects _A Treebank-Driven Approach to the Study of Spoken Slovenian_ (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
-
+This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by Slovenian Research and Innovation Agency, CLARIN.SI and CJVT UL as part of the research projects [SPOT: A Treebank-Driven Approach to the Study of Spoken Slovenian](https://spot.ff.uni-lj.si/) (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the _2019 CLARIN.SI Resource and Service Development_ grant.
 
 <p align="center">
 <a href="http://www.clarin.si/info/about/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CLARIN.png" alt="drawing" height="90"/></a>
-<a href="https://www.arrs.si/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/ARRS.png" alt="drawing" height="110"/></a>
+<a href="https://www.aris-rs.si/"><img src="https://pbs.twimg.com/profile_images/1696069698289332224/tB-Z74Tn_400x400.jpg" alt="drawing" height="110"/></a>
 <a href="https://www.cjvt.si/en/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CJVT.png" alt="drawing" height="70"/></a>
 </p>
 
