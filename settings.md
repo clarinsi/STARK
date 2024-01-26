@@ -18,7 +18,7 @@ For details on the settings pertaining to the tool performance and testing see [
 ### `--input`
 **Value:** _\<path to the input file or directory\>_
 
-The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the [CONLL-U](https://universaldependencies.org/format.html) format. The only condition is that there is exactly one root node per sentence (named _root_). 
+The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the [CONLL-U](https://universaldependencies.org/format.html) format, regardless of the tagsets used. The only condition is that there is exactly one root node per sentence (named _root_). 
 
 ### `--output`
 **Value:**_ \<path to the output file\>_
