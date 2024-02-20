@@ -18,7 +18,7 @@ For details on the settings pertaining to the tool performance and testing see [
 ### `--input`
 **Value:** _\<path to the input file or directory\>_
 
-The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the [CONLL-U](https://universaldependencies.org/format.html) format. The only condition is that there is exactly one root node per sentence (named _root_). 
+The `--input` parameter defines the location of the input file or directory, i.e. one or more files in the `.conllu` format. The tool is primarily aimed at processing corpora based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but can also be used for any other dependency-parsed corpus complying with the [CONLL-U](https://universaldependencies.org/format.html) format, regardless of the tagsets used. The only condition is that there is exactly one root node per sentence (named _root_). 
 
 ### `--output`
 **Value:**_ \<path to the output file\>_
@@ -74,7 +74,7 @@ Similarly, the optional `--head` parameter allows the users to define specific c
 ### `--query`
 **Value:** _\<pre-defined tree query\>_
 
-Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/). For example, the query _upos=NOUN >amod (_ >advmod _)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_).
+Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/). For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_). When using the `--query` parameter, make sure to comment the `--size` parameter, as the latter has priority over the former.
 
 ## Statistics
 By default, STARK produces a list of trees with the absolute frequency (raw count) and the relative frequency (normalized count per million tokens) of the trees in the input treebank. In addition, two optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena.
