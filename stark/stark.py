@@ -155,7 +155,7 @@ def decode_query(orig_query, dependency_type, feats_detailed_list):
     return root
 
 
-def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
+def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True, label_subtypes=False):
     hash_object = hashlib.sha1(input_path.encode('utf-8'))
     hex_dig = hash_object.hexdigest()
     trees_read_outputfile = os.path.join(internal_saves, hex_dig) if internal_saves is not None else None
@@ -179,12 +179,13 @@ def create_trees(input_path, internal_saves, feats_detailed_dict={}, save=True):
 
                 # TODO check if 5th place is always there for feats
                 token_form = token.form if token.form is not None else '_'
-                node = Tree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token.deprel, token.feats, form_dict,
+                token_deprel = token.deprel if label_subtypes else token.deprel.split(':')[0]
+                node = Tree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel, token.feats, form_dict,
                             lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, token.head)
                 token_nodes.append(node)
                 space_after = token.misc['SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc else True
                 tokens.append((token_form, space_after))
-                if token.deprel == 'root':
+                if token_deprel == 'root':
                     root = node
 
                 corpus_size += 1
@@ -526,7 +527,7 @@ def process_trees(input_path, internal_saves, configs):
 
                 (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
                  feats_detailed_list, sentence_statistics) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list,
-                                                     save=False)
+                                                     save=False, label_subtypes=configs['label_subtypes'])
 
                 corpus_size += sub_corpus_size
 
@@ -554,7 +555,7 @@ def process_trees(input_path, internal_saves, configs):
         # 4126 - 12 grams
         # 10598 - 13 grams
         (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
-         feats_detailed_list, sentence_statistics) = create_trees(input_path, internal_saves)
+         feats_detailed_list, sentence_statistics) = create_trees(input_path, internal_saves, label_subtypes=configs['label_subtypes'])
 
         result_dict = {}
         unigrams_dict = {}
@@ -718,6 +719,8 @@ def read_configs(config, args):
                                               'grew_match') if not args.grew_match else args.grew_match == 'yes'
     configs['example'] = config.getboolean('settings',
                                               'example') if not args.example else args.example == 'yes'
+    configs['label_subtypes'] = config.getboolean('settings',
+                                           'label_subtypes') if not args.label_subtypes else args.label_subtypes == 'yes'
 
     if args.sentence_count_file:
         configs['sentence_count_file'] = args.sentence_count_file

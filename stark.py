@@ -31,6 +31,7 @@ def parse_args():
 
     # output settings
     parser.add_argument("--grew_match", default=None, type=str, help="Output setting for printing query and url.")
+    parser.add_argument("--label_subtypes", default=None, type=str, help="Output setting for printing query and url.")
     parser.add_argument("--depsearch", default=None, type=str, help="Output setting for printing depsearch query.")
     parser.add_argument("--example", default=None, type=str, help="Print one example in a separate column.")
     parser.add_argument("--sentence_count_file", default=None, type=str, help="Path to a file where counts of queries will be stored per sentence.")
