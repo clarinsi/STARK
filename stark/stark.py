@@ -439,6 +439,8 @@ def read_filters(configs, feats_detailed_list):
             raise ValueError('You should specify either tree_size or query!')
         query = configs['query']
         query_tree = [decode_query('(' + query + ')', '', feats_detailed_list)]
+        if query_tree == [{}]:
+            raise ValueError('Query is not formatted properly!')
 
     # set filters
     node_type = configs['node_type']
