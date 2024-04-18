@@ -688,14 +688,14 @@ def read_configs(config, args):
                                                         'association_measures') if not args.association_measures else args.association_measures == 'yes')
 
     # optional parameters
-    if config.has_option('settings', 'labels'):
+    if config.has_option('settings', 'labels') or args.labels:
         label_whitelist = config.get('settings',
                                      'labels') if not args.labels else args.labels
         configs['label_whitelist'] = label_whitelist.split('|')
     else:
         configs['label_whitelist'] = []
 
-    if config.has_option('settings', 'head'):
+    if config.has_option('settings', 'head') or args.head:
         root_whitelist = config.get('settings',
                                     'head') if not args.head else args.head
         configs['root_whitelist'] = root_whitelist.split('|')
