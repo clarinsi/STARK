@@ -9,6 +9,7 @@ Below is a list of customizable settings that can be used to define the type of 
 | [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
 |  | [complete](#--complete) | [query](#--query) | | [depsearch](#--depsearch) | |
 |  | [labeled](#--labeled) |  |  |  |  |
+|  | [label_subtypes](#--label_subtypes) |  |  |  |  |
 | | [fixed](#--fixed) |  |  |  | |
 
 For details on the settings pertaining to the tool performance and testing see [advanced settings](/advanced.md).
@@ -48,6 +49,11 @@ The obligatory `--complete` parameter defines whether STARK, for a given tree si
 **Values:** _yes, no_
 
 The obligatory `--labeled` parameter specifies whether trees should be differentiated based on the syntactic relations (dependency labels) between the nodes of the tree (value _yes_), or not (value _no_). For example, if the first option differentiates between trees 'NOUN <nsubj VERB' and 'NOUN <obj VERB', the second option considers them as two instances of the same tree, i.e. 'NOUN < VERB'.
+
+### `--label_subtypes`
+**Values:** _yes, no_
+
+The obligatory `--label_subtypes` parameter specifies whether (labeled) trees should be differentiated based on label extensions (relation sub-types) (value _yes_) or not (value _no_). For example, if the first option differentiates between trees 'NOUN <nsubj:pass VERB' and 'NOUN <nsubj VERB', the second option considers them as two instances of the same tree, i.e. 'NOUN <nsubj VERB'.
 
 ### `--fixed`
 **Values:** _yes, no_
