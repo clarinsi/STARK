@@ -37,7 +37,7 @@ weblog-blogspot.com_gettingpolitical_20030906235000_ENG_20030906_235000-0005	0
 ### `--detailed_results_file `
 **Value:** _\<path to file\>_
 
-This parameter prints all the matched examples in the input treebank, i.e. all matched trees in all sentences, so it should be used with caution when large input treebanks are involved. Here is an example of the matched examples for tree 'PART <mark VERB >obl ADP':
+This parameter prints all the matched examples in the input treebank, i.e. all matched trees in all sentences, so it should be used with caution when large input treebanks are involved. Here is an example of the matched examples for tree 'PART \<mark VERB \>obl ADP':
 
 ```bash
 (PART <mark VERB >obl ADP)ABC	reviews-139456-0001	Pleasure A[to] B[work] C[with]. 
