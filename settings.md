@@ -5,7 +5,7 @@ Below is a list of customizable settings that can be used to define the type of 
 
 |General | Tree specification | Tree restrictions | Statistics | Visualisation | Threshold |
 | --- | --- | --- | --- | --- |  --- | 
-| [input](#--input) | [size](#--size) | [labels](#--labels) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
+| [input](#--input) | [size](#--size) | [allowed_labels](#--allowed_labels) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
 | [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
 |  | [complete](#--complete) | [query](#--query) | | [depsearch](#--depsearch) | |
 |  | [labeled](#--labeled) |  |  |  |  |
@@ -61,10 +61,10 @@ The second, order-agnostic description of a tree can also be produced by using t
 ## Restriction to specific structures
 In contrast to the obligatory settings above specifying the criteria for defining the _types_ of trees to be extracted, STARK also allows the users to restrict the extraction procedure to _specific_ trees through the three options presented below.
 
-### `--labels`
+### `--allowed_labels`
 **Value:** _\<list of allowed dependency relations\>_
 
-The optional `--labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. For example, specifying _labels = obj|iobj|nsubj_ only extracts trees featuring these three relations and ignores all others.
+The optional `--allowed_labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. For example, specifying _allowed_labels = obj|iobj|nsubj_ only extracts trees featuring these three relations and ignores all others.
 
 ### `--head`
 **Value:** _\<list of allowed head characteristics\>_

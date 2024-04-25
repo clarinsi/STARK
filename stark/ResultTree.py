@@ -21,6 +21,8 @@ class ResultTree(object):
         self.node = node
         self.children = children
         self.filters = filters
+        # value of self.key might change in __repr__() when that chunk executes (self.children, self.key and
+        # self.node must be defined)
         self.key = None
         self.order_key = None
         self.order = None
@@ -52,7 +54,20 @@ class ResultTree(object):
 
         return nodes, links
 
+    def ignore_nodes(self):
+        """
+        Drops nodes in result tree, that are supposed to be ignored.
+        """
+        self.children = [child for child in self.children if child.node.deprel not in self.filters['ignore_labels']]
+        for child in self.children:
+            child.ignore_nodes()
+
     def get_key(self):
+        """
+        A code that returns and (if necessary generates) key of a tree. (used for `Tree` column in output)
+        :return:
+        key: Key of a tree
+        """
         if self.key:
             return self.key
         key = ''
@@ -181,6 +196,8 @@ class ResultTree(object):
     def finalize_result(self):
         result = copy.copy(self)
         result.reset_params()
+        if result.filters['ignore_labels']:
+            result.ignore_nodes()
 
         # create order letters
         order = result.get_order()

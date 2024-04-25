@@ -372,6 +372,12 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                 sentence['count'] = {}
                 for query_results in subtrees:
                     for r in query_results:
+                        if filters['ignore_labels']:
+                            r.get_array()
+                            if filters['tree_size_range'] and \
+                                    (len(r.array) > filters['tree_size_range'][-1] or len(r.array) <
+                                     filters['tree_size_range'][0]):
+                                continue
                         if filters['node_order']:
                             key = r.get_key() + r.order
                         else:
@@ -399,7 +405,8 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
 
         # 3.65 s (1 core)
         else:
-            for tree_i, tree in enumerate(all_trees):
+            for tree, sentence in zip(all_trees, sentence_statistics):
+                sentence['count'] = {}
                 input_data = (tree, query_tree, create_output_string_functs, filters)
                 if filters['association_measures']:
                     unigrams = get_unigrams(input_data)
@@ -412,14 +419,36 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                 subtrees = tree_calculations(input_data)
                 for query_results in subtrees:
                     for r in query_results:
+                        if filters['ignore_labels']:
+                            r.get_array()
+                            if filters['tree_size_range'] and \
+                                    (len(r.array) > filters['tree_size_range'][-1] or len(r.array) < filters['tree_size_range'][0]):
+                                continue
                         if filters['node_order']:
                             key = r.get_key() + r.order
                         else:
                             key = r.get_key()
                         if key in result_dict:
+                            if filters['detailed_results_file']:
+                                recreated_sentence = recreate_sentence(sentence, r)
+                                result_dict[key]['sentence'].append((sentence['id'], recreated_sentence))
+                            elif filters['example'] and random.random() < 1.0 - (
+                                    result_dict[key]['number'] / (result_dict[key]['number'] + 1)):
+                                recreated_sentence = recreate_sentence(sentence, r)
+                                result_dict[key]['sentence'] = [(sentence['id'], recreated_sentence)]
                             result_dict[key]['number'] += 1
                         else:
                             result_dict[key] = {'object': r, 'number': 1}
+
+                            # recreate example sentence with shown positions of subtree
+                            if filters['example'] or filters['detailed_results_file']:
+                                recreated_sentence = recreate_sentence(sentence, r)
+                                result_dict[key]['sentence'] = [(sentence['id'], recreated_sentence)]
+                        if filters['sentence_count_file']:
+                            if key in sentence['count']:
+                                sentence['count'][key] += 1
+                            else:
+                                sentence['count'][key] = 1
 
 
 def read_filters(configs, feats_detailed_list):
@@ -464,12 +493,13 @@ def read_filters(configs, feats_detailed_list):
         create_output_string_functs.append(create_output_string_funct)
 
     filters = {}
+    filters['tree_size_range'] = tree_size_range
     filters['internal_saves'] = configs['internal_saves']
     filters['input'] = configs['input_path']
     filters['node_order'] = configs['node_order']
-    # filters['caching'] = config.getboolean('settings', 'caching')
     filters['dependency_type'] = configs['dependency_type']
     filters['label_whitelist'] = configs['label_whitelist']
+    filters['ignore_labels'] = configs['ignore_labels']
     filters['example'] = configs['example']
     filters['sentence_count_file'] = configs['sentence_count_file']
     filters['detailed_results_file'] = configs['detailed_results_file']
@@ -651,6 +681,7 @@ def create_default_configs():
     configs['association_measures'] = False
 
     configs['label_whitelist'] = []
+    configs['ignore_labels'] = []
     configs['root_whitelist'] = []
 
     configs['query'] = None
@@ -688,12 +719,19 @@ def read_configs(config, args):
                                                         'association_measures') if not args.association_measures else args.association_measures == 'yes')
 
     # optional parameters
-    if config.has_option('settings', 'labels') or args.labels:
+    if config.has_option('settings', 'allowed_labels') or args.allowed_labels:
         label_whitelist = config.get('settings',
-                                     'labels') if not args.labels else args.labels
+                                     'allowed_labels') if not args.allowed_labels else args.allowed_labels
         configs['label_whitelist'] = label_whitelist.split('|')
     else:
         configs['label_whitelist'] = []
+
+    if config.has_option('settings', 'ignore_labels') or args.ignore_labels:
+        ignore_labels = config.get('settings',
+                                        'ignore_labels') if not args.ignore_labels else args.ignore_labels
+        configs['ignore_labels'] = ignore_labels.split('|')
+    else:
+        configs['ignore_labels'] = []
 
     if config.has_option('settings', 'head') or args.head:
         root_whitelist = config.get('settings',

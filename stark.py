@@ -24,7 +24,8 @@ def parse_args():
     parser.add_argument("--fixed", default=None, type=str, help="Order of node.")
     parser.add_argument("--node_type", default=None, type=str, help="Type of node.")
 
-    parser.add_argument("--labels", default=None, type=str, help="Label whitelist.")
+    parser.add_argument("--allowed_labels", default=None, type=str, help="Label not included here will not be counted.")
+    parser.add_argument("--ignore_labels", default=None, type=str, help="Labels that contain these parsing tags will be counted but ignored in result representations.")
     parser.add_argument("--head", default=None, type=str, help="Head whitelist.")
 
     parser.add_argument("--query", default=None, type=str, help="Query.")
