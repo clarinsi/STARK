@@ -9,6 +9,7 @@ Below is a list of customizable settings that can be used to define the type of 
 | [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
 |  | [complete](#--complete) | [query](#--query) | | [depsearch](#--depsearch) | |
 |  | [labeled](#--labeled) |  |  |  |  |
+|  | [label_subtypes](#--label_subtypes) |  |  |  |  |
 | | [fixed](#--fixed) |  |  |  | |
 
 For details on the settings pertaining to the tool performance and testing see [advanced settings](/advanced.md).
@@ -49,6 +50,11 @@ The obligatory `--complete` parameter defines whether STARK, for a given tree si
 
 The obligatory `--labeled` parameter specifies whether trees should be differentiated based on the syntactic relations (dependency labels) between the nodes of the tree (value _yes_), or not (value _no_). For example, if the first option differentiates between trees 'NOUN <nsubj VERB' and 'NOUN <obj VERB', the second option considers them as two instances of the same tree, i.e. 'NOUN < VERB'.
 
+### `--label_subtypes`
+**Values:** _yes, no_
+
+The obligatory `--label_subtypes` parameter specifies whether (labeled) trees should be differentiated based on label extensions (relation sub-types) (value _yes_) or not (value _no_). For example, if the first option differentiates between trees 'NOUN <nsubj:pass VERB' and 'NOUN <nsubj VERB', the second option considers them as two instances of the same tree, i.e. 'NOUN <nsubj VERB'.
+
 ### `--fixed`
 **Values:** _yes, no_
 
@@ -74,7 +80,7 @@ Similarly, the optional `--head` parameter allows the users to define specific c
 ### `--query`
 **Value:** _\<pre-defined tree query\>_
 
-Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/). For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_). When using the `--query` parameter, make sure to comment the `--size` parameter, as the latter has priority over the former.
+Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/). For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. Note that the query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_). When using the `--query` parameter, make sure to comment the `--size` parameter, as the latter has priority over the former. Note that, in contrast to the `--head` parameter above, no 'and'/'or' operators are supported.
 
 ## Statistics
 By default, STARK produces a list of trees with the absolute frequency (raw count) and the relative frequency (normalized count per million tokens) of the trees in the input treebank. In addition, two optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena.
