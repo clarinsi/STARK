@@ -58,7 +58,7 @@ class ResultTree(object):
         """
         Drops nodes in result tree, that are supposed to be ignored.
         """
-        self.children = [child for child in self.children if child.node.deprel not in self.filters['ignore_labels']]
+        self.children = [child for child in self.children if child.node.deprel not in self.filters['ignored_labels']]
         for child in self.children:
             child.ignore_nodes()
 
@@ -196,7 +196,7 @@ class ResultTree(object):
     def finalize_result(self):
         result = copy.copy(self)
         result.reset_params()
-        if result.filters['ignore_labels']:
+        if result.filters['ignored_labels']:
             result.ignore_nodes()
 
         # create order letters

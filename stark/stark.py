@@ -372,7 +372,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                 sentence['count'] = {}
                 for query_results in subtrees:
                     for r in query_results:
-                        if filters['ignore_labels']:
+                        if filters['ignored_labels']:
                             r.get_array()
                             if filters['tree_size_range'] and \
                                     (len(r.array) > filters['tree_size_range'][-1] or len(r.array) <
@@ -419,7 +419,7 @@ def count_trees(cpu_cores, all_trees, query_tree, create_output_string_functs, f
                 subtrees = tree_calculations(input_data)
                 for query_results in subtrees:
                     for r in query_results:
-                        if filters['ignore_labels']:
+                        if filters['ignored_labels']:
                             r.get_array()
                             if filters['tree_size_range'] and \
                                     (len(r.array) > filters['tree_size_range'][-1] or len(r.array) < filters['tree_size_range'][0]):
@@ -499,7 +499,7 @@ def read_filters(configs, feats_detailed_list):
     filters['node_order'] = configs['node_order']
     filters['dependency_type'] = configs['dependency_type']
     filters['label_whitelist'] = configs['label_whitelist']
-    filters['ignore_labels'] = configs['ignore_labels']
+    filters['ignored_labels'] = configs['ignored_labels']
     filters['example'] = configs['example']
     filters['sentence_count_file'] = configs['sentence_count_file']
     filters['detailed_results_file'] = configs['detailed_results_file']
@@ -681,7 +681,7 @@ def create_default_configs():
     configs['association_measures'] = False
 
     configs['label_whitelist'] = []
-    configs['ignore_labels'] = []
+    configs['ignored_labels'] = []
     configs['root_whitelist'] = []
 
     configs['query'] = None
@@ -726,12 +726,12 @@ def read_configs(config, args):
     else:
         configs['label_whitelist'] = []
 
-    if config.has_option('settings', 'ignore_labels') or args.ignore_labels:
-        ignore_labels = config.get('settings',
-                                        'ignore_labels') if not args.ignore_labels else args.ignore_labels
-        configs['ignore_labels'] = ignore_labels.split('|')
+    if config.has_option('settings', 'ignored_labels') or args.ignored_labels:
+        ignored_labels = config.get('settings',
+                                        'ignored_labels') if not args.ignored_labels else args.ignored_labels
+        configs['ignored_labels'] = ignored_labels.split('|')
     else:
-        configs['ignore_labels'] = []
+        configs['ignored_labels'] = []
 
     if config.has_option('settings', 'head') or args.head:
         root_whitelist = config.get('settings',
