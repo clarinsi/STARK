@@ -52,7 +52,7 @@ Tree specification:
 
 Tree restrictions:
 -	`head`: predefined characteristics of the head node (e.g. _upos=NOUN_)
--	`allowed_labels`: predefined list of dependency labels allowed in the extracted tree (values *yes* or *no*)
+-	`ignore_labels`: predefined list of dependency labels that should be ignored when counting the trees (e.g. _punct_)
 -	`query`: predefined tree structure based on the DepSearch query language (e.g. _VERB >obl NOUN_).
 
 Statistics: 
