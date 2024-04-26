@@ -5,10 +5,10 @@ Below is a list of customizable settings that can be used to define the type of 
 
 |General | Tree specification | Tree restrictions | Statistics | Visualisation | Threshold |
 | --- | --- | --- | --- | --- |  --- | 
-| [input](#--input) | [size](#--size) | [allowed_labels](#--allowed_labels) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
-| [output](#--output) | [node_type](#--node_type) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
-|  | [complete](#--complete) | [query](#--query) | | [depsearch](#--depsearch) | |
-|  | [labeled](#--labeled) |  |  |  |  |
+| [input](#--input) | [size](#--size) | [head](#--head) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
+| [output](#--output) | [node_type](#--node_type) | [ignore_labels](#--ignore_labels) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
+|  | [complete](#--complete) | [allowed_labels](#--allowed_labels) | | [depsearch](#--depsearch) | |
+|  | [labeled](#--labeled) | [query](#--query) |  |  |  |
 |  | [label_subtypes](#--label_subtypes) |  |  |  |  |
 | | [fixed](#--fixed) |  |  |  | |
 
@@ -67,15 +67,20 @@ The second, order-agnostic description of a tree can also be produced by using t
 ## Restriction to specific structures
 In contrast to the obligatory settings above specifying the criteria for defining the _types_ of trees to be extracted, STARK also allows the users to restrict the extraction procedure to _specific_ trees through the three options presented below.
 
-### `--allowed_labels`
-**Value:** _\<list of allowed dependency relations\>_
-
-The optional `--allowed_labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. For example, specifying _allowed_labels = obj|iobj|nsubj_ only extracts trees featuring these three relations and ignores all others.
-
 ### `--head`
 **Value:** _\<list of allowed head characteristics\>_
 
 Similarly, the optional `--head` parameter allows the users to define specific constraints on the head node (i.e. the word that all other words in the (sub-)tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR) and '&' (AND) operators, e.g. _upos=NOUN&Case=Acc|upos=NOUN&Case=Nom_ to extract trees governed by nouns in either accusative or nominative case. 
+
+### `--ignore_labels`
+**Value:** _\<list of dependency relations to be ignored\>_
+
+The optional `--ignore_labels` parameter defines a list of dependency relations that are to be ignored when matching the trees and thus not displayed in the results file. For example, specifying _ignore_labels = punct_ produces a list of matched trees that do not include the _punct_ relation (even if it is present in the actual tree). In addition to ignoring a certain type of relations, such as punctuation or other clause-peripheral phenomena, this is a particularly useful feature for users interested in a limited set of relations only, such as core predicate arguments. Such users would then use this parameter as a negative filter by specifying all relations except those pertaining to the core predicate arguments (e.g. _nsubj, obj_). In contrast to the `--allowed_labels` parameter below, this parameter does not exclude trees containing a given relation, but only ignores them when they occur in a tree. Two or more relations specified should be separated by the '|' operator.
+
+### `--allowed_labels`
+**Value:** _\<whitelist of allowed dependency relations\>_
+
+The optional `--allowed_labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. For example, specifying _allowed_labels = obj|iobj|nsubj_ extracts trees featuring only these three relations (and no other) and ignores all others. In contrast to the `--ignore_labels` parameter above, the presence of any other label in the tree automatically excludes such tree from being matched and counted.  
 
 ### `--query`
 **Value:** _\<pre-defined tree query\>_
