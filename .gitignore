@@ -1,5 +1,6 @@
 .idea/
 venv/
+tests/test_data/output/
 internal_saves/
 __pycache__/
 results/
