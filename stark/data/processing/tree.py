@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 from copy import copy
 
-from stark.ResultNode import ResultNode
-from stark.ResultTree import ResultTree
-from stark.Value import Value
+from stark.data.representation.node import RepresentationNode
+from stark.data.representation.tree import RepresentationTree
+from stark.data.processing.value import Value
 from stark.generic import generate_key
 
 
@@ -198,22 +197,22 @@ class Tree(object):
 
     def order_dependent_queries(self, active_permanent_query_trees, active_temporary_query_trees, partial_subtrees,
                                 create_output_string, merged_partial_subtrees, i_query, i_answer, filters):
-        node = ResultNode(self, self.index, create_output_string)
+        node = RepresentationNode(self, self.index, create_output_string)
 
         if i_query < len(active_permanent_query_trees):
             if 'children' in active_permanent_query_trees[i_query]:
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [ResultTree(node, [], filters)], filters))
+                    self.create_output_children(partial_subtrees[i_answer], [RepresentationTree(node, [], filters)], filters))
                 i_answer += 1
             else:
-                merged_partial_subtrees.append([ResultTree(node, [], filters)])
+                merged_partial_subtrees.append([RepresentationTree(node, [], filters)])
         else:
             if 'children' in active_temporary_query_trees[i_query - len(active_permanent_query_trees)]:
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [ResultTree(node, [], filters)], filters))
+                    self.create_output_children(partial_subtrees[i_answer], [RepresentationTree(node, [], filters)], filters))
                 i_answer += 1
             else:
-                merged_partial_subtrees.append([ResultTree(node, [], filters)])
+                merged_partial_subtrees.append([RepresentationTree(node, [], filters)])
 
 
 

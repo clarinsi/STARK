@@ -38,7 +38,7 @@ here = path.abspath(path.dirname(__file__))
 from stark.generic import get_collocabilities, create_output_string_form, create_output_string_deprel, create_output_string_lemma, create_output_string_upos, create_output_string_xpos, create_output_string_feats
 import urllib.parse
 
-from stark.Tree import Tree
+from stark.data.processing.tree import Tree
 
 sys.setrecursionlimit(25000)
 
@@ -567,10 +567,9 @@ def read_filters(configs, feats_detailed_list):
     return filters, query_tree, create_output_string_functs, cpu_cores, tree_size_range, node_types
 
 
-def process_trees(input_path, internal_saves, configs):
-    if os.path.isdir(input_path):
-
-        checkpoint_path = Path(internal_saves, 'checkpoint.pkl') if internal_saves is not None else None
+def process_trees(configs):
+    if os.path.isdir(configs['input_path']):
+        checkpoint_path = Path(configs['internal_saves'], 'checkpoint.pkl') if configs['internal_saves'] is not None else None
         continuation_processing = configs['continuation_processing']
 
         if checkpoint_path is None or not checkpoint_path.exists() or not continuation_processing:
@@ -586,8 +585,8 @@ def process_trees(input_path, internal_saves, configs):
             already_processed, result_dict, unigrams_dict, corpus_size, feats_detailed_list, complete_sentence_statistics = load_zipped_pickle(
                 checkpoint_path)
 
-        for path in sorted(os.listdir(input_path)):
-            path_obj = Path(input_path, path)
+        for path in sorted(os.listdir(configs['input_path'])):
+            path_obj = Path(configs['input_path'], path)
             pathlist = path_obj.glob('**/*.conllu')
             if path_obj.name in already_processed:
                 continue
@@ -597,7 +596,7 @@ def process_trees(input_path, internal_saves, configs):
                 path_str = str(path)
 
                 (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, sub_corpus_size,
-                 feats_detailed_list, sentence_statistics) = create_trees(path_str, internal_saves, feats_detailed_dict=feats_detailed_list,
+                 feats_detailed_list, sentence_statistics) = create_trees(path_str, configs['internal_saves'], feats_detailed_dict=feats_detailed_list,
                                                      save=False, label_subtypes=configs['label_subtypes'])
 
                 corpus_size += sub_corpus_size
@@ -626,7 +625,7 @@ def process_trees(input_path, internal_saves, configs):
         # 4126 - 12 grams
         # 10598 - 13 grams
         (all_trees, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, corpus_size,
-         feats_detailed_list, sentence_statistics) = create_trees(input_path, internal_saves, label_subtypes=configs['label_subtypes'])
+         feats_detailed_list, sentence_statistics) = create_trees(configs['input_path'], configs['internal_saves'], label_subtypes=configs['label_subtypes'])
 
         result_dict = {}
         unigrams_dict = {}
@@ -934,15 +933,12 @@ def read_settings(config_file, args):
 
 def run(configs):
     result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types, sentence_statistics \
-        = process_trees(configs['input_path'],
-          configs[
-              'internal_saves'],
-          configs)
+        = process_trees(configs)
 
     other_result_dict, other_corpus_size = None, None
     if configs['compare'] is not None:
-        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types, other_sentence_statistics = process_trees(
-            configs['other_input_path'], configs['internal_saves'], configs)
+        configs['input_path'] = configs['other_input_path']
+        other_result_dict, other_tree_size_range, other_filters, other_corpus_size, other_unigrams_dict, other_node_types, other_sentence_statistics = process_trees(configs)
 
     write(configs, result_dict, tree_size_range, filters, corpus_size, unigrams_dict, node_types, other_result_dict,
           other_corpus_size, sentence_statistics)

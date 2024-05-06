@@ -16,7 +16,7 @@ import copy
 import string
 
 
-class ResultTree(object):
+class RepresentationTree(object):
     def __init__(self, node, children, filters):
         self.node = node
         self.children = children

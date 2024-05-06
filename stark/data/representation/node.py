@@ -15,7 +15,7 @@
 from stark.generic import generate_key, generate_name
 
 
-class ResultNode(object):
+class RepresentationNode(object):
     def __init__(self, node, architecture_order, create_output_strings):
         self.name_parts, self.name = generate_name(node, create_output_strings)
         self.location = architecture_order
