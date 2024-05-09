@@ -44,6 +44,7 @@ def test_query():
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_query.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_query.tsv'))
 
+
 def test_dir():
     """
     Test complete=no and query.
@@ -55,3 +56,53 @@ def test_dir():
                                                       '--output', 'test_data/output/out_dir.tsv']))
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_dir.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_dir.tsv'))
+
+
+def test_internal_storage():
+    """
+    Test internal storage.
+    :return:
+    """
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_internal_storage.ini')
+    output_mapper_dir = 'test_data/output/internal_saves'
+    if os.path.exists(output_mapper_dir):
+        shutil.rmtree(output_mapper_dir)
+    settings = read_settings(config_file, parse_args([]))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_dir.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_dir.tsv'))
+
+
+def test_internal_storage2():
+    """
+    Test internal storage.
+    :return:
+    """
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_base.ini')
+    output_mapper_dir = 'test_data/output/internal_saves'
+    if os.path.exists(output_mapper_dir):
+        shutil.rmtree(output_mapper_dir)
+    settings = read_settings(config_file, parse_args(['--internal_saves', 'test_data/output/internal_saves',
+                                                      '--output', 'test_data/output/out_internal_storage2.tsv']))
+    stark.run(settings)
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_internal_storage2.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                           'out_internal_storage2.tsv'))
+
+
+def test_output_settings():
+    """
+    Test complete=no and query.
+    :return:
+    """
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_output_settings.ini')
+    settings = read_settings(config_file, parse_args([]))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_output_settings.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                         'out_output_settings.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                           'detailed_results_file.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'sentence_count_file.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                         'sentence_count_file.tsv'))

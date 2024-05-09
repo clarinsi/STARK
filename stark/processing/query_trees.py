@@ -1,0 +1,204 @@
+# Copyright 2024 CJVT
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import copy
+from stark.resources.constants import UNIVERSAL_FEATURES
+
+
+def add_node(tree):
+    if 'children' in tree:
+        tree['children'].append({})
+    else:
+        tree['children'] = [{}]
+
+
+# walk over all nodes in tree and add a node to each possible node
+def tree_grow(orig_tree):
+    new_trees = []
+    new_tree = copy.deepcopy(orig_tree)
+    add_node(new_tree)
+    new_trees.append(new_tree)
+    if 'children' in orig_tree:
+        children = []
+        for child_tree in orig_tree['children']:
+            children.append(tree_grow(child_tree))
+        for i, child in enumerate(children):
+            for child_res in child:
+                new_tree = copy.deepcopy(orig_tree)
+                new_tree['children'][i] = child_res
+                new_trees.append(new_tree)
+
+    return new_trees
+
+
+def compare_trees(tree1, tree2):
+    if tree1 == {} and tree2 == {}:
+        return True
+
+    if 'children' not in tree1 or 'children' not in tree2 or len(tree1['children']) != len(tree2['children']):
+        return False
+
+    children2_connections = []
+
+    for child1_i, child1 in enumerate(tree1['children']):
+        child_duplicated = False
+        for child2_i, child2 in enumerate(tree2['children']):
+            if child2_i in children2_connections:
+                pass
+            if compare_trees(child1, child2):
+                children2_connections.append(child2_i)
+                child_duplicated = True
+                break
+        if not child_duplicated:
+            return False
+
+    return True
+
+
+def create_ngrams_query_trees(n, trees):
+    for i in range(n - 1):
+        new_trees = []
+        for tree in trees:
+            # append new_tree only if it is not already inside
+            for new_tree in tree_grow(tree):
+                duplicate = False
+                for confirmed_new_tree in new_trees:
+                    if compare_trees(new_tree, confirmed_new_tree):
+                        duplicate = True
+                        break
+                if not duplicate:
+                    new_trees.append(new_tree)
+
+        trees = new_trees
+    return trees
+
+
+def split_query_text(input_string):
+    """
+    Splits query by ignoring everything in brackets and otherwise splitting by spaces.
+    :param input_string: Raw query in string
+    :return: Split string
+    """
+
+    replacements = {}
+    brackets_count = 1
+    brackets_depth = 0
+    replace_string = ''
+
+    for char in input_string:
+        if char == '(':
+            brackets_depth += 1
+
+        if brackets_depth >= 1:
+            replace_string += char
+
+        if char == ')':
+            brackets_depth -= 1
+            if brackets_depth == 0:
+                input_string = input_string.replace(replace_string, f'<BRACKET{brackets_count}>', 1)
+                replacements[f'<BRACKET{brackets_count}>'] = replace_string
+                brackets_count += 1
+                replace_string = ''
+
+    return [el if el not in replacements else replacements[el] for el in input_string.split()]
+
+
+def decode_query(orig_query, dependency_type):
+    new_query = False
+
+    # if command in bracelets remove them and treat command as new query
+    if orig_query[0] == '(' and orig_query[-1] == ')':
+        new_query = True
+        orig_query = orig_query[1:-1]
+
+    if dependency_type != '':
+        decoded_query = {'deprel': dependency_type}
+    else:
+        decoded_query = {}
+
+    if orig_query == '_':
+        return decoded_query
+    # if no spaces in query then this is query node and do this otherwise further split query
+    elif len(orig_query.split(' ')) == 1:
+        orig_query_split_parts = orig_query.split(' ')[0].split('&')
+        for orig_query_split_part in orig_query_split_parts:
+            orig_query_split = orig_query_split_part.split('=', 1)
+            if len(orig_query_split) > 1:
+                if orig_query_split[0] == 'L':
+                    decoded_query['lemma'] = orig_query_split[1]
+                elif orig_query_split[0] == 'upos':
+                    decoded_query['upos'] = orig_query_split[1]
+                elif orig_query_split[0] == 'xpos':
+                    decoded_query['xpos'] = orig_query_split[1]
+                elif orig_query_split[0] == 'form':
+                    decoded_query['form'] = orig_query_split[1]
+                elif orig_query_split[0] == 'feats':
+                    decoded_query['feats'] = orig_query_split[1]
+                elif orig_query_split[0] in UNIVERSAL_FEATURES:
+                    decoded_query['feats_detailed'] = {}
+                    decoded_query['feats_detailed'][orig_query_split[0]] = orig_query_split[1]
+                    return decoded_query
+                elif not new_query:
+                    raise Exception('Not supported yet!')
+                else:
+                    print('???')
+            elif not new_query:
+                decoded_query['form'] = orig_query_split_part
+        return decoded_query
+
+    # split over spaces if not inside braces
+    all_orders = split_query_text(orig_query)
+
+    node_actions = all_orders[::2]
+    priority_actions = all_orders[1::2]
+    priority_actions_beginnings = [a[0] for a in priority_actions]
+
+    # find root index
+    try:
+        root_index = priority_actions_beginnings.index('>')
+    except ValueError:
+        root_index = len(priority_actions)
+
+    children = []
+    root = None
+    for i, node_action in enumerate(node_actions):
+        if i < root_index:
+            children.append(decode_query(node_action, priority_actions[i][1:]))
+        elif i > root_index:
+            children.append(decode_query(node_action, priority_actions[i - 1][1:]))
+        else:
+            root = decode_query(node_action, dependency_type)
+    if children:
+        root["children"] = children
+    return root
+
+
+def generate_query_trees(configs, filters):
+    query_tree = []
+    if filters['tree_size_range'][0] > 0:
+        if len(filters['tree_size_range']) == 1:
+            query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [{}])
+        elif len(filters['tree_size_range']) == 2:
+            query_tree = []
+            for i in range(filters['tree_size_range'][0], filters['tree_size_range'][1] + 1):
+                query_tree.extend(create_ngrams_query_trees(i, [{}]))
+    else:
+        if filters['tree_size_range'][0] == 0 and 'query' not in configs:
+            raise ValueError('You should specify either tree_size or query!')
+        query = configs['query']
+        query_tree = [decode_query('(' + query + ')', '')]
+        if query_tree == [{}]:
+            raise ValueError('Query is not formatted properly!')
+
+    return query_tree

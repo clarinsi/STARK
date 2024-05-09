@@ -17,37 +17,41 @@ from copy import copy
 from stark.data.representation.node import RepresentationNode
 from stark.data.representation.tree import RepresentationTree
 from stark.data.processing.value import Value
-from stark.generic import generate_key
+from stark.utils import create_output_string_lemma
 
 
 class Tree(object):
-    def __init__(self, index, form, lemma, upos, xpos, deprel, feats_detailed, form_dict, lemma_dict, upos_dict, xpos_dict, deprel_dict, feats_dict, feats_detailed_dict, head):
+    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, document, summary):
+
+        feats_dict = summary.feats_dict
+
         if not hasattr(self, 'feats'):
             self.feats_detailed = {}
 
-        if form not in form_dict:
-            form_dict[form] = Value(form)
-        self.form = form_dict[form]
-        if lemma not in lemma_dict:
-            lemma_dict[lemma] = Value(lemma)
-        self.lemma = lemma_dict[lemma]
-        if upos not in upos_dict:
-            upos_dict[upos] = Value(upos)
-        self.upos = upos_dict[upos]
-        if xpos not in xpos_dict:
-            xpos_dict[xpos] = Value(xpos)
-        self.xpos = xpos_dict[xpos]
-        if deprel not in deprel_dict:
-            deprel_dict[deprel] = Value(deprel)
-        self.deprel = deprel_dict[deprel]
+        if form not in document.form_dict:
+            document.form_dict[form] = Value(form)
+        self.form = document.form_dict[form]
+        if lemma not in document.lemma_dict:
+            document.lemma_dict[lemma] = Value(lemma)
+        self.lemma = document.lemma_dict[lemma]
+        if upos not in document.upos_dict:
+            document.upos_dict[upos] = Value(upos)
+        self.upos = document.upos_dict[upos]
+        if xpos not in document.xpos_dict:
+            document.xpos_dict[xpos] = Value(xpos)
+        self.xpos = document.xpos_dict[xpos]
+        if deprel not in document.deprel_dict:
+            document.deprel_dict[deprel] = Value(deprel)
+        self.deprel = document.deprel_dict[deprel]
         for feat in feats_detailed.keys():
-            if feat not in feats_detailed_dict:
-                feats_detailed_dict[feat] = {}
-            if next(iter(feats_detailed[feat])) not in feats_detailed_dict[feat]:
-                feats_detailed_dict[feat][next(iter(feats_detailed[feat]))] = Value(next(iter(feats_detailed[feat])))
-            if not feat in self.feats_detailed:
+            if feat not in feats_dict:
+                feats_dict[feat] = {}
+            if next(iter(feats_detailed[feat])) not in feats_dict[feat]:
+                feats_dict[feat][next(iter(feats_detailed[feat]))] = Value(next(iter(feats_detailed[feat])))
+            if feat not in self.feats_detailed:
                 self.feats_detailed[feat] = {}
-            self.feats_detailed[feat][next(iter(feats_detailed[feat]))] = feats_detailed_dict[feat][next(iter(feats_detailed[feat]))]
+            self.feats_detailed[feat][next(iter(feats_detailed[feat]))] = (
+                feats_dict)[feat][next(iter(feats_detailed[feat]))]
 
         self.parent = head
         self.children = []
@@ -69,7 +73,8 @@ class Tree(object):
             return True
 
         for feat in query_tree['feats_detailed'].keys():
-            if feat not in self.feats_detailed or query_tree['feats_detailed'][feat] != next(iter(self.feats_detailed[feat].values())).get_value():
+            if (feat not in self.feats_detailed or
+                    query_tree['feats_detailed'][feat] != next(iter(self.feats_detailed[feat].values())).get_value()):
                 return False
 
         return True
@@ -86,7 +91,8 @@ class Tree(object):
             # check if attributes are valid
             for key in option.keys():
                 if key not in main_attributes:
-                    if key not in self.feats_detailed or option[key] != list(self.feats_detailed[key].items())[0][1].get_value():
+                    if (key not in self.feats_detailed or
+                            option[key] != list(self.feats_detailed[key].items())[0][1].get_value()):
                         filter_passed = False
 
             filter_passed = filter_passed and \
@@ -109,10 +115,12 @@ class Tree(object):
                ('upos' not in query_tree or query_tree['upos'] == self.upos.get_value()) and \
                ('xpos' not in query_tree or query_tree['xpos'] == self.xpos.get_value()) and \
                ('deprel' not in query_tree or query_tree['deprel'] == self.deprel.get_value()) and \
-               (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or ('children' in query_tree and len(self.children) == len(query_tree['children']))) and \
+               (not filters['complete_tree_type'] or (len(self.children) == 0 and 'children' not in query_tree) or
+                ('children' in query_tree and len(self.children) == len(query_tree['children']))) and \
                self.fits_static_requirements_feats(query_tree)
 
-    def generate_children_queries(self, all_query_indices, children):
+    @staticmethod
+    def generate_children_queries(all_query_indices, children):
         partial_results = {}
         # list of pairs (index of query in group, group of query, is permanent)
         child_queries_metadata = []
@@ -121,7 +129,8 @@ class Tree(object):
 
             # add continuation queries to children
             for result_part_index, result_index, is_permanent in child_queries_metadata:
-                if result_index in partial_results and result_part_index in partial_results[result_index] and len(partial_results[result_index][result_part_index]) > 0:
+                if (result_index in partial_results and result_part_index in partial_results[result_index]
+                        and len(partial_results[result_index][result_part_index]) > 0):
                     if len(all_query_indices[result_index][0]) > result_part_index + 1:
                         new_queries.append((result_part_index + 1, result_index, is_permanent))
 
@@ -140,22 +149,23 @@ class Tree(object):
             partial_results = yield child, child_queries, child_queries_metadata
         yield None, None, None
 
-    def add_subtrees(self, old_subtree, new_subtree):
+    @staticmethod
+    def add_subtrees(old_subtree, new_subtree):
         old_subtree.extend(new_subtree)
 
-    def get_all_query_indices(self, temporary_query_nb, permanent_query_nb, permanent_query_trees, all_query_indices, children, create_output_string, filters):
-        partial_answers = [[] for i in range(permanent_query_nb + temporary_query_nb)]
-        complete_answers = [[] for i in range(permanent_query_nb)]
+    def get_all_query_indices(self, temporary_query_nb, permanent_query_nb, permanent_query_trees, all_query_indices,
+                              children, create_output_string, filters):
+        partial_answers = [[] for _ in range(permanent_query_nb + temporary_query_nb)]
+        complete_answers = [[] for _ in range(permanent_query_nb)]
 
         # list of pairs (index of query in group, group of query)
-        # TODO try to erase!!!
         child_queries = [all_query_indice[0] for all_query_indice in all_query_indices]
 
         answers_lengths = [len(query) for query in child_queries]
 
         child_queries_flatten = [query_part for query in child_queries for query_part in query]
 
-        all_new_partial_answers = [[] for query_part in child_queries_flatten]
+        all_new_partial_answers = [[] for _ in child_queries_flatten]
 
         child_queries_flatten_dedup = []
         child_queries_flatten_dedup_indices = []
@@ -171,8 +181,9 @@ class Tree(object):
         # ask children all queries/partial queries
         for child in children:
             # obtain children results
-            new_partial_answers_dedup, new_complete_answers = child.get_subtrees(permanent_query_trees, child_queries_flatten_dedup,
-                                                                              create_output_string, filters)
+            new_partial_answers_dedup, new_complete_answers = child.get_subtrees(permanent_query_trees,
+                                                                                 child_queries_flatten_dedup,
+                                                                                 create_output_string, filters)
 
             assert len(new_partial_answers_dedup) == len(child_queries_flatten_dedup)
 
@@ -189,8 +200,7 @@ class Tree(object):
         # iterate over all answers per queries
         for answer_i, answer_length in enumerate(answers_lengths):
             # iterate over answers of query
-            # TODO ERROR IN HERE!
-            partial_answers[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], answer_length, filters)
+            partial_answers[answer_i] = self.create_answers(all_new_partial_answers[i:i + answer_length], answer_length)
             i += answer_length
 
         return partial_answers, complete_answers
@@ -202,31 +212,48 @@ class Tree(object):
         if i_query < len(active_permanent_query_trees):
             if 'children' in active_permanent_query_trees[i_query]:
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [RepresentationTree(node, [], filters)], filters))
+                    self.create_output_children(partial_subtrees[i_answer],
+                                                [RepresentationTree(node, [], filters)], filters))
                 i_answer += 1
             else:
                 merged_partial_subtrees.append([RepresentationTree(node, [], filters)])
         else:
             if 'children' in active_temporary_query_trees[i_query - len(active_permanent_query_trees)]:
                 merged_partial_subtrees.append(
-                    self.create_output_children(partial_subtrees[i_answer], [RepresentationTree(node, [], filters)], filters))
+                    self.create_output_children(partial_subtrees[i_answer],
+                                                [RepresentationTree(node, [], filters)], filters))
                 i_answer += 1
             else:
                 merged_partial_subtrees.append([RepresentationTree(node, [], filters)])
-
-
-
         return i_answer
 
     def get_unigrams(self, create_output_strings, filters):
-        unigrams = [generate_key(self, create_output_strings, print_lemma=False)[1]]
+        unigrams = [self.generate_key(self, create_output_strings, print_lemma=False)[1]]
         for child in self.children:
             unigrams += child.get_unigrams(create_output_strings, filters)
         return unigrams
 
+    @staticmethod
+    def generate_key(node, create_output_strings, print_lemma=True):
+        array = [[create_output_string(node) for create_output_string in create_output_strings]]
+        if create_output_string_lemma in create_output_strings and print_lemma:
+            key_array = [[create_output_string(
+                node) if create_output_string != create_output_string_lemma else create_output_string(node) for
+                          create_output_string in create_output_strings]]
+        else:
+            key_array = array
+        if len(array[0]) > 1:
+            key = '&'.join(key_array[0])
+        else:
+            key = key_array[0][0]
+
+        return array, key
+
     def get_subtrees(self, permanent_query_trees, temporary_query_trees, create_output_string, filters):
         """
 
+        :param filters:
+        :param create_output_string:
         :param permanent_query_trees:
         :param temporary_query_trees:
         """
@@ -236,7 +263,8 @@ class Tree(object):
 
         active_permanent_query_trees = []
         for permanent_query_tree in permanent_query_trees:
-            if self.fits_static_requirements(permanent_query_tree, filters) and self.fits_permanent_requirements(filters):
+            if (self.fits_static_requirements(permanent_query_tree, filters)
+                    and self.fits_permanent_requirements(filters)):
                 active_permanent_query_trees.append(permanent_query_tree)
                 if 'children' in permanent_query_tree:
                     all_query_indices.append((permanent_query_tree['children'], True))
@@ -245,17 +273,18 @@ class Tree(object):
         active_temporary_query_trees = []
         successful_temporary_queries = []
         for i, temporary_query_tree in enumerate(temporary_query_trees):
-            if self.fits_static_requirements(temporary_query_tree, filters) and self.fits_temporary_requirements(filters):
+            if (self.fits_static_requirements(temporary_query_tree, filters)
+                    and self.fits_temporary_requirements(filters)):
                 active_temporary_query_trees.append(temporary_query_tree)
                 successful_temporary_queries.append(i)
                 if 'children' in temporary_query_tree:
                     all_query_indices.append((temporary_query_tree['children'], False))
 
         partial_subtrees, complete_answers = self.get_all_query_indices(len(temporary_query_trees),
-                                                                                                      len(permanent_query_trees),
-                                                                                                      permanent_query_trees,
-                                                                                                      all_query_indices, self.children,
-                                                                                                      create_output_string, filters)
+                                                                        len(permanent_query_trees),
+                                                                        permanent_query_trees,
+                                                                        all_query_indices, self.children,
+                                                                        create_output_string, filters)
 
         merged_partial_answers = []
         i_question = 0
@@ -265,8 +294,9 @@ class Tree(object):
         # go over all permanent and temporary query trees
         while i_question < len(active_permanent_query_trees) + len(active_temporary_query_trees):
             # permanent query trees always have left and right child
-            i_answer = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees, partial_subtrees,
-                                                           create_output_string, merged_partial_answers, i_question, i_answer, filters)
+            i_answer = self.order_dependent_queries(active_permanent_query_trees, active_temporary_query_trees,
+                                                    partial_subtrees, create_output_string, merged_partial_answers,
+                                                    i_question, i_answer, filters)
 
             i_question += 1
 
@@ -276,7 +306,7 @@ class Tree(object):
             complete_answers[i].extend(add_subtree)
 
         # answers to valid queries
-        partial_answers = [[] for i in range(len(temporary_query_trees))]
+        partial_answers = [[] for _ in range(len(temporary_query_trees))]
         for inside_i, outside_i in enumerate(successful_temporary_queries):
             partial_answers[outside_i] = merged_partial_answers[
                 len(active_permanent_query_trees) + inside_i]
@@ -298,19 +328,6 @@ class Tree(object):
                 new_part.extend(right_part)
                 all_children_group_possibilities.append(new_part)
         return all_children_group_possibilities
-
-    @staticmethod
-    def merge_answer(answer1, answer2, base_answer_i, answer_j):
-        merged_results = []
-        merged_indices = []
-        for answer1p_i, old_result in enumerate(answer1):
-            for answer2p_i, new_result in enumerate(answer2):
-                if answer1p_i != answer2p_i:
-                    new_indices = [answer1p_i] + [answer2p_i]
-                    # TODO add comparison answers with different indices if equal than ignore
-                    merged_results.append(old_result + new_result)
-                    merged_indices.append(new_indices)
-        return merged_results, merged_indices
 
     def merge_results3(self, child, new_results, filters):
         if filters['node_order']:
@@ -339,7 +356,8 @@ class Tree(object):
             merged_results.extend(self.merge_results3(child, new_results, filters))
         return merged_results
 
-    def create_answers(self, separated_answers, answer_length, filters):
+    @staticmethod
+    def create_answers(separated_answers, answer_length):
         partly_built_trees = [[None] * answer_length]
         partly_built_trees_architecture_indices = [[None] * answer_length]
         built_trees = []
@@ -357,7 +375,8 @@ class Tree(object):
                     for tree_part_i, tree_part in enumerate(partly_built_trees):
                         if not tree_part[answer_part_i]:
                             new_tree_part = copy(tree_part)
-                            new_tree_part_architecture_indices = copy(partly_built_trees_architecture_indices[tree_part_i])
+                            new_tree_part_architecture_indices = (
+                                copy(partly_built_trees_architecture_indices[tree_part_i]))
                             new_tree_part[answer_part_i] = separated_answers[answer_part_i][child_i]
                             new_tree_part_architecture_indices[answer_part_i] = child_i
                             completed_tree_part = True
@@ -392,7 +411,10 @@ class Tree(object):
                 for unique_tree in unique_trees_architecture:
                     already_in = True
                     for part_i in range(len(unique_tree)):
-                        if len(unique_tree[part_i]) != len(new_tree[part_i]) or any(unique_tree[part_i][i_unique_part].get_order_key() != new_tree[part_i][i_unique_part].get_order_key() for i_unique_part in range(len(unique_tree[part_i]))):
+                        if (len(unique_tree[part_i]) != len(new_tree[part_i])
+                                or any(unique_tree[part_i][i_unique_part].get_order_key() !=
+                                       new_tree[part_i][i_unique_part].get_order_key()
+                                       for i_unique_part in range(len(unique_tree[part_i])))):
                             already_in = False
                             break
                     if already_in:
