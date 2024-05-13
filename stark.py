@@ -5,7 +5,9 @@ import time
 from pathlib import Path
 
 import stark
+import logging
 from stark.stark import read_settings, parse_args
+logger = logging.getLogger('stark')
 
 
 def main():
@@ -19,5 +21,5 @@ def main():
 if __name__ == "__main__":
     start_time = time.time()
     main()
-    print("Total:")
-    print("--- %s seconds ---" % (time.time() - start_time))
+    logger.info("Total:")
+    logger.info("--- %s seconds ---" % (time.time() - start_time))

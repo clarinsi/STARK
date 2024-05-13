@@ -18,7 +18,7 @@ import time
 from pathlib import Path
 
 from stark.processing.cache import ProcessorCache
-from stark.processing.count import TreeCounter
+from stark.processing.counters import QueryCounter, GreedyCounter
 from stark.processing.document_processor import DocumentProcessor
 
 logger = logging.getLogger('stark')
@@ -61,7 +61,10 @@ class Processor(object):
             document_processor = DocumentProcessor(str(path), self)
             document = document_processor.form_trees(summary)
 
-            tree_counter = TreeCounter(document, summary, self.filters)
+            if self.configs['greedy_counter']:
+                tree_counter = GreedyCounter(document, summary, self.filters)
+            else:
+                tree_counter = QueryCounter(document, summary, self.filters)
             tree_counter.run()
             summary.samples.extend(document.sentence_statistics)
 

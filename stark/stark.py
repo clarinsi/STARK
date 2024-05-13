@@ -43,6 +43,7 @@ def parse_args(args):
     parser.add_argument("--output", default=None, type=str, help="The output file.")
     parser.add_argument("--internal_saves", default=None, type=str, help="Location for internal_saves.")
     parser.add_argument("--cpu_cores", default=None, type=int, help="Number of cores used.")
+    parser.add_argument("--greedy_counter", default=None, type=str, help="Uses greedy counter.")
 
     parser.add_argument("--size", default=None, type=str, help="Size of trees.")
     parser.add_argument("--complete", default=None, type=str, help="Tree type.")
@@ -79,7 +80,8 @@ def parse_args(args):
 def count_subtrees(configs, filters):
     processor = Processor(configs, filters)
     summary = Summary()
-    summary.set_query_trees(generate_query_trees(configs, filters))
+    if not configs['greedy_counter']:
+        summary.set_query_trees(generate_query_trees(configs, filters))
     if os.path.isdir(configs['input_path']):
         processor.run_dir(summary)
 
@@ -87,32 +89,6 @@ def count_subtrees(configs, filters):
         processor.run([configs['input_path']], summary)
 
     return summary
-
-
-def create_default_configs():
-    configs = {'input_path': 'data/sl_ssj-ud_v2.4.conllu',
-               'output': 'results/out_official.tsv',
-               'tree_size': '2-4',
-               'node_type': 'upos',
-               'internal_saves': './internal_saves',
-               'cpu_cores': 12,
-               'complete_tree_type': True,
-               'dependency_type': True,
-               'node_order': True,
-               'association_measures': False,
-               'label_whitelist': [],
-               'ignored_labels': [],
-               'root_whitelist': [],
-               'query': None,
-               'compare': None,
-               'frequency_threshold': 0,
-               'lines_threshold': None,
-               'continuation_processing': False,
-               'nodes_number': True,
-               'print_root': True}
-    if configs['compare'] is not None:
-        configs['other_input_path'] = configs['compare']
-    return configs
 
 
 def read_configs(config, args):
@@ -124,6 +100,8 @@ def read_configs(config, args):
     configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
 
     # mandatory parameters with default value
+    configs['greedy_counter'] = (config.getboolean('settings', 'greedy_counter') if not args.greedy_counter
+                                  else args.greedy_counter == 'yes')
     configs['internal_saves'] = (config.get('settings', 'internal_saves')
                                  if config.has_option('settings', 'internal_saves') else None) \
         if not args.internal_saves else args.internal_saves

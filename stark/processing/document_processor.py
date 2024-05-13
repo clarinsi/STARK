@@ -58,7 +58,7 @@ class DocumentProcessor(object):
                     root = node
 
                 summary.corpus_size += 1
-            document.sentence_statistics.append({'id': sentence.id, 'tokens': tokens})
+            document.sentence_statistics.append({'id': sentence.id, 'tokens': tokens, 'count': {}})
             for token_id, token in enumerate(token_nodes):
                 if isinstance(token.parent, int) or token.parent == '':
                     root = None
