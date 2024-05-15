@@ -100,7 +100,10 @@ def read_configs(config, args):
     configs = {}
     # mandatory parameters
     configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
-    configs['output'] = config.get('settings', 'output') if not args.output else args.output
+    if config.has_option('settings', 'output') or args.output:
+        configs['output'] = config.get('settings', 'output') if not args.output else args.output
+    else:
+        configs['output'] = None
     configs['tree_size'] = config.get('settings', 'size', fallback='0') if not args.size else args.size
     configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
 
