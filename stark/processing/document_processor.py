@@ -16,7 +16,8 @@ import logging
 import pyconll
 
 from stark.data.document import Document
-from stark.data.processing.tree import Tree
+from stark.data.processing.greedy_tree import GreedyTree
+from stark.data.processing.query_tree import QueryTree
 from stark.processing.cache import DocumentCache
 
 logger = logging.getLogger('stark')
@@ -47,8 +48,13 @@ class DocumentProcessor(object):
                 token_form = token.form if token.form is not None else '_'
                 token_deprel = token.deprel if self.processor.configs['label_subtypes'] \
                     else token.deprel.split(':')[0]
-                node = Tree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel, token.head,
-                            token.feats, document, summary)
+                if self.processor.configs['greedy_counter']:
+                    node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel, token.head,
+                                token.feats, document, summary)
+                else:
+                    node = QueryTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
+                                      token.head,
+                                      token.feats, document, summary)
                 token_nodes.append(node)
                 space_after = token.misc[
                                   'SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc \

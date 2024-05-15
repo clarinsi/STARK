@@ -1,100 +1,100 @@
-Tree	Node A-upos	Node B-upos	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	MI	MI3	Dice	logDice	t-score	simple-LL
-ADJ <amod NOUN	ADJ	NOUN	551	20792.5	AB	2	NOUN	-0.21	18.00	0.13	11.02	-3.70	103.55
-NOUN >nmod NOUN	NOUN	NOUN	409	15434.0	AB	2	NOUN	-1.63	15.72	0.07	10.18	-42.33	1310.98
-PUNCT <punct NOUN	PUNCT	NOUN	193	7283.0	AB	2	NOUN	-2.08	13.10	0.04	9.37	-45.01	1008.35
-NOUN >punct PUNCT	NOUN	PUNCT	168	6339.6	AB	2	NOUN	-2.28	12.50	0.04	9.17	-50.17	1069.47
-AUX <cop NOUN	AUX	NOUN	148	5584.9	AB	2	NOUN	-1.23	13.19	0.04	9.36	-16.44	290.18
-DET <det NOUN	DET	NOUN	112	4226.4	AB	2	NOUN	-0.76	12.86	0.03	9.11	-7.32	103.74
-NOUN >nmod PROPN	NOUN	PROPN	104	3924.5	AB	2	NOUN	-1.19	12.21	0.03	8.95	-13.00	190.99
-NOUN >conj NOUN	NOUN	NOUN	97	3660.4	AB	2	NOUN	-3.71	9.49	0.02	8.10	-118.60	2119.74
-NOUN >acl VERB	NOUN	VERB	86	3245.3	AB	2	NOUN	-2.59	10.26	0.02	8.43	-46.73	732.38
-CCONJ <cc NOUN	CCONJ	NOUN	78	2943.4	AB	2	NOUN	-1.68	10.89	0.02	8.53	-19.52	265.76
-NOUN <nsubj NOUN	NOUN	NOUN	61	2301.9	AB	2	NOUN	-4.37	7.49	0.01	7.43	-154.16	2247.47
-PART <advmod NOUN	PART	NOUN	57	2150.9	AB	2	NOUN	-1.59	10.07	0.02	8.15	-15.25	175.61
-SCONJ <mark NOUN	SCONJ	NOUN	41	1547.2	AB	2	NOUN	-2.27	8.45	0.01	7.65	-24.48	257.44
-NUM <nummod NOUN	NUM	NOUN	40	1509.4	AB	2	NOUN	-1.62	9.03	0.01	7.69	-13.09	126.61
-NOUN >appos NOUN	NOUN	NOUN	36	1358.5	AB	2	NOUN	-5.14	5.20	0.01	6.67	-204.84	2346.82
-AUX <aux NOUN	AUX	NOUN	24	905.7	AB	2	NOUN	-3.86	5.31	0.01	6.73	-66.15	592.36
-SCONJ <case NOUN	SCONJ	NOUN	23	867.9	AB	2	NOUN	-3.10	5.94	0.01	6.81	-36.43	306.49
-PROPN <nsubj NOUN	PROPN	NOUN	21	792.5	AB	2	NOUN	-3.49	5.29	0.01	6.65	-47.05	387.07
-NOUN <obl NOUN	NOUN	NOUN	18	679.2	AB	2	NOUN	-6.14	2.20	0.00	5.67	-293.93	2427.63
-ADV <advmod NOUN	ADV	NOUN	17	641.5	AB	2	NOUN	-3.91	4.27	0.00	6.32	-57.72	435.97
-NOUN >amod ADJ	NOUN	ADJ	17	641.5	AB	2	NOUN	-5.23	2.95	0.00	6.00	-150.56	1188.02
-NOUN >parataxis VERB	NOUN	VERB	16	603.8	AB	2	NOUN	-5.02	2.98	0.00	6.00	-125.84	958.34
-NOUN >appos PROPN	NOUN	PROPN	16	603.8	AB	2	NOUN	-3.89	4.11	0.00	6.25	-55.16	403.81
-NOUN >cop AUX	NOUN	AUX	15	566.0	AB	2	NOUN	-4.54	3.28	0.00	6.06	-85.99	625.14
-DET <nsubj NOUN	DET	NOUN	15	566.0	AB	2	NOUN	-3.66	4.16	0.00	6.21	-45.04	315.82
-NOUN >nummod NUM	NOUN	NUM	11	415.1	AB	2	NOUN	-3.48	3.44	0.00	5.83	-33.71	200.53
-NOUN >nmod PRON	NOUN	PRON	10	377.4	AB	2	NOUN	-4.23	2.41	0.00	5.62	-56.26	330.33
-NOUN >acl ADJ	NOUN	ADJ	9	339.6	AB	2	NOUN	-6.15	0.19	0.00	5.08	-209.59	1224.24
-CCONJ <advmod NOUN	CCONJ	NOUN	9	339.6	AB	2	NOUN	-4.80	1.54	0.00	5.41	-80.46	456.78
-NOUN >csubj VERB	NOUN	VERB	8	301.9	AB	2	NOUN	-6.02	-0.02	0.00	5.00	-180.79	993.71
-NOUN >list NOUN	NOUN	NOUN	8	301.9	AB	2	NOUN	-7.30	-1.30	0.00	4.50	-444.44	2478.94
-NOUN >acl NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	-7.50	-1.88	0.00	4.31	-475.50	2484.52
-NOUN >conj VERB	NOUN	VERB	7	264.2	AB	2	NOUN	-6.21	-0.60	0.00	4.81	-193.65	998.52
-NOUN >parataxis NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	-7.50	-1.88	0.00	4.31	-475.50	2484.52
-PRON <nsubj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	-4.97	0.20	0.00	4.89	-74.26	345.85
-PRON <obj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	-4.97	0.20	0.00	4.89	-74.26	345.85
-NOUN <orphan NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	-7.72	-2.55	0.00	4.09	-514.01	2490.23
-NOUN <nmod NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	-7.72	-2.55	0.00	4.09	-514.01	2490.23
-ADV <orphan NOUN	ADV	NOUN	5	188.7	AB	2	NOUN	-5.67	-1.03	0.00	4.56	-111.79	482.88
-NOUN >nmod DET	NOUN	DET	4	150.9	AB	2	NOUN	-5.57	-1.57	0.00	4.30	-92.72	357.46
-VERB <advcl NOUN	VERB	NOUN	4	150.9	AB	2	NOUN	-7.02	-3.02	0.00	4.00	-257.68	1013.80
-NOUN >nsubj NOUN	NOUN	NOUN	4	150.9	AB	2	NOUN	-8.30	-4.30	0.00	3.50	-630.53	2502.12
-NOUN >conj ADJ	NOUN	ADJ	4	150.9	AB	2	NOUN	-7.32	-3.32	0.00	3.91	-316.89	1249.93
-NOUN >nmod X	NOUN	X	3	113.2	AB	2	NOUN	-3.50	-0.33	0.00	4.05	-17.82	55.42
-NOUN >aux AUX	NOUN	AUX	3	113.2	AB	2	NOUN	-6.86	-3.69	0.00	3.73	-199.22	677.72
-ADP <case NOUN	ADP	NOUN	3	113.2	AB	2	NOUN	-7.53	-4.36	0.00	3.56	-318.05	1088.15
-NOUN >advmod ADV	NOUN	ADV	3	113.2	AB	2	NOUN	-6.41	-3.24	0.00	3.82	-145.48	492.38
-NOUN >parataxis ADJ	NOUN	ADJ	3	113.2	AB	2	NOUN	-7.73	-4.56	0.00	3.50	-366.49	1255.58
-CCONJ <orphan NOUN	CCONJ	NOUN	3	113.2	AB	2	NOUN	-6.38	-3.21	0.00	3.83	-142.83	483.25
-NOUN >list X	NOUN	X	3	113.2	AB	2	NOUN	-3.50	-0.33	0.00	4.05	-17.82	55.42
-NOUN >appos NUM	NOUN	NUM	2	75.5	AB	2	NOUN	-5.94	-3.94	0.00	3.37	-85.41	234.43
-NOUN >advcl VERB	NOUN	VERB	2	75.5	AB	2	NOUN	-8.02	-6.02	0.00	3.00	-365.82	1025.05
-NOUN >advmod PART	NOUN	PART	2	75.5	AB	2	NOUN	-6.43	-4.43	0.00	3.32	-120.33	332.60
-NOUN >orphan NOUN	NOUN	NOUN	2	75.5	AB	2	NOUN	-9.30	-7.30	0.00	2.50	-893.12	2514.92
-NOUN >nmod NUM	NOUN	NUM	2	75.5	AB	2	NOUN	-5.94	-3.94	0.00	3.37	-85.41	234.43
-NOUN >conj PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	-6.89	-4.89	0.00	3.25	-165.91	460.96
-NOUN >conj SYM	NOUN	SYM	2	75.5	AB	2	NOUN	0.39	2.39	0.00	3.50	0.33	-0.48
-PROPN <obl NOUN	PROPN	NOUN	2	75.5	AB	2	NOUN	-6.89	-4.89	0.00	3.25	-165.91	460.96
-NOUN >appos X	NOUN	X	2	75.5	AB	2	NOUN	-4.08	-2.08	0.00	3.46	-22.53	58.82
-VERB <csubj NOUN	VERB	NOUN	2	75.5	AB	2	NOUN	-8.02	-6.02	0.00	3.00	-365.82	1025.05
-NOUN >list PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	-6.89	-4.89	0.00	3.25	-165.91	460.96
-PRON <cc NOUN	PRON	NOUN	1	37.7	AB	2	NOUN	-7.55	-7.55	0.00	2.30	-186.90	369.26
-NOUN >acl DET	NOUN	DET	1	37.7	AB	2	NOUN	-7.57	-7.57	0.00	2.30	-188.43	372.31
-ADJ <nsubj NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	-9.32	-9.32	0.00	1.91	-636.77	1267.94
-NOUN >conj DET	NOUN	DET	1	37.7	AB	2	NOUN	-7.57	-7.57	0.00	2.30	-188.43	372.31
-ADJ <obj NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	-9.32	-9.32	0.00	1.91	-636.77	1267.94
-NOUN >obl NOUN	NOUN	NOUN	1	37.7	AB	2	NOUN	-10.30	-10.30	0.00	1.50	-1264.06	2521.92
-NOUN >advmod CCONJ	NOUN	CCONJ	1	37.7	AB	2	NOUN	-7.97	-7.97	0.00	2.24	-249.39	493.98
-NOUN >orphan CCONJ	NOUN	CCONJ	1	37.7	AB	2	NOUN	-7.97	-7.97	0.00	2.24	-249.39	493.98
-NOUN >orphan ADV	NOUN	ADV	1	37.7	AB	2	NOUN	-7.99	-7.99	0.00	2.24	-253.98	503.14
-NOUN >orphan NUM	NOUN	NUM	1	37.7	AB	2	NOUN	-6.94	-6.94	0.00	2.37	-121.79	239.41
-ADP <cc NOUN	ADP	NOUN	1	37.7	AB	2	NOUN	-9.11	-9.11	0.00	1.98	-552.87	1100.26
-X <cc NOUN	X	NOUN	1	37.7	AB	2	NOUN	-5.08	-5.08	0.00	2.46	-32.87	62.67
-CCONJ <mark NOUN	CCONJ	NOUN	1	37.7	AB	2	NOUN	-7.97	-7.97	0.00	2.24	-249.39	493.98
-NOUN >nmod ADJ	NOUN	ADJ	1	37.7	AB	2	NOUN	-9.32	-9.32	0.00	1.91	-636.77	1267.94
-NOUN >appos ADJ	NOUN	ADJ	1	37.7	AB	2	NOUN	-9.32	-9.32	0.00	1.91	-636.77	1267.94
-X <amod NOUN	X	NOUN	1	37.7	AB	2	NOUN	-5.08	-5.08	0.00	2.46	-32.87	62.67
-X <dep NOUN	X	NOUN	1	37.7	AB	2	NOUN	-5.08	-5.08	0.00	2.46	-32.87	62.67
-ADV <mark NOUN	ADV	NOUN	1	37.7	AB	2	NOUN	-7.99	-7.99	0.00	2.24	-253.98	503.14
-NOUN >appos ADV	NOUN	ADV	1	37.7	AB	2	NOUN	-7.99	-7.99	0.00	2.24	-253.98	503.14
-NOUN >nsubj DET	NOUN	DET	1	37.7	AB	2	NOUN	-7.57	-7.57	0.00	2.30	-188.43	372.31
-PART <cc NOUN	PART	NOUN	1	37.7	AB	2	NOUN	-7.43	-7.43	0.00	2.32	-171.17	337.87
-NOUN <parataxis NOUN	NOUN	NOUN	1	37.7	AB	2	NOUN	-10.30	-10.30	0.00	1.50	-1264.06	2521.92
-NUM <dep NOUN	NUM	NOUN	1	37.7	AB	2	NOUN	-6.94	-6.94	0.00	2.37	-121.79	239.41
-PRON <obl NOUN	PRON	NOUN	1	37.7	AB	2	NOUN	-7.55	-7.55	0.00	2.30	-186.90	369.26
-PROPN <obj NOUN	PROPN	NOUN	1	37.7	AB	2	NOUN	-7.89	-7.89	0.00	2.25	-235.63	466.50
-DET <obl NOUN	DET	NOUN	1	37.7	AB	2	NOUN	-7.57	-7.57	0.00	2.30	-188.43	372.31
-ADV <parataxis NOUN	ADV	NOUN	1	37.7	AB	2	NOUN	-7.99	-7.99	0.00	2.24	-253.98	503.14
-NOUN >conj NUM	NOUN	NUM	1	37.7	AB	2	NOUN	-6.94	-6.94	0.00	2.37	-121.79	239.41
-NOUN <obj NOUN	NOUN	NOUN	1	37.7	AB	2	NOUN	-10.30	-10.30	0.00	1.50	-1264.06	2521.92
-ADJ <obl NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	-9.32	-9.32	0.00	1.91	-636.77	1267.94
-X <advmod NOUN	X	NOUN	1	37.7	AB	2	NOUN	-5.08	-5.08	0.00	2.46	-32.87	62.67
-NOUN >obl PROPN	NOUN	PROPN	1	37.7	AB	2	NOUN	-7.89	-7.89	0.00	2.25	-235.63	466.50
-NOUN >acl PROPN	NOUN	PROPN	1	37.7	AB	2	NOUN	-7.89	-7.89	0.00	2.25	-235.63	466.50
-NOUN >appos SYM	NOUN	SYM	1	37.7	AB	2	NOUN	-0.61	-0.61	0.00	2.50	-0.53	0.69
-NOUN >nsubj X	NOUN	X	1	37.7	AB	2	NOUN	-5.08	-5.08	0.00	2.46	-32.87	62.67
-NOUN >nsubj PROPN	NOUN	PROPN	1	37.7	AB	2	NOUN	-7.89	-7.89	0.00	2.25	-235.63	466.50
-DET <advmod NOUN	DET	NOUN	1	37.7	AB	2	NOUN	-7.57	-7.57	0.00	2.30	-188.43	372.31
-NUM <nsubj NOUN	NUM	NOUN	1	37.7	AB	2	NOUN	-6.94	-6.94	0.00	2.37	-121.79	239.41
+Tree	Node A-upos	Node B-upos	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	Example	MI	MI3	Dice	logDice	t-score	simple-LL
+ADJ <amod NOUN	ADJ	NOUN	551	20792.5	AB	2	NOUN	"Enak očitek naslavlja ""A[zahodna] B[demokracija]"" na Slovenijo lažje je pač ""handlati"" z eno samo državo kakor pa s kopico manjših, ki so še v medsebojnem sporu... in njegovem egoizmu, Kdo na svetu ima pravico in v imenu česa zahtevati od nekega naroda ali celi vrsti njih, da naj preslišijo glas svoje identitete, in torej molče prenašajo politično in duhovno unificiranje in to za vso prihodnost naprej, se pravi tudi za prihodnje rodove? ki naj bi uničila Jugoslavijo. "	-0.21	18.00	0.13	11.02	-3.70	103.55
+NOUN >nmod NOUN	NOUN	NOUN	409	15434.0	AB	2	NOUN	Dobra A[ponazoritev] nove B[ureditve] je primerjava med dvema največjima gospodarskima silama na svetu. 	-1.63	15.72	0.07	10.18	-42.33	1310.98
+PUNCT <punct NOUN	PUNCT	NOUN	193	7283.0	AB	2	NOUN	Večerja: krožnik enolončnice iz mešane zelenjave (1 KDP); 50 g parmezana (1 KDP); 250 g špargljev, kuhanih na pari (1 KDP); 50 g kruha (1 KDP); 150 g sadne solate brez dodanega sladkorja A[(]1 B[KDP]); kozarec vina (1 KDP) 	-2.08	13.10	0.04	9.37	-45.01	1008.35
+NOUN >punct PUNCT	NOUN	PUNCT	168	6339.6	AB	2	NOUN	IRC je odprt A[protokol], ki uporablja TCP in včasih tudi TLSB[.] 	-2.28	12.50	0.04	9.17	-50.17	1069.47
+AUX <cop NOUN	AUX	NOUN	148	5584.9	AB	2	NOUN	Petrolovo poslovno poročilo, ki A[je] B[osnova] letnega poročila, zajema podatke iz vseh organizacijskih enot družbe, obdelala jih je analitska služba, ki je del finančno-računovodske divizije. 	-1.23	13.19	0.04	9.36	-16.44	290.18
+DET <det NOUN	DET	NOUN	112	4226.4	AB	2	NOUN	A[Naša] B[podjetja] velikokrat potrebujejo delavce le za štiri ure, ki jih po veljavni zakonodaji ne moremo zaposliti. 	-0.76	12.86	0.03	9.11	-7.32	103.74
+NOUN >nmod PROPN	NOUN	PROPN	104	3924.5	AB	2	NOUN	"Pri tem velja poudariti, da spremembe v omrežnih skupinah ne bodo imele nobenega vpliva na organizacijsko shemo Telekoma,"" je povedal A[podpredsednik] uprave Telekoma Slovenije B[Miran] Kramberger. "	-1.19	12.21	0.03	8.95	-13.00	190.99
+NOUN >conj NOUN	NOUN	NOUN	97	3660.4	AB	2	NOUN	A[Vsebnost] surovih beljakovin, njihova B[razgradljivost] in vsebnost prebavljivih nerazgradljivih beljakovin v različnih krmilih 	-3.71	9.49	0.02	8.10	-118.60	2119.74
+NOUN >acl VERB	NOUN	VERB	86	3245.3	AB	2	NOUN	Poslovni A[sistem] Mercator, ki je oblikovanje poročila B[zaupal] Studiu A4 iz Ljubljane, se je prvega letnega poročila lotil leta 1995. 	-2.59	10.26	0.02	8.43	-46.73	732.38
+CCONJ <cc NOUN	CCONJ	NOUN	78	2943.4	AB	2	NOUN	A[In] to je B[način] našega informiranja, da vemo, kako je z nami. 	-1.68	10.89	0.02	8.53	-19.52	265.76
+NOUN <nsubj NOUN	NOUN	NOUN	61	2301.9	AB	2	NOUN	A[Aceton] in fenol sta B[surovini] za sintezo mnogo drugih pomembnih spojin. 	-4.37	7.49	0.01	7.43	-154.16	2247.47
+PART <advmod NOUN	PART	NOUN	57	2150.9	AB	2	NOUN	A da se ne boste prestrašili - Strašnice niso strašne pesmi, ampak A[le] strašno lepe B[pesmi], kratke in hitro zapomljive, tako da jih bo hitro znal vsak navihan malček. 	-1.59	10.07	0.02	8.15	-15.25	175.61
+SCONJ <mark NOUN	SCONJ	NOUN	41	1547.2	AB	2	NOUN	A jih ni, morda zaradi zgodovine, saj so pri Fiatu očitno ugotovili, A[da] so to »težki« B[trgi]. 	-2.27	8.45	0.01	7.65	-24.48	257.44
+NUM <nummod NOUN	NUM	NOUN	40	1509.4	AB	2	NOUN	En kos: približno 340 kcal, beljakovine: 4 g, maščobe: 20 g, ogljikovi hidrati: A[37] B[g] 	-1.62	9.03	0.01	7.69	-13.09	126.61
+NOUN >appos NOUN	NOUN	NOUN	36	1358.5	AB	2	NOUN	Po letu 2000, ki je bilo leto ploščic, vas v letu 2001 čakajo nove, fenomenalne A[nagrade] z intelektualnim robom, in sicer šokantna B[zgodba] o Srečku Katancu v knjigi z naslovom Fenomenalno! 	-5.14	5.20	0.01	6.67	-204.84	2346.82
+AUX <aux NOUN	AUX	NOUN	24	905.7	AB	2	NOUN	Novinarji v hiši so takrat zaradi formata malo godrnjali, zato jih je Beznik sklical na sestanek v sejno sobo (ki A[je] bila tudi B[knjižnica]) in jim razložil, da kdor je proti novi rotaciji, je proti napredku. 	-3.86	5.31	0.01	6.73	-66.15	592.36
+SCONJ <case NOUN	SCONJ	NOUN	23	867.9	AB	2	NOUN	In medtem ko je ladja drsela skozi neskončno zelenino papirusa in plavajočih hijacint, iz katere se je morda enkrat na dan A[kot] B[privid] prikazal deblak z golim veslačem, sem se v mislih zahvaljevala vsem tistim, ki so me napotili v Sudan. 	-3.10	5.94	0.01	6.81	-36.43	306.49
+PROPN <nsubj NOUN	PROPN	NOUN	21	792.5	AB	2	NOUN	"Resda je privatizacija stvar lastnikov, še kako res pa je tudi, da je Nova A[KBM] ""državna"" B[banka], torej smo lastniki vsi in imamo tudi pravico, da se kot državljani - lastniki tudi obnašamo. "	-3.49	5.29	0.01	6.65	-47.05	387.07
+NOUN <obl NOUN	NOUN	NOUN	18	679.2	AB	2	NOUN	in tradicionalno rokoborbo dawas, ki je zaradi pokrajinske in jezikovne A[razdrobljenosti] ljudstva edini zunanji B[dokaz] nubijske plemenske enovitosti. 	-6.14	2.20	0.00	5.67	-293.93	2427.63
+ADV <advmod NOUN	ADV	NOUN	17	641.5	AB	2	NOUN	Kone je bil A[resnično] zadnji B[človek], o katerem se mi je ljubilo pogovarjati. 	-3.91	4.27	0.00	6.32	-57.72	435.97
+NOUN >amod ADJ	NOUN	ADJ	17	641.5	AB	2	NOUN	A[Človek], B[rojen] v znamenju Opice, je ena sama utelešena improvizacija. 	-5.23	2.95	0.00	6.00	-150.56	1188.02
+NOUN >parataxis VERB	NOUN	VERB	16	603.8	AB	2	NOUN	Jupiter je običajno četrto najsvetlejše nebesno A[telo] (po Soncu, Mesecu in Veneri); včasih se Mars B[zdi] svetlejši od Jupitra. 	-5.02	2.98	0.00	6.00	-125.84	958.34
+NOUN >appos PROPN	NOUN	PROPN	16	603.8	AB	2	NOUN	Nova povojna A[vojska], B[Reichswehr], je bila ustanovljena 23. marca 1921. 	-3.89	4.11	0.00	6.25	-55.16	403.81
+NOUN >cop AUX	NOUN	AUX	15	566.0	AB	2	NOUN	Še en A[dirigent], ki je nanj naredil močan vtis, je B[bil] Hans Knappertsbusch. 	-4.54	3.28	0.00	6.06	-85.99	625.14
+DET <nsubj NOUN	DET	NOUN	15	566.0	AB	2	NOUN	Na ameriškem touru ELPGA je ob koncu novembra na turnirju v West Palm Beachu svojo osmo zmago vpisala najboljša na svetu Annika Sorenstam, ki ji je bila A[to] hkrati letošnja osma B[zmaga] oz. 56. v karieri. 	-3.66	4.16	0.00	6.21	-45.04	315.82
+NOUN >nummod NUM	NOUN	NUM	11	415.1	AB	2	NOUN	Veterinarji Veterinarske bolnice Maribor, d. o. o., Šentiljska A[cesta] B[109], za velike živali, so dosegljivi na številki 228-37, nočno dežurstvo na številki 0609 638-781; veterinarji, specializirani za male živali, so dosegljivi na številki 22-837, nočno dežurstvo na 0609 656-320, v ambulanti Hoče 611-801 in v veterinarski posvetovalnici na telefonski številki 211-244. 	-3.48	3.44	0.00	5.83	-33.71	200.53
+NOUN >nmod PRON	NOUN	PRON	10	377.4	AB	2	NOUN	Katarina je veliki roman o velikem romanju v Kelmorajn, ki je v bistvu A[romanje] k B[sebi]. 	-4.23	2.41	0.00	5.62	-56.26	330.33
+NOUN >acl ADJ	NOUN	ADJ	9	339.6	AB	2	NOUN	V ministrstvu za promet in zveze so jim odgovorili, da novo A[oštevilčenje], ki je B[usklajeno] z operaterji, nima nikakršnega vpliva na notranjo organizacijo Telekoma. 	-6.15	0.19	0.00	5.08	-209.59	1224.24
+CCONJ <advmod NOUN	CCONJ	NOUN	9	339.6	AB	2	NOUN	Sicer A[pa] je te dni glavna zgodba, povezana z evropskimi trgi, B[poskus] prevzema Londonske borze s strani Euronexta in Deutsche boerse. 	-4.80	1.54	0.00	5.41	-80.46	456.78
+NOUN >csubj VERB	NOUN	VERB	8	301.9	AB	2	NOUN	Pospravljali smo ta arhiv in moja A[nerodnost] je bila, da sem B[prosil] tehnično službo Petrola, da nam pomaga. 	-6.02	-0.02	0.00	5.00	-180.79	993.71
+NOUN >list NOUN	NOUN	NOUN	8	301.9	AB	2	NOUN	Večerja: A[krožnik] enolončnice iz mešane zelenjave (1 KDP); 50 g parmezana (1 KDP); 250 B[g] špargljev, kuhanih na pari (1 KDP); 50 g kruha (1 KDP); 150 g sadne solate brez dodanega sladkorja (1 KDP); kozarec vina (1 KDP) 	-7.30	-1.30	0.00	4.50	-444.44	2478.94
+NOUN >acl NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	In tudi A[spoznanje], da je pravna utemeljenost političnih dejanj Slovenije v sporu z Beogradom vse od sredine 80. let najzanesljivejše B[poroštvo], da v Sloveniji z razglasitvijo izrednih razmer zvezne oblasti ne bodo mogle odpraviti dosežkov demokratičnega razvoja. 	-7.50	-1.88	0.00	4.31	-475.50	2484.52
+NOUN >conj VERB	NOUN	VERB	7	264.2	AB	2	NOUN	In če je drugim vodilo čim večji dobiček, mora biti nam tudi čim uspešnejši A[razvoj] mesta, in ne B[dovolimo] več, da bi o naši usodi odločali (samo) drugi. 	-6.21	-0.60	0.00	4.81	-193.65	998.52
+NOUN >parataxis NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	Papaja ni le okusen in zdrav A[sadež], je tudi odlično lepotilno B[sredstvo] za nego telesa. 	-7.50	-1.88	0.00	4.31	-475.50	2484.52
+PRON <nsubj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	A[Nekaj] je B[zasluga] njegove fantovske pustolovske žilice, večina pa najverjetneje krvi, ki se pretaka po njegovih žilah. 	-4.97	0.20	0.00	4.89	-74.26	345.85
+PRON <obj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	V Ardenih je tokrat zablestel Aerts, ki A[mu] je bila to šele četrta B[zmaga] v 7-letni karieri profesionalca. 	-4.97	0.20	0.00	4.89	-74.26	345.85
+NOUN <orphan NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	Ljubljana - Sonce se te dni upira prihodu jeseni, a bližajoči se uvodni hokejski dogodek sezone pri nas (od četrtka do A[nedelje] tradicionalni blejski B[turnir]) jasno naznanja začetek panog, značilnih za zimsko športno obdobje. 	-7.72	-2.55	0.00	4.09	-514.01	2490.23
+NOUN <nmod NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	Tako bodo igralci neke A[vrste] B[vodiči], gledalci pa popotniki skozi lasten spomin, ki v njih porojeva najrazličnejše zgodbe. 	-7.72	-2.55	0.00	4.09	-514.01	2490.23
+ADV <orphan NOUN	ADV	NOUN	5	188.7	AB	2	NOUN	Glede predlogov OZS s področja davkov sta povedali, da so gradiva, v katerih so vključeni tudi ti predlogi, vključno s pavšalom, že nared za obravnavo, A[enako] pa tudi B[gradiva] v zvezi z uveljavljanjem direktive EU o zapoznelih plačilih. 	-5.67	-1.03	0.00	4.56	-111.79	482.88
+NOUN >nmod DET	NOUN	DET	4	150.9	AB	2	NOUN	Slovenske Konjice - V Sloveniji se z ekološkim kmetovanjem ukvarja približno 1300 kmetij, okoli A[petina] B[vseh] pa jih je z območja koroško-savinjske regije, kjer so pod okriljem strokovnjakov celjske kmetijsko-gozdarske zbornice povezani tudi v združenje ekoloških pridelovalcev in predelovalcev hrane z imenom Deteljica. 	-5.57	-1.57	0.00	4.30	-92.72	357.46
+VERB <advcl NOUN	VERB	NOUN	4	150.9	AB	2	NOUN	Ker A[nimamo] referenčnega obdobja, bo skupni B[znesek] plačil t. i. ovojnica, izračunana na podlagi izpogajanih baznih površin in pravic za premije, iz česar bodo izračunana enotna plačila na hektar. 	-7.02	-3.02	0.00	4.00	-257.68	1013.80
+NOUN >nsubj NOUN	NOUN	NOUN	4	150.9	AB	2	NOUN	Edina A[izjema] so B[opore] iz prožnih vej z obrezanih grmovnic, s katerimi zagotovimo zelnatim trajnicam pokončno rast. 	-8.30	-4.30	0.00	3.50	-630.53	2502.12
+NOUN >conj ADJ	NOUN	ADJ	4	150.9	AB	2	NOUN	V maniri skečev odigrani oglasi so bili pravzaprav vsi po vrsti A[antioglasi] za tisto, za kar naj bi navdušili bodoče kupce, in vsaj tako B[zabavni] kot predstava. 	-7.32	-3.32	0.00	3.91	-316.89	1249.93
+NOUN >nmod X	NOUN	X	3	113.2	AB	2	NOUN	A[ZAKON] B[št.] 1: Ne glede na to, kako slab je bil vaš zadnji udarec, vedite, da najslabši šele prihaja. 	-3.50	-0.33	0.00	4.05	-17.82	55.42
+NOUN >aux AUX	NOUN	AUX	3	113.2	AB	2	NOUN	A[Posledica] tega B[je] bila, da so jo za tekstopisko najeli pevci, kot so Britney Spears, New Kids on the Block, Fergie in Pussycat Dolls. 	-6.86	-3.69	0.00	3.73	-199.22	677.72
+ADP <case NOUN	ADP	NOUN	3	113.2	AB	2	NOUN	Pomembno pa je poudariti, da zaščita pred neželeno zanositvijo ni zaščita pred spolno nalezljivimi boleznimi, zato ob partnerju, ki ga slabo poznate, za lastno zaščito uporabite metodo, ki je v svetu poznana kot Double Dutch: poleg hormonske kontracepcije se zaščitite tudi A[s] B[kondom] in bodite dosledne. 	-7.53	-4.36	0.00	3.56	-318.05	1088.15
+NOUN >advmod ADV	NOUN	ADV	3	113.2	AB	2	NOUN	"(NEMšKO: SCHLAG; FRANCOSKO: COUP; čEšKO: RÁNA; SLOVAšKO: RANA; HRVAšKO: UDARAC; šPANSKO: GOLPE; DANSKO: SLAG; šVEDSKO: SLAG) ""Udarec"" je A[gibanje] palice B[navzdol], ki ga igralec naredi z namenom, da bi udaril po žogici in jo premaknil. "	-6.41	-3.24	0.00	3.82	-145.48	492.38
+NOUN >parataxis ADJ	NOUN	ADJ	3	113.2	AB	2	NOUN	Ker nimamo referenčnega obdobja, bo skupni A[znesek] plačil t. i. ovojnica, izračunana na podlagi izpogajanih baznih površin in pravic za premije, iz česar bodo B[izračunana] enotna plačila na hektar. 	-7.73	-4.56	0.00	3.50	-366.49	1255.58
+CCONJ <orphan NOUN	CCONJ	NOUN	3	113.2	AB	2	NOUN	29. avgust - 56 let bo star trener juda Alfonz HOSTNIK Iz Domžal, 35 let A[pa] alpski B[smučar] Stojan PIHALJ iz Maribora. 	-6.38	-3.21	0.00	3.83	-142.83	483.25
+NOUN >list X	NOUN	X	3	113.2	AB	2	NOUN	2 A[Zbirka] odločb civilnega oddelka Vrhovnega sodišča Republike Slovenije 2000, GV, Ljubljana 2001, št. 37, B[str.] 240. 	-3.50	-0.33	0.00	4.05	-17.82	55.42
+NOUN >appos NUM	NOUN	NUM	2	75.5	AB	2	NOUN	Slomar D. O. O., Smrekarjeva 47, 6310 Izola, Tel.: 05/ 6418 242, A[Faks]: B[05]/ 6418 242, Sahir Abdelkbir 	-5.94	-3.94	0.00	3.37	-85.41	234.43
+NOUN >advcl VERB	NOUN	VERB	2	75.5	AB	2	NOUN	Največja razlika je A[razlika] v jeziku čeprav vsi jeziki vse B[povedo] o človeku in svetu, torej vse, kar je mogoče povedati in zamolčati. 	-8.02	-6.02	0.00	3.00	-365.82	1025.05
+NOUN >advmod PART	NOUN	PART	2	75.5	AB	2	NOUN	Prva A[težava] je B[seveda] ta, da Slovenija kot državna tvorba nima zgodovine, saj je z desetimi leti šele dobro zakorakala v osnovno šolo, nima pa seveda niti tradicije, saj se je stari socialistični z gnusom odrekla, novo pa mora šele ustvariti. 	-6.43	-4.43	0.00	3.32	-120.33	332.60
+NOUN >orphan NOUN	NOUN	NOUN	2	75.5	AB	2	NOUN	Veterinarji Veterinarske bolnice Maribor, d. o. o., Šentiljska cesta 109, za velike živali, so dosegljivi na številki 228-37, nočno A[dežurstvo] na B[številki] 0609 638-781; veterinarji, specializirani za male živali, so dosegljivi na številki 22-837, nočno dežurstvo na 0609 656-320, v ambulanti Hoče 611-801 in v veterinarski posvetovalnici na telefonski številki 211-244. 	-9.30	-7.30	0.00	2.50	-893.12	2514.92
+NOUN >nmod NUM	NOUN	NUM	2	75.5	AB	2	NOUN	Nekaj takih univerzalnih čitalcev (A[cena] za B[enega] je menda le okrog 20000 SIT) je pri nas že. 	-5.94	-3.94	0.00	3.37	-85.41	234.43
+NOUN >conj PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	Preloženo tekmo je Pionir v Ljutomeru nesrečno izgubil - V petek jim proti Olimpiji sreča ni obrnila hrbta - Dober A[servis], napad in B[Dolja] z druge linije 	-6.89	-4.89	0.00	3.25	-165.91	460.96
+NOUN >conj SYM	NOUN	SYM	2	75.5	AB	2	NOUN	Do 12 tednov lahko shranjujejo sladki komarček v kontrolirani atmosferi pri 0 A[oC], 3B[%] O2 in 3% CO2. 	0.39	2.39	0.00	3.50	0.33	-0.48
+PROPN <obl NOUN	PROPN	NOUN	2	75.5	AB	2	NOUN	Res je tudi, da za A[Slovence] dilema, kupiti knjigo ali nove preobleke za avtomobilske sedeže, ni ravno pretirano težka B[odločitev]. 	-6.89	-4.89	0.00	3.25	-165.91	460.96
+NOUN >appos X	NOUN	X	2	75.5	AB	2	NOUN	Njihov drugi glasbeni A[album], B[A] Year Without Rain, je izšel 17. septembra 2010. 	-4.08	-2.08	0.00	3.46	-22.53	58.82
+VERB <csubj NOUN	VERB	NOUN	2	75.5	AB	2	NOUN	A[Pokazali] pa ni dober B[izraz]: v predstavi gre namreč za medsebojno učinkovanje igralcev (imenujejo se tudi »prebivalci labirinta« ali »izzivalci«) in gledalcev. 	-8.02	-6.02	0.00	3.00	-365.82	1025.05
+NOUN >list PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	2 A[Zbirka] odločb civilnega oddelka Vrhovnega sodišča Republike Slovenije 2000, B[GV], Ljubljana 2001, št. 37, str. 240. 	-6.89	-4.89	0.00	3.25	-165.91	460.96
+PRON <cc NOUN	PRON	NOUN	1	37.7	AB	2	NOUN	"To je ""energija"" biti, A[se] pravi B[energija] lastne identitete. "	-7.55	-7.55	0.00	2.30	-186.90	369.26
+NOUN >acl DET	NOUN	DET	1	37.7	AB	2	NOUN	"Ne A[energija] ""biti B[vse] ali nič"", ampak preprosto energija biti. "	-7.57	-7.57	0.00	2.30	-188.43	372.31
+ADJ <nsubj NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	A[Prva] je dosledno B[vztrajanje] pri načelu legalitete v vsem procesu osamosvajanja. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
+NOUN >conj DET	NOUN	DET	1	37.7	AB	2	NOUN	"Resda je privatizacija stvar lastnikov, še kako res pa je tudi, da je Nova KBM ""državna"" A[banka], torej smo lastniki B[vsi] in imamo tudi pravico, da se kot državljani - lastniki tudi obnašamo. "	-7.57	-7.57	0.00	2.30	-188.43	372.31
+ADJ <obj NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	In če je A[drugim] vodilo čim večji B[dobiček], mora biti nam tudi čim uspešnejši razvoj mesta, in ne dovolimo več, da bi o naši usodi odločali (samo) drugi. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
+NOUN >obl NOUN	NOUN	NOUN	1	37.7	AB	2	NOUN	V Ardenih je tokrat zablestel Aerts, ki mu je bila to šele četrta A[zmaga] v 7-letni B[karieri] profesionalca. 	-10.30	-10.30	0.00	1.50	-1264.06	2521.92
+NOUN >advmod CCONJ	NOUN	CCONJ	1	37.7	AB	2	NOUN	Več bo znano po opravljenih analizah, A[dejstvo] B[pa] je, da vsebnost strupa v vodi upada, vendar je zaradi počasne razstrupitve voda še vedno neprimerna za pitje. 	-7.97	-7.97	0.00	2.24	-249.39	493.98
+NOUN >orphan ADV	NOUN	ADV	1	37.7	AB	2	NOUN	Nekaj je zasluga njegove fantovske pustolovske žilice, A[večina] pa B[najverjetneje] krvi, ki se pretaka po njegovih žilah. 	-7.99	-7.99	0.00	2.24	-253.98	503.14
+NOUN >orphan CCONJ	NOUN	CCONJ	1	37.7	AB	2	NOUN	Nekaj je zasluga njegove fantovske pustolovske žilice, A[večina] B[pa] najverjetneje krvi, ki se pretaka po njegovih žilah. 	-7.97	-7.97	0.00	2.24	-249.39	493.98
+NOUN >orphan NUM	NOUN	NUM	1	37.7	AB	2	NOUN	Veterinarji Veterinarske bolnice Maribor, d. o. o., Šentiljska cesta 109, za velike živali, so dosegljivi na številki 228-37, nočno dežurstvo na številki 0609 638-781; veterinarji, specializirani za male živali, so dosegljivi na številki 22-837, nočno A[dežurstvo] na B[0609] 656-320, v ambulanti Hoče 611-801 in v veterinarski posvetovalnici na telefonski številki 211-244. 	-6.94	-6.94	0.00	2.37	-121.79	239.41
+ADP <cc NOUN	ADP	NOUN	1	37.7	AB	2	NOUN	Kaspofungin se uporablja za zdravljenje invazivne aspergiloze pri bolnikih, ki niso odzivni na druga protiglivična zdravila ali jih ne prenašajo (A[na] primer B[amfotericin] B, lipidni pripravki amfotericina B in/ ali itrakonazol). 	-9.11	-9.11	0.00	1.98	-552.87	1100.26
+X <cc NOUN	X	NOUN	1	37.7	AB	2	NOUN	Po novem bo tako kot v svetu potrebno samo eno, A[tj.] gradbeno B[dovoljenje], kar naj bi vse skupaj po besedah okoljskega ministra Janeza Kopača tudi pocenilo naložbe. 	-5.08	-5.08	0.00	2.46	-32.87	62.67
+CCONJ <mark NOUN	CCONJ	NOUN	1	37.7	AB	2	NOUN	A[Tako] kot je starodaven B[odmev] plesnih korakov, s katerimi svatovalke polnijo votlo zemljo. 	-7.97	-7.97	0.00	2.24	-249.39	493.98
+NOUN >nmod ADJ	NOUN	ADJ	1	37.7	AB	2	NOUN	Ustanovitev takšnega sodišča so predlagali iraški A[oporečniki] na B[tujem]. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
+NOUN >appos ADJ	NOUN	ADJ	1	37.7	AB	2	NOUN	Ne moti nas, da so čez cesto A[ljudje] drugačne kože: B[črni], rjavi, zeleni... 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
+X <amod NOUN	X	NOUN	1	37.7	AB	2	NOUN	Ker nimamo referenčnega obdobja, bo skupni znesek plačil A[t.] i. B[ovojnica], izračunana na podlagi izpogajanih baznih površin in pravic za premije, iz česar bodo izračunana enotna plačila na hektar. 	-5.08	-5.08	0.00	2.46	-32.87	62.67
+X <dep NOUN	X	NOUN	1	37.7	AB	2	NOUN	(A[kg]/ B[foto]: Luka Cjuha) 	-5.08	-5.08	0.00	2.46	-32.87	62.67
+ADV <mark NOUN	ADV	NOUN	1	37.7	AB	2	NOUN	To se pravi - vprašal bi, komu hiša pripada, A[ali] je v družini kdo B[policaj] in tako dalje. 	-7.99	-7.99	0.00	2.24	-253.98	503.14
+NOUN >appos ADV	NOUN	ADV	1	37.7	AB	2	NOUN	Knjižnice so zares polne, kar pa ni slabo, saj je njihov namen prav A[dostopnost] vsakomur, in to B[brezplačno]. 	-7.99	-7.99	0.00	2.24	-253.98	503.14
+NOUN >nsubj DET	NOUN	DET	1	37.7	AB	2	NOUN	Prva A[težava] je seveda B[ta], da Slovenija kot državna tvorba nima zgodovine, saj je z desetimi leti šele dobro zakorakala v osnovno šolo, nima pa seveda niti tradicije, saj se je stari socialistični z gnusom odrekla, novo pa mora šele ustvariti. 	-7.57	-7.57	0.00	2.30	-188.43	372.31
+PART <cc NOUN	PART	NOUN	1	37.7	AB	2	NOUN	Prepoznati pa bi se morali A[ne] samo B[politiki], ampak predvsem prebivalci Slovenije; ne le tisti, ki jim je država izpolnila pričakovanja, ampak tudi oni, ki ji marsikaj očitajo; ne le Slovenci, ampak tudi tistih deset odstotkov, ki to niso. 	-7.43	-7.43	0.00	2.32	-171.17	337.87
+NOUN <parataxis NOUN	NOUN	NOUN	1	37.7	AB	2	NOUN	/ A[slika]/ Pljučniki so spomladi cvetoče B[rastline] in imajo nad srebrnkasto lisastimi listi gruče rožnatih in modrih cvetov. 	-10.30	-10.30	0.00	1.50	-1264.06	2521.92
+NUM <dep NOUN	NUM	NOUN	1	37.7	AB	2	NOUN	A[2] B[Zbirka] odločb civilnega oddelka Vrhovnega sodišča Republike Slovenije 2000, GV, Ljubljana 2001, št. 37, str. 240. 	-6.94	-6.94	0.00	2.37	-121.79	239.41
+PRON <obl NOUN	PRON	NOUN	1	37.7	AB	2	NOUN	A[Zanje] so vojaki iz mirovnih enot pravi B[bogataši]. 	-7.55	-7.55	0.00	2.30	-186.90	369.26
+PROPN <obj NOUN	PROPN	NOUN	1	37.7	AB	2	NOUN	Ta namig in naravnost robbovska uglajenost, slokost in eleganca obeh kipov so bili A[Resmanu] B[izziv], da izrečeno domnevo preveri na podlagi temeljite raziskave virov. 	-7.89	-7.89	0.00	2.25	-235.63	466.50
+DET <obl NOUN	DET	NOUN	1	37.7	AB	2	NOUN	V maniri skečev odigrani oglasi so bili pravzaprav A[vsi] po vrsti B[antioglasi] za tisto, za kar naj bi navdušili bodoče kupce, in vsaj tako zabavni kot predstava. 	-7.57	-7.57	0.00	2.30	-188.43	372.31
+ADV <parataxis NOUN	ADV	NOUN	1	37.7	AB	2	NOUN	"(A[NEMšKO]: SCHLAG; FRANCOSKO: COUP; čEšKO: RÁNA; SLOVAšKO: RANA; HRVAšKO: UDARAC; šPANSKO: GOLPE; DANSKO: SLAG; šVEDSKO: SLAG) ""Udarec"" je B[gibanje] palice navzdol, ki ga igralec naredi z namenom, da bi udaril po žogici in jo premaknil. "	-7.99	-7.99	0.00	2.24	-253.98	503.14
+NOUN >conj NUM	NOUN	NUM	1	37.7	AB	2	NOUN	Na ameriškem touru ELPGA je ob koncu novembra na turnirju v West Palm Beachu svojo osmo zmago vpisala najboljša na svetu Annika Sorenstam, ki ji je bila to hkrati letošnja osma A[zmaga] oz. B[56.] v karieri. 	-6.94	-6.94	0.00	2.37	-121.79	239.41
+NOUN <obj NOUN	NOUN	NOUN	1	37.7	AB	2	NOUN	Ob tem naj omenimo še dejstvo, da A[sezone] sploh še ni B[konec]. 	-10.30	-10.30	0.00	1.50	-1264.06	2521.92
+ADJ <obl NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	Številne države jih uporabljajo kot uradno valuto, v mnogih A[drugih] pa je de facto B[valuta]. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
+X <advmod NOUN	X	NOUN	1	37.7	AB	2	NOUN	Številne države jih uporabljajo kot uradno valuto, v mnogih drugih pa je A[de] facto B[valuta]. 	-5.08	-5.08	0.00	2.46	-32.87	62.67
+NOUN >obl PROPN	NOUN	PROPN	1	37.7	AB	2	NOUN	Jupiter je običajno četrto najsvetlejše nebesno A[telo] (po B[Soncu], Mesecu in Veneri); včasih se Mars zdi svetlejši od Jupitra. 	-7.89	-7.89	0.00	2.25	-235.63	466.50
+NOUN >acl PROPN	NOUN	PROPN	1	37.7	AB	2	NOUN	Posledica tega je bila, da so jo za tekstopisko najeli A[pevci], kot so B[Britney] Spears, New Kids on the Block, Fergie in Pussycat Dolls. 	-7.89	-7.89	0.00	2.25	-235.63	466.50
+NOUN >appos SYM	NOUN	SYM	1	37.7	AB	2	NOUN	Občasno so lahko prisotne multiple A[razjede] (~ 40 B[%]), pri čemer so pogostejše pri bolnikih s sočasno okužbo z virusom HIV. 	-0.61	-0.61	0.00	2.50	-0.53	0.69
+NOUN >nsubj X	NOUN	X	1	37.7	AB	2	NOUN	Glavni A[povzročitelj] obeh vrst obolenja je B[Escherichia] coli, v redkih primerih pa tudi druge bakterije, virusi ali glive. 	-5.08	-5.08	0.00	2.46	-32.87	62.67
+NOUN >nsubj PROPN	NOUN	PROPN	1	37.7	AB	2	NOUN	Še en A[dirigent], ki je nanj naredil močan vtis, je bil B[Hans] Knappertsbusch. 	-7.89	-7.89	0.00	2.25	-235.63	466.50
+DET <advmod NOUN	DET	NOUN	1	37.7	AB	2	NOUN	Državi z največjim absolutnim številom samomorov sta Kitajska in Indija, v katerih se zgodi A[več] kot B[polovica] vseh samomorov. 	-7.57	-7.57	0.00	2.30	-188.43	372.31
+NUM <nsubj NOUN	NUM	NOUN	1	37.7	AB	2	NOUN	A[1] je najboljša B[ocena], 6 pa najslabša. 	-6.94	-6.94	0.00	2.37	-121.79	239.41

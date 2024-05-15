@@ -24,7 +24,7 @@ import logging
 from stark.data.summary import Summary
 from stark.processing.filters import read_filters
 from stark.processing.processor import Processor
-from stark.processing.query_trees import generate_query_trees
+from stark.processing.query_trees import generate_query_trees, get_query_tree_size_range
 from stark.processing.writers import TSVWriter, ObjectWriter
 
 logging.basicConfig(level=logging.NOTSET)
@@ -80,8 +80,13 @@ def parse_args(args):
 def count_subtrees(configs, filters):
     processor = Processor(configs, filters)
     summary = Summary()
-    if not configs['greedy_counter']:
+    if not configs['greedy_counter'] or filters['tree_size_range'][0] == 0:
         summary.set_query_trees(generate_query_trees(configs, filters))
+
+        # set min and max tree size to limit greedy generation
+        if configs['greedy_counter']:
+            filters['tree_size_range'] = get_query_tree_size_range(summary.query_trees)
+
     if os.path.isdir(configs['input_path']):
         processor.run_dir(summary)
 

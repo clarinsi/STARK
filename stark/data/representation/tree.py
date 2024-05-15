@@ -35,7 +35,7 @@ class RepresentationTree(object):
     def set_children(self, children):
         self.children = children
 
-    def reset_params(self):
+    def _reset_params(self):
         self.key = None
         self.order_key = None
         self.order = None
@@ -54,13 +54,13 @@ class RepresentationTree(object):
 
         return nodes, links
 
-    def ignore_nodes(self):
+    def _ignore_nodes(self):
         """
         Drops nodes in result tree, that are supposed to be ignored.
         """
         self.children = [child for child in self.children if child.node.deprel not in self.filters['ignored_labels']]
         for child in self.children:
-            child.ignore_nodes()
+            child._ignore_nodes()
 
     def get_key(self):
         """
@@ -195,9 +195,9 @@ class RepresentationTree(object):
 
     def finalize_result(self):
         result = copy.copy(self)
-        result.reset_params()
+        result._reset_params()
         if result.filters['ignored_labels']:
-            result.ignore_nodes()
+            result._ignore_nodes()
 
         # create order letters
         order = result.get_order()
@@ -206,7 +206,7 @@ class RepresentationTree(object):
         for i in range(len(order)):
             ind = order.index(min(order))
             order[ind] = 10000
-            order_letters[ind] = string.ascii_uppercase[i]
+            order_letters[ind] = string.ascii_uppercase[i % 26]
         result.order = ''.join(order_letters)
         return result
 
@@ -214,20 +214,9 @@ class RepresentationTree(object):
         mapper = {}
         location_array = self.get_array_location()
         for i in range(len(location_array)):
-            mapper[location_array[i]] = string.ascii_uppercase[i]
-            # order_letters[ind] = string.ascii_uppercase[i]
-        # result = copy.copy(self)
-        # result.reset_params()
-        # mapper = {}
-        # # create order letters
-        # order = result.get_order()
-        # order_letters = [''] * len(result.order)
-        # for i in range(len(order)):
-        #     ind = order.index(min(order))
-        #     order_letters[ind] = string.ascii_uppercase[i]
-        #     mapper[order[ind]] = string.ascii_uppercase[i]
-        #     order[ind] = 10000
-        # result.order = ''.join(order_letters)
+            mapper[location_array[i]] = string.ascii_uppercase[i] if i < 26 else (string.ascii_uppercase[i % 26] +
+                                                                                  str(int(i / 26)))
+
         return mapper
 
     def get_array_location(self):

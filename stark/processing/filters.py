@@ -64,7 +64,6 @@ def read_filters(configs):
     }
 
     if configs['root_whitelist']:
-        # test
         filters['root_whitelist'] = []
 
         for option in configs['root_whitelist']:
@@ -80,3 +79,98 @@ def read_filters(configs):
         filters['root_whitelist'] = []
 
     return filters
+
+
+class Filter(object):
+    @staticmethod
+    def check_representation_tree(tree):
+        """
+        Checks if greedy representation tree passes filters.
+        :param tree:
+        :return:
+        """
+        return (
+                Filter.check_tree_size(tree.tree_size, tree.filters)
+                and Filter.check_root_whitelist(tree.node.form, tree.node.lemma, tree.node.upos, tree.node.feats,
+                                                tree.node.deprel, tree.filters)
+        )
+
+    @staticmethod
+    def check_query_tree(query_tree, form, lemma, upos, xpos, feats, deprel, children, filters):
+        return ('form' not in query_tree or query_tree['form'] == form) and \
+            ('lemma' not in query_tree or query_tree['lemma'] == lemma) and \
+            ('upos' not in query_tree or query_tree['upos'] == upos) and \
+            ('xpos' not in query_tree or query_tree['xpos'] == xpos) and \
+            ('deprel' not in query_tree or query_tree['deprel'] == deprel) and \
+            (not filters['complete_tree_type'] or (len(children) == 0 and 'children' not in query_tree) or
+             ('children' in query_tree and len(children) == len(query_tree['children']))) and \
+            Filter._check_query_tree_feats(query_tree, feats)
+
+    @staticmethod
+    def _check_query_tree_feats(query_tree, feats):
+        if 'feats_detailed' not in query_tree:
+            return True
+
+        for feat in query_tree['feats_detailed'].keys():
+            if (feat not in feats or
+                    query_tree['feats_detailed'][feat] != feats[feat]):
+                return False
+        return True
+
+    @staticmethod
+    def check_tree_size(size, filters):
+        """
+        Checks if tree size is in filtered range.
+        :param size:
+        :param filters:
+        :return:
+        """
+        return filters['tree_size_range'][0] <= size <= filters['tree_size_range'][-1]
+
+    @staticmethod
+    def check_root_whitelist(form, lemma, upos, feats, deprel, filters):
+        """
+        When root whitelist exists checks if element parameters are acceptable.
+        :param form:
+        :param lemma:
+        :param upos:
+        :param feats:
+        :param deprel:
+        :param filters:
+        :return:
+        """
+        if not filters['root_whitelist']:
+            return True
+
+        main_attributes = ['deprel', 'feats', 'form', 'lemma', 'upos']
+        for option in filters['root_whitelist']:
+            filter_passed = True
+
+            # check if attributes are valid
+            for key in option.keys():
+                if key not in main_attributes:
+                    if key not in feats:
+                        filter_passed = False
+                    elif option[key] != feats[key]:
+                        filter_passed = False
+
+            filter_passed = filter_passed and \
+                            ('deprel' not in option or option['deprel'] == deprel) and \
+                            ('form' not in option or option['form'] == form) and \
+                            ('lemma' not in option or option['lemma'] == lemma) and \
+                            ('upos' not in option or option['upos'] == upos)
+
+            if filter_passed:
+                return True
+
+        return False
+
+    @staticmethod
+    def check_label_whitelist(deprel, filters):
+        """
+        When label whitelist exists, check if deprel is in it.
+        :param deprel:
+        :param filters:
+        :return:
+        """
+        return not filters['label_whitelist'] or deprel in filters['label_whitelist']

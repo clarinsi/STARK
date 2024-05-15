@@ -152,7 +152,7 @@ def decode_query(orig_query, dependency_type):
                 elif not new_query:
                     raise Exception('Not supported yet!')
                 else:
-                    print('???')
+                    raise Exception('Unexpected behaviour!')
             elif not new_query:
                 decoded_query['form'] = orig_query_split_part
         return decoded_query
@@ -202,3 +202,24 @@ def generate_query_trees(configs, filters):
             raise ValueError('Query is not formatted properly!')
 
     return query_tree
+
+
+def get_query_tree_size(query_tree):
+    size = 1
+    if 'children' in query_tree:
+        for child in query_tree['children']:
+            size += get_query_tree_size(child)
+
+    return size
+
+
+def get_query_tree_size_range(query_trees):
+    min_size = 1000000
+    max_size = 0
+    for query_tree in query_trees:
+        size = get_query_tree_size(query_tree)
+        if size > max_size:
+            max_size = size
+        if size < min_size:
+            min_size = size
+    return [min_size, max_size]

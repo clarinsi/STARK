@@ -63,9 +63,12 @@ class Writer(object):
 
         if self.filters['tree_size_range'][-1]:
             len_words = self.filters['tree_size_range'][-1]
+            if self.configs['greedy_counter']:
+                len_words = max([row[1]['object'].tree_size for row in sorted_list])
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
-        header = ["Tree"] + ["Node " + string.ascii_uppercase[i] + "-" + node_type for i in range(len_words) for
+        header = ["Tree"] + ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
+                             "Node " + string.ascii_uppercase[i % 26] + "-" + node_type for i in range(len_words) for
                              node_type in self.filters['node_types']] + ['Absolute frequency']
         header += ['Relative frequency']
         if self.filters['node_order']:

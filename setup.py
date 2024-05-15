@@ -19,5 +19,6 @@ setup(name='stark',
   include_package_data=True,
   install_requires=[
     'pyconll>=3.1.0',
+    'networkx>=3.3',
   ],
 )
