@@ -8,6 +8,7 @@ data
 !stark/data
 config2.ini
 configs/
+!tests/test_data/configs/
 gui/designer/
 build
 dist

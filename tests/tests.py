@@ -15,6 +15,8 @@ def test_base():
     :return:
     """
     random.seed(12)
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
     config_file = os.path.join(CONFIGS_DIR, 'config_base.ini')
     settings = read_settings(config_file, parse_args([]))
     stark.run(settings)

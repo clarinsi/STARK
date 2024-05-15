@@ -102,7 +102,7 @@ class Writer(object):
             if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
                 break
             words_only = [word_att for word in v['object'].array for word_att in word] + ['' for _ in range(
-                (self.filters['tree_size_range'][-1] - len(v['object'].array)) * len(v['object'].array[0]))]
+                (len_words - len(v['object'].array)) * len(v['object'].array[0]))]
             key = v['object'].get_key()[1:-1] if v['object'].get_key()[0] == '(' and v['object'].get_key()[
                 -1] == ')' else v['object'].get_key()
             grew_nodes, grew_links = v['object'].get_grew()
