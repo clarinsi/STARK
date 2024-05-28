@@ -25,10 +25,10 @@ class GreedyRepresentationTree(RepresentationTree):
         if filters['node_order']:
             children_sorted = children[1]
         else:
-            children_sorted = sorted(children[1], key=lambda x: x.get_key())
-        super().__init__(node, children_sorted, filters)
+            children_sorted = sorted(children[1], key=lambda x: (x.get_key(filters), x.node.deprel))
+        super().__init__(node, children_sorted)
 
-    def check_query(self, query):
+    def check_query(self, query, filters):
         # compares query and children lengths
         query_length = len(query['children']) if 'children' in query else 0
         if query_length != len(self.children):
@@ -36,7 +36,7 @@ class GreedyRepresentationTree(RepresentationTree):
 
         # does node comparisons
         filt = Filter.check_query_tree(query, self.node.form, self.node.lemma, self.node.upos, self.node.xpos,
-                                       self.node.feats, self.node.deprel, self.children, self.filters)
+                                       self.node.feats, self.node.deprel, self.children, filters)
 
         if not filt:
             return False
@@ -51,7 +51,7 @@ class GreedyRepresentationTree(RepresentationTree):
         edges = []
         for i, child in enumerate(self.children):
             for j, query_child in enumerate(query['children']):
-                if child.check_query(query_child):
+                if child.check_query(query_child, filters):
                     edges.append((i + 1, -j - 1))
 
         graph = nx.Graph()
@@ -63,7 +63,7 @@ class GreedyRepresentationTree(RepresentationTree):
         connections = hopcroft_karp_matching(graph, children_nodes)
         return len(connections) == query_length * 2
 
-    def pass_filter(self, query_trees):
+    def pass_filter(self, query_trees, filters):
         """
         Validator of filters for greedy counter.
         :return: True when representation tree passes all filters.
@@ -72,31 +72,15 @@ class GreedyRepresentationTree(RepresentationTree):
         if query_trees:
             pass_query = False
             for query in query_trees:
-                if self.check_query(query):
+                if self.check_query(query, filters):
                     pass_query = True
             if not pass_query:
                 return False
-        return Filter.check_representation_tree(self)
+        return Filter.check_representation_tree(self, filters)
 
-    def _check_tree_size(self):
+    def _check_tree_size(self, filters):
         """
         Checks whether tree size is within filter parameters.
         :return:
         """
-        return self.filters['tree_size_range'][0] <= self.tree_size <= self.filters['tree_size_range'][-1]
-
-    # def finalize_result(self):
-    #     self._reset_params()
-    #     if self.filters['ignored_labels']:
-    #         self._ignore_nodes()
-    #
-    #     # create order letters
-    #     order = self.get_order()
-    #     self.order_ids = order.copy()
-    #     order_letters = [''] * len(self.order)
-    #     for i in range(len(order)):
-    #         ind = order.index(min(order))
-    #         order[ind] = 10000
-    #         order_letters[ind] = string.ascii_uppercase[i]
-    #     self.order = ''.join(order_letters)
-    #     return self
+        return filters['tree_size_range'][0] <= self.tree_size <= filters['tree_size_range'][-1]

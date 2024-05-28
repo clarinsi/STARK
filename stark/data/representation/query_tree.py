@@ -17,4 +17,4 @@ from stark.data.representation.tree import RepresentationTree
 
 class QueryRepresentationTree(RepresentationTree):
     def __init__(self, node, children, filters):
-        super().__init__(node, children, filters)
+        super().__init__(node, children)

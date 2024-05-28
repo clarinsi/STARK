@@ -83,16 +83,17 @@ def read_filters(configs):
 
 class Filter(object):
     @staticmethod
-    def check_representation_tree(tree):
+    def check_representation_tree(tree, filters):
         """
         Checks if greedy representation tree passes filters.
+        :param filters:
         :param tree:
         :return:
         """
         return (
-                Filter.check_tree_size(tree.tree_size, tree.filters)
+                Filter.check_tree_size(tree.tree_size, filters)
                 and Filter.check_root_whitelist(tree.node.form, tree.node.lemma, tree.node.upos, tree.node.feats,
-                                                tree.node.deprel, tree.filters)
+                                                tree.node.deprel, filters)
         )
 
     @staticmethod

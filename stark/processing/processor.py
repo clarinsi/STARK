@@ -60,7 +60,8 @@ class Processor(object):
         for path in sorted(path_list):
             document_processor = DocumentProcessor(str(path), self)
             document = document_processor.form_trees(summary)
-
+            logger.info("Trees formed time:")
+            logger.info("--- %s seconds ---" % (time.time() - start_exe_time))
             if self.configs['greedy_counter']:
                 tree_counter = GreedyCounter(document, summary, self.filters)
             else:
@@ -68,7 +69,8 @@ class Processor(object):
             tree_counter.run()
             summary.samples.extend(document.sentence_statistics)
 
-        logger.info("Execution time:")
+        logger.info(f"{len(summary.representation_trees)} unique trees counted time (execution time):")
+        logger.info("Trees counted time (execution time):")
         logger.info("--- %s seconds ---" % (time.time() - start_exe_time))
 
         return summary

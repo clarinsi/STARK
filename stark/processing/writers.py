@@ -63,7 +63,7 @@ class Writer(object):
 
         if self.filters['tree_size_range'][-1]:
             len_words = self.filters['tree_size_range'][-1]
-            if self.configs['greedy_counter']:
+            if self.configs['greedy_counter'] and len(sorted_list) != 0:
                 len_words = max([row[1]['object'].tree_size for row in sorted_list])
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
@@ -97,16 +97,15 @@ class Writer(object):
 
         # body
         for k, v in sorted_list:
-            v['object'].get_array()
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
                 break
-            words_only = [word_att for word in v['object'].array for word_att in word] + ['' for _ in range(
-                (len_words - len(v['object'].array)) * len(v['object'].array[0]))]
-            key = v['object'].get_key()[1:-1] if v['object'].get_key()[0] == '(' and v['object'].get_key()[
-                -1] == ')' else v['object'].get_key()
+            words_only = [word_att for word in v['object'].get_array(self.filters) for word_att in word] + ['' for _ in range(
+                (len_words - len(v['object'].get_array(self.filters))) * len(v['object'].get_array(self.filters)[0]))]
+            key = v['object'].get_key(self.filters)[1:-1] if v['object'].get_key(self.filters)[0] == '(' and v['object'].get_key(self.filters)[
+                -1] == ')' else v['object'].get_key(self.filters)
             grew_nodes, grew_links = v['object'].get_grew()
-            location_mapper = v['object'].get_location_mapper()
+            location_mapper = v['object'].get_location_mapper(self.filters)
             key_grew = self.get_grew(grew_nodes, grew_links, self.filters['node_types'], self.filters['node_order'],
                                      location_mapper, self.filters['dependency_type'],
                                      self.filters['complete_tree_type'])
@@ -120,16 +119,16 @@ class Writer(object):
                 url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
                 row += [url]
             if self.filters['node_order'] and self.configs['depsearch']:
-                row += [v['object'].get_key_sorted()[1:-1]]
+                row += [v['object'].get_key_sorted(self.filters)[1:-1]]
             if self.filters['nodes_number']:
-                row += ['%d' % len(v['object'].array)]
+                row += ['%d' % len(v['object'].get_array(self.filters))]
             if self.filters['print_root']:
                 row += [v['object'].node.name]
             if self.filters['example']:
                 random_sentence_position = int(len(v['sentence']) * random.random())
                 row += [v['sentence'][random_sentence_position][1]]
             if self.filters['association_measures']:
-                row += self.get_collocabilities(v, self.summary.unigrams, self.summary.corpus_size)
+                row += self.get_collocabilities(v, self.summary.unigrams, self.summary.corpus_size, self.filters)
             if self.configs['compare']:
                 other_abs_freq = other_representation_trees[k]['number'] if k in other_representation_trees else 0
                 row += self.get_keyness(v['number'], other_abs_freq, self.summary.corpus_size, other_corpus_size)
@@ -219,10 +218,10 @@ class Writer(object):
         return grew + '}'
 
     @staticmethod
-    def get_collocabilities(ngram, unigrams, corpus_size):
+    def get_collocabilities(ngram, unigrams, corpus_size, filters):
         sum_fwi = 0.0
         mul_fwi = 1.0
-        for key_array in ngram['object'].array:
+        for key_array in ngram['object'].get_array(filters):
             # create key for unigrams
             if len(key_array) > 1:
                 key = '&'.join(key_array)
@@ -238,7 +237,7 @@ class Writer(object):
         N = corpus_size
 
         # n of ngram
-        n = len(ngram['object'].array)
+        n = len(ngram['object'].get_array(filters))
         O = ngram['number']
         E = mul_fwi / pow(N, n - 1)
 

@@ -53,6 +53,27 @@ def test_query():
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_query.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_query.tsv'))
 
 
+def test_fixed():
+    """
+    Test complete=no and query.
+    :return:
+    """
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_base.ini')
+    settings = read_settings(config_file, parse_args(['--fixed', 'no',
+                                                      '--output', 'test_data/output/out_fixed.tsv']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_fixed.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_fixed.tsv'))
+
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_base.ini')
+    settings = read_settings(config_file, parse_args(['--greedy_counter', 'yes',
+                                                      '--fixed', 'no',
+                                                      '--output', 'test_data/output/out_fixed.tsv']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_fixed.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_fixed.tsv'))
+
+
 def test_dir():
     """
     Test complete=no and query.

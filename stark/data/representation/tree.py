@@ -17,29 +17,12 @@ import string
 
 
 class RepresentationTree(object):
-    def __init__(self, node, children, filters):
+    def __init__(self, node, children):
         self.node = node
         self.children = children
-        self.filters = filters
-        # value of self.key might change in __repr__() when that chunk executes (self.children, self.key and
-        # self.node must be defined)
-        self.key = None
-        self.order_key = None
-        self.order = None
-        self.order_ids = None
-        self.array = None
-
-    def __repr__(self):
-        return self.get_key()
 
     def set_children(self, children):
         self.children = children
-
-    def _reset_params(self):
-        self.key = None
-        self.order_key = None
-        self.order = None
-        self.array = None
 
     def get_grew(self):
         nodes = [self.node]
@@ -54,64 +37,44 @@ class RepresentationTree(object):
 
         return nodes, links
 
-    def _ignore_nodes(self):
+    def _ignore_nodes(self, filters):
         """
         Drops nodes in result tree, that are supposed to be ignored.
         """
-        self.children = [child for child in self.children if child.node.deprel not in self.filters['ignored_labels']]
+        self.children = [child for child in self.children if child.node.deprel not in filters['ignored_labels']]
         for child in self.children:
-            child._ignore_nodes()
+            child._ignore_nodes(filters)
 
-    def get_key(self):
+        # children nodes have to be sorted when fixed=no
+        if not filters['node_order']:
+            self.children = sorted(self.children, key=lambda x: (x.get_key(filters), x.node.deprel))
+
+    def get_key(self, filters):
         """
         A code that returns and (if necessary generates) key of a tree. (used for `Tree` column in output)
         :return:
         key: Key of a tree
         """
-        if self.key:
-            return self.key
         key = ''
         write_self_node_to_result = False
         if self.children:
             children = self.children
             for child in children:
-                if self.filters['node_order'] and child.node.location < self.node.location:
-                    if self.filters['dependency_type']:
+                if filters['node_order'] and child.node.location < self.node.location:
+                    if filters['dependency_type']:
                         separator = ' <' + child.node.deprel + ' '
                     else:
                         separator = ' < '
-                    key += child.get_key() + separator
+                    key += child.get_key(filters) + separator
                 else:
                     if not write_self_node_to_result:
                         write_self_node_to_result = True
                         key += self.node.name
-                    if self.filters['dependency_type']:
+                    if filters['dependency_type']:
                         separator = ' >' + child.node.deprel + ' '
                     else:
                         separator = ' > '
-                    key += separator + child.get_key()
-
-            if not write_self_node_to_result:
-                key += self.node.name
-            self.key = '(' + key + ')'
-        else:
-            self.key = self.node.name
-        return self.key
-
-    def get_key_sorted(self):
-        key = ''
-        write_self_node_to_result = False
-        if self.children:
-            children = sorted(self.children, key=lambda x: x.node.name)
-            for child in children:
-                if not write_self_node_to_result:
-                    write_self_node_to_result = True
-                    key += self.node.name
-                if self.filters['dependency_type']:
-                    separator = ' >' + child.node.deprel + ' '
-                else:
-                    separator = ' > '
-                key += separator + child.get_key_sorted()
+                    key += separator + child.get_key(filters)
 
             if not write_self_node_to_result:
                 key += self.node.name
@@ -120,89 +83,104 @@ class RepresentationTree(object):
             key = self.node.name
         return key
 
-    def get_order_key(self):
-        if self.order_key:
-            return self.order_key
+    def get_key_sorted(self, filters):
+        key = ''
+        write_self_node_to_result = False
+        if self.children:
+            children = sorted(self.children, key=lambda x: x.node.name)
+            for child in children:
+                if not write_self_node_to_result:
+                    write_self_node_to_result = True
+                    key += self.node.name
+                if filters['dependency_type']:
+                    separator = ' >' + child.node.deprel + ' '
+                else:
+                    separator = ' > '
+                key += separator + child.get_key_sorted(filters)
+
+            if not write_self_node_to_result:
+                key += self.node.name
+            key = '(' + key + ')'
+        else:
+            key = self.node.name
+        return key
+
+    def get_order_key(self, filters):
         order_key = ''
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if self.filters['node_order'] and child.node.location < self.node.location:
-                    if self.filters['dependency_type']:
+                if filters['node_order'] and child.node.location < self.node.location:
+                    if filters['dependency_type']:
                         separator = ' <' + child.node.deprel + ' '
                     else:
                         separator = ' < '
-                    order_key += child.get_order_key() + separator
+                    order_key += child.get_order_key(filters) + separator
                 else:
                     if not write_self_node_to_result:
                         write_self_node_to_result = True
                         order_key += str(self.node.location)
-                    if self.filters['dependency_type']:
+                    if filters['dependency_type']:
                         separator = ' >' + child.node.deprel + ' '
                     else:
                         separator = ' > '
-                    order_key += separator + child.get_order_key()
+                    order_key += separator + child.get_order_key(filters)
             if not write_self_node_to_result:
                 order_key += str(self.node.location)
-            self.order_key = '(' + order_key + ')'
+            order_key = '(' + order_key + ')'
         else:
-            self.order_key = str(self.node.location)
-        return self.order_key
+            order_key = str(self.node.location)
+        return order_key
 
-    def get_order(self):
-        if self.order:
-            return self.order
+    def get_order(self, filters):
         order = []
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if self.filters['node_order'] and child.node.location < self.node.location:
-                    order += child.get_order()
+                if filters['node_order'] and child.node.location < self.node.location:
+                    order += child.get_order(filters)
                 else:
                     if not write_self_node_to_result:
                         write_self_node_to_result = True
                         order += [self.node.location]
-                    order += child.get_order()
+                    order += child.get_order(filters)
 
             if not write_self_node_to_result:
                 order += [self.node.location]
-            self.order = order
+            order = order
         else:
-            self.order = [self.node.location]
-        return self.order
+            order = [self.node.location]
+        return order
 
-    def get_array(self):
-        if self.array:
-            return self.array
+    def get_array(self, filters):
         array = []
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if self.filters['node_order'] and child.node.location < self.node.location:
-                    array += child.get_array()
+                if filters['node_order'] and child.node.location < self.node.location:
+                    array += child.get_array(filters)
                 else:
                     if not write_self_node_to_result:
                         write_self_node_to_result = True
                         array += [self.node.name_parts]
-                    array += child.get_array()
+                    array += child.get_array(filters)
 
             if not write_self_node_to_result:
                 array += [self.node.name_parts]
-            self.array = array
+            array = array
         else:
-            self.array = [self.node.name_parts]
-        return self.array
+            array = [self.node.name_parts]
+        return array
 
-    def finalize_result(self):
+    def finalize_result(self, filters):
         result = copy.copy(self)
-        result._reset_params()
-        if result.filters['ignored_labels']:
-            result._ignore_nodes()
+        if filters['ignored_labels']:
+            result._ignore_nodes(filters)
 
         # create order letters
-        order = result.get_order()
+        order = result.get_order(filters)
         result.order_ids = order.copy()
-        order_letters = [''] * len(result.order)
+        order_letters = [''] * len(order)
         for i in range(len(order)):
             ind = order.index(min(order))
             order[ind] = 10000
@@ -210,27 +188,27 @@ class RepresentationTree(object):
         result.order = ''.join(order_letters)
         return result
 
-    def get_location_mapper(self):
+    def get_location_mapper(self, filters):
         mapper = {}
-        location_array = self.get_array_location()
+        location_array = self.get_array_location(filters)
         for i in range(len(location_array)):
             mapper[location_array[i]] = string.ascii_uppercase[i] if i < 26 else (string.ascii_uppercase[i % 26] +
                                                                                   str(int(i / 26)))
 
         return mapper
 
-    def get_array_location(self):
+    def get_array_location(self, filters):
         array = []
         write_self_node_to_result = False
         if self.children:
             for child in self.children:
-                if self.filters['node_order'] and child.node.location < self.node.location:
-                    array += child.get_array_location()
+                if filters['node_order'] and child.node.location < self.node.location:
+                    array += child.get_array_location(filters)
                 else:
                     if not write_self_node_to_result:
                         write_self_node_to_result = True
                         array += [self.node.location]
-                    array += child.get_array_location()
+                    array += child.get_array_location(filters)
 
             if not write_self_node_to_result:
                 array += [self.node.location]

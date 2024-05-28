@@ -84,18 +84,18 @@ class Counter(object):
         return recreated_sentence
 
     def postprocess_query_results(self, subtrees, sentence):
-        subtrees = sorted(subtrees, key=lambda x: x.get_key())
+        subtrees = sorted(subtrees, key=lambda x: x.get_key(self.filters))
         for r in subtrees:
             if self.filters['ignored_labels']:
-                r.get_array()
+                r.get_array(self.filters)
                 if self.filters['tree_size_range'] and \
-                        (len(r.array) > self.filters['tree_size_range'][-1] or len(r.array) <
+                        (len(r.get_array(self.filters)) > self.filters['tree_size_range'][-1] or len(r.get_array(self.filters)) <
                          self.filters['tree_size_range'][0]):
                     continue
             if self.filters['node_order']:
-                key = r.get_key() + r.order
+                key = r.get_key(self.filters) + r.order
             else:
-                key = r.get_key()
+                key = r.get_key(self.filters)
             if key in self.summary.representation_trees:
                 if self.filters['detailed_results_file']:
                     recreated_sentence = self.recreate_sentence(sentence, r)
@@ -149,11 +149,11 @@ class GreedyCounter(Counter):
     def tree_calculations(input_data):
         tree, query_trees, filters = input_data
         _, subtrees = tree.get_subtrees(filters)
-        subtrees = GreedyCounter.filter_subtrees(query_trees, subtrees)
+        subtrees = GreedyCounter.filter_subtrees(query_trees, subtrees, filters)
         return subtrees
 
     @staticmethod
-    def filter_subtrees(query_trees, subtrees):
-        subtrees = [subtree.finalize_result() for subtree in subtrees]
-        subtrees = [subtree for subtree in subtrees if subtree.pass_filter(query_trees)]
+    def filter_subtrees(query_trees, subtrees, filters):
+        subtrees = [subtree.finalize_result(filters) for subtree in subtrees]
+        subtrees = [subtree for subtree in subtrees if subtree.pass_filter(query_trees, filters)]
         return subtrees

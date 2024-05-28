@@ -76,7 +76,7 @@ class QueryTree(Tree):
 
         for i in range(len(active_permanent_query_trees)):
             # erase first and last brackets when adding new query result
-            add_subtree = [subtree.finalize_result() for subtree in merged_partial_answers[i]]
+            add_subtree = [subtree.finalize_result(filters) for subtree in merged_partial_answers[i]]
             complete_answers[i].extend(add_subtree)
 
         # answers to valid queries
@@ -117,7 +117,7 @@ class QueryTree(Tree):
             new_child = child
 
         else:
-            new_child = sorted(child, key=lambda x: x[0].get_key())
+            new_child = sorted(child, key=lambda x: x[0].get_key(filters))
 
         children_groups = []
 
@@ -182,7 +182,7 @@ class QueryTree(Tree):
         for answer_i, answer_length in enumerate(answers_lengths):
             # iterate over answers of query
             partial_answers[answer_i] = QueryTree._create_answers(all_new_partial_answers[i:i + answer_length],
-                                                             answer_length)
+                                                             answer_length, filters)
             i += answer_length
 
         return partial_answers, complete_answers
@@ -232,7 +232,7 @@ class QueryTree(Tree):
         return merged_results
 
     @staticmethod
-    def _create_answers(separated_answers, answer_length):
+    def _create_answers(separated_answers, answer_length, filters):
         partly_built_trees = [[None] * answer_length]
         partly_built_trees_architecture_indices = [[None] * answer_length]
         built_trees = []
@@ -287,8 +287,8 @@ class QueryTree(Tree):
                     already_in = True
                     for part_i in range(len(unique_tree)):
                         if (len(unique_tree[part_i]) != len(new_tree[part_i])
-                                or any(unique_tree[part_i][i_unique_part].get_order_key() !=
-                                       new_tree[part_i][i_unique_part].get_order_key()
+                                or any(unique_tree[part_i][i_unique_part].get_order_key(filters) !=
+                                       new_tree[part_i][i_unique_part].get_order_key(filters)
                                        for i_unique_part in range(len(unique_tree[part_i])))):
                             already_in = False
                             break

@@ -21,6 +21,8 @@ from pathlib import Path
 import sys
 import logging
 
+# from pympler import asizeof
+
 from stark.data.summary import Summary
 from stark.processing.filters import read_filters
 from stark.processing.processor import Processor
@@ -92,6 +94,14 @@ def count_subtrees(configs, filters):
 
     else:
         processor.run([configs['input_path']], summary)
+
+    # print('summary memory size (MB):')
+    # mem_size = asizeof.asizeof(summary)
+    # print(mem_size/1000000)
+    #
+    # print('summary.representation_trees memory size (MB):')
+    # mem_size = asizeof.asizeof(summary.representation_trees)
+    # print(mem_size / 1000000)
 
     return summary
 
@@ -205,7 +215,6 @@ def run(configs):
     if configs['compare'] is not None:
         configs['input_path'] = configs['other_input_path']
         other_summary = count_subtrees(configs, filters)
-
     if configs['output']:
         writer = TSVWriter(summary, other_summary, filters, configs)
     else:
