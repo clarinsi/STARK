@@ -76,7 +76,7 @@ class QueryTree(Tree):
 
         for i in range(len(active_permanent_query_trees)):
             # erase first and last brackets when adding new query result
-            add_subtree = [subtree.finalize_result(filters) for subtree in merged_partial_answers[i]]
+            add_subtree = [subtree.ignore_labels(filters) for subtree in merged_partial_answers[i]]
             complete_answers[i].extend(add_subtree)
 
         # answers to valid queries

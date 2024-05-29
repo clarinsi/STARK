@@ -15,6 +15,7 @@
 import random
 from abc import abstractmethod
 from multiprocessing import Pool
+from tqdm import tqdm
 
 
 class Counter(object):
@@ -45,14 +46,20 @@ class Counter(object):
                     else:
                         self.summary.unigrams[unigram] = 1
 
-            all_subtrees = p.map(self.tree_calculations,
-                                 [(tree, self.summary.query_trees, self.filters) for tree in self.document.trees])
+            all_subtrees = []
+            with tqdm(desc='Creating subtrees', total=len(self.document.trees)) as pbar:
+                for subtree in p.imap(self.tree_calculations,
+                                                [(tree, self.summary.query_trees, self.filters) for tree in self.document.trees]):
+                    all_subtrees.append(subtree)
+                    pbar.update()
 
-            for subtrees, sentence in zip(all_subtrees, self.document.sentence_statistics):
+            for subtrees, sentence in tqdm(zip(all_subtrees, self.document.sentence_statistics),
+                                           desc='Postprocessing results', total=len(all_subtrees)):
                 self.postprocess_query_results(subtrees, sentence)
 
     def run_single_processor(self):
-        for tree, sentence in zip(self.document.trees, self.document.sentence_statistics):
+        for tree, sentence in tqdm(zip(self.document.trees, self.document.sentence_statistics), desc='Processing',
+                                   total=len(self.document.trees)):
             input_data = (tree, self.summary.query_trees, self.filters)
             if self.filters['association_measures']:
                 unigrams = self.get_unigrams((tree, self.filters))
@@ -70,13 +77,14 @@ class Counter(object):
         tree, filters = input_data
         return tree.get_unigrams(filters['create_output_string_functs'])
 
-    @staticmethod
-    def recreate_sentence(sentence, r):
+    def recreate_sentence(self, sentence, r):
         recreated_sentence = ''
         for token_i, token in enumerate(sentence['tokens']):
-            if token_i + 1 in r.order_ids:
-                letter_position = r.order_ids.index(token_i + 1)
-                recreated_sentence += f'{r.order[letter_position]}[{token[0]}]'
+            order = r.get_order(self.filters)
+            if token_i + 1 in order:
+                letter_position = order.index(token_i + 1)
+                order_letters = r.get_order_letters(order)
+                recreated_sentence += f'{order_letters[letter_position]}[{token[0]}]'
             else:
                 recreated_sentence += token[0]
             if token[1]:
@@ -84,18 +92,20 @@ class Counter(object):
         return recreated_sentence
 
     def postprocess_query_results(self, subtrees, sentence):
-        subtrees = sorted(subtrees, key=lambda x: x.get_key(self.filters))
-        for r in subtrees:
+        keys_subtrees = [(subtree.get_key(self.filters), subtree) for subtree in subtrees]
+        keys_subtrees = sorted(keys_subtrees, key=lambda x: x[0])
+        for k, r in keys_subtrees:
             if self.filters['ignored_labels']:
-                r.get_array(self.filters)
+                word_array = r.get_array(self.filters)
                 if self.filters['tree_size_range'] and \
-                        (len(r.get_array(self.filters)) > self.filters['tree_size_range'][-1] or len(r.get_array(self.filters)) <
+                        (len(word_array) > self.filters['tree_size_range'][-1] or len(word_array) <
                          self.filters['tree_size_range'][0]):
                     continue
             if self.filters['node_order']:
-                key = r.get_key(self.filters) + r.order
+                order_letters = r.get_order_letters(r.get_order(self.filters))
+                key = k + order_letters
             else:
-                key = r.get_key(self.filters)
+                key = k
             if key in self.summary.representation_trees:
                 if self.filters['detailed_results_file']:
                     recreated_sentence = self.recreate_sentence(sentence, r)
@@ -154,6 +164,6 @@ class GreedyCounter(Counter):
 
     @staticmethod
     def filter_subtrees(query_trees, subtrees, filters):
-        subtrees = [subtree.finalize_result(filters) for subtree in subtrees]
         subtrees = [subtree for subtree in subtrees if subtree.pass_filter(query_trees, filters)]
+        subtrees = [subtree.ignore_labels(filters) for subtree in subtrees]
         return subtrees

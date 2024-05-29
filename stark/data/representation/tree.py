@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import copy
+import abc
 import string
 
 
@@ -20,6 +19,11 @@ class RepresentationTree(object):
     def __init__(self, node, children):
         self.node = node
         self.children = children
+
+    @classmethod
+    @abc.abstractmethod
+    def copy(cls, node, children, filters):
+        return
 
     def set_children(self, children):
         self.children = children
@@ -37,17 +41,17 @@ class RepresentationTree(object):
 
         return nodes, links
 
-    def _ignore_nodes(self, filters):
+    def ignore_nodes(self, filters):
         """
         Drops nodes in result tree, that are supposed to be ignored.
         """
-        self.children = [child for child in self.children if child.node.deprel not in filters['ignored_labels']]
-        for child in self.children:
-            child._ignore_nodes(filters)
+        children = [child for child in self.children if child.node.deprel not in filters['ignored_labels']]
 
-        # children nodes have to be sorted when fixed=no
-        if not filters['node_order']:
-            self.children = sorted(self.children, key=lambda x: (x.get_key(filters), x.node.deprel))
+        new_children = []
+        for child in children:
+            new_children.append(child.ignore_nodes(filters))
+
+        return self.copy(self.node, new_children, filters)
 
     def get_key(self, filters):
         """
@@ -172,21 +176,19 @@ class RepresentationTree(object):
             array = [self.node.name_parts]
         return array
 
-    def finalize_result(self, filters):
-        result = copy.copy(self)
-        if filters['ignored_labels']:
-            result._ignore_nodes(filters)
-
-        # create order letters
-        order = result.get_order(filters)
-        result.order_ids = order.copy()
+    @staticmethod
+    def get_order_letters(order):
         order_letters = [''] * len(order)
         for i in range(len(order)):
             ind = order.index(min(order))
             order[ind] = 10000
             order_letters[ind] = string.ascii_uppercase[i % 26]
-        result.order = ''.join(order_letters)
-        return result
+        return ''.join(order_letters)
+
+    def ignore_labels(self, filters):
+        if filters['ignored_labels']:
+            return self.ignore_nodes(filters)
+        return self
 
     def get_location_mapper(self, filters):
         mapper = {}

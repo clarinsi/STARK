@@ -20,5 +20,6 @@ setup(name='stark',
   install_requires=[
     'pyconll>=3.1.0',
     'networkx>=3.3',
+    'tqdm>=4.66.4'
   ],
 )

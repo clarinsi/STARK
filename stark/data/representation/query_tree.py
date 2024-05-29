@@ -18,3 +18,14 @@ from stark.data.representation.tree import RepresentationTree
 class QueryRepresentationTree(RepresentationTree):
     def __init__(self, node, children, filters):
         super().__init__(node, children)
+
+    @classmethod
+    def copy(cls, node, children, filters):
+        """
+        Copies original object with empty children.
+        :param filters:
+        :param children:
+        :param node:
+        :return:
+        """
+        return cls(node, children, filters)

@@ -28,6 +28,18 @@ class GreedyRepresentationTree(RepresentationTree):
             children_sorted = sorted(children[1], key=lambda x: (x.get_key(filters), x.node.deprel))
         super().__init__(node, children_sorted)
 
+    @classmethod
+    def copy(cls, node, children, filters):
+        """
+        Copies original object with empty children.
+        :param filters:
+        :param children:
+        :param node:
+        :return:
+        """
+        tree_size = sum([child.tree_size for child in children]) + 1
+        return cls(node, [tree_size, children], filters)
+
     def check_query(self, query, filters):
         # compares query and children lengths
         query_length = len(query['children']) if 'children' in query else 0

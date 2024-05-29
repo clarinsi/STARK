@@ -59,7 +59,7 @@ class GreedyTree(Tree):
         return combinations
 
     @staticmethod
-    def _merge_complete_combinations(combinations, child_active_trees):
+    def _merge_complete_combinations(combinations, child_active_trees, filters):
         """
         Creates all possible combinations of children trees when complete_tree_type=yes. Always generates all complete
         trees (there are fairly few of them) - no filtering!
@@ -67,6 +67,8 @@ class GreedyTree(Tree):
         :param child_active_trees:
         :return:
         """
+        if not child_active_trees or not combinations or not GreedyTree._processing_filter(combinations[0], child_active_trees[0], filters):
+            return []
         new_combinations_size = combinations[0][0] + child_active_trees[0].tree_size
         combinations[0][1].append(child_active_trees[0])
         combinations[0] = (new_combinations_size, combinations[0][1])
@@ -82,7 +84,7 @@ class GreedyTree(Tree):
         :return:
         """
         if filters['complete_tree_type']:
-            combinations = GreedyTree._merge_complete_combinations(combinations, child_active_trees)
+            combinations = GreedyTree._merge_complete_combinations(combinations, child_active_trees, filters)
         else:
             combinations = GreedyTree._merge_incomplete_combinations(combinations, child_active_trees, filters)
 

@@ -25,6 +25,7 @@ import sys
 from os import path
 import urllib.parse
 import logging
+from tqdm import tqdm
 
 here = path.abspath(path.dirname(__file__))
 logging.basicConfig(level=logging.NOTSET)
@@ -96,14 +97,16 @@ class Writer(object):
             sorted_list = sorted_list[:self.filters['lines_threshold']]
 
         # body
-        for k, v in sorted_list:
+        for k, v in tqdm(sorted_list, desc='Writing'):
+            word_array = v['object'].get_array(self.filters)
+            literal_key = v['object'].get_key(self.filters)
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
                 break
-            words_only = [word_att for word in v['object'].get_array(self.filters) for word_att in word] + ['' for _ in range(
-                (len_words - len(v['object'].get_array(self.filters))) * len(v['object'].get_array(self.filters)[0]))]
-            key = v['object'].get_key(self.filters)[1:-1] if v['object'].get_key(self.filters)[0] == '(' and v['object'].get_key(self.filters)[
-                -1] == ')' else v['object'].get_key(self.filters)
+            words_only = [word_att for word in word_array for word_att in word] + ['' for _ in range(
+                (len_words - len(word_array)) * len(word_array[0]))]
+            key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
+                -1] == ')' else literal_key
             grew_nodes, grew_links = v['object'].get_grew()
             location_mapper = v['object'].get_location_mapper(self.filters)
             key_grew = self.get_grew(grew_nodes, grew_links, self.filters['node_types'], self.filters['node_order'],
@@ -112,7 +115,8 @@ class Writer(object):
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]
             if self.filters['node_order']:
-                row += [v['object'].order]
+                order_letters = v['object'].get_order_letters(v['object'].get_order(self.filters))
+                row += [order_letters]
             if self.configs['grew_match']:
                 row += [key_grew]
             if corpus and self.configs['grew_match']:
@@ -121,7 +125,7 @@ class Writer(object):
             if self.filters['node_order'] and self.configs['depsearch']:
                 row += [v['object'].get_key_sorted(self.filters)[1:-1]]
             if self.filters['nodes_number']:
-                row += ['%d' % len(v['object'].get_array(self.filters))]
+                row += ['%d' % len(word_array)]
             if self.filters['print_root']:
                 row += [v['object'].node.name]
             if self.filters['example']:
