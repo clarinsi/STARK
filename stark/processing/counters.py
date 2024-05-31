@@ -46,16 +46,15 @@ class Counter(object):
                     else:
                         self.summary.unigrams[unigram] = 1
 
-            all_subtrees = []
+            i = 0
             with tqdm(desc='Creating subtrees', total=len(self.document.trees)) as pbar:
-                for subtree in p.imap(self.tree_calculations,
+                for subtrees in p.imap(self.tree_calculations,
                                                 [(tree, self.summary.query_trees, self.filters) for tree in self.document.trees]):
-                    all_subtrees.append(subtree)
-                    pbar.update()
 
-            for subtrees, sentence in tqdm(zip(all_subtrees, self.document.sentence_statistics),
-                                           desc='Postprocessing results', total=len(all_subtrees)):
-                self.postprocess_query_results(subtrees, sentence)
+                    for subtree in subtrees:
+                        self.postprocess_query_results(subtree, self.document.sentence_statistics[i])
+                    i += 1
+                    pbar.update()
 
     def run_single_processor(self):
         for tree, sentence in tqdm(zip(self.document.trees, self.document.sentence_statistics), desc='Processing',
@@ -70,7 +69,8 @@ class Counter(object):
                         self.summary.unigrams[unigram] = 1
 
             subtrees = self.tree_calculations(input_data)
-            self.postprocess_query_results(subtrees, sentence)
+            for subtree in subtrees:
+                self.postprocess_query_results(subtree, sentence)
 
     @staticmethod
     def get_unigrams(input_data):
@@ -91,46 +91,44 @@ class Counter(object):
                 recreated_sentence += ' '
         return recreated_sentence
 
-    def postprocess_query_results(self, subtrees, sentence):
-        keys_subtrees = [(subtree.get_key(self.filters), subtree) for subtree in subtrees]
-        keys_subtrees = sorted(keys_subtrees, key=lambda x: x[0])
-        for k, r in keys_subtrees:
-            if self.filters['ignored_labels']:
-                word_array = r.get_array(self.filters)
-                if self.filters['tree_size_range'] and \
-                        (len(word_array) > self.filters['tree_size_range'][-1] or len(word_array) <
-                         self.filters['tree_size_range'][0]):
-                    continue
-            if self.filters['node_order']:
-                order_letters = r.get_order_letters(r.get_order(self.filters))
-                key = k + order_letters
-            else:
-                key = k
-            if key in self.summary.representation_trees:
-                if self.filters['detailed_results_file']:
-                    recreated_sentence = self.recreate_sentence(sentence, r)
-                    self.summary.representation_trees[key]['sentence'].append((sentence['id'],
-                                                                               recreated_sentence))
-                elif self.filters['example'] and random.random() < 1.0 - (
-                        self.summary.representation_trees[key]['number'] /
-                        (self.summary.representation_trees[key]['number'] + 1)):
-                    recreated_sentence = self.recreate_sentence(sentence, r)
-                    self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
-                                                                           recreated_sentence)]
-                self.summary.representation_trees[key]['number'] += 1
-            else:
-                self.summary.representation_trees[key] = {'object': r, 'number': 1}
+    def postprocess_query_results(self, r, sentence):
+        # for r in subtrees:
+        if self.filters['ignored_labels']:
+            key, word_array = r.get_key_array(self.filters)
+            if self.filters['tree_size_range'] and \
+                    (len(word_array) > self.filters['tree_size_range'][-1] or len(word_array) <
+                     self.filters['tree_size_range'][0]):
+                return
+        else:
+            key = r.get_key(self.filters)
+        if self.filters['node_order']:
+            order_letters = r.get_order_letters(r.get_order(self.filters))
+            key = key + order_letters
+        if key in self.summary.representation_trees:
+            if self.filters['detailed_results_file']:
+                recreated_sentence = self.recreate_sentence(sentence, r)
+                self.summary.representation_trees[key]['sentence'].append((sentence['id'],
+                                                                           recreated_sentence))
+            elif self.filters['example'] and random.random() < 1.0 - (
+                    self.summary.representation_trees[key]['number'] /
+                    (self.summary.representation_trees[key]['number'] + 1)):
+                recreated_sentence = self.recreate_sentence(sentence, r)
+                self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
+                                                                       recreated_sentence)]
+            self.summary.representation_trees[key]['number'] += 1
+        else:
+            self.summary.representation_trees[key] = {'object': r, 'number': 1}
 
-                # recreate example sentence with shown positions of subtree
-                if self.filters['example'] or self.filters['detailed_results_file']:
-                    recreated_sentence = self.recreate_sentence(sentence, r)
-                    self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
-                                                                           recreated_sentence)]
-            if self.filters['sentence_count_file']:
-                if key in sentence['count']:
-                    sentence['count'][key] += 1
-                else:
-                    sentence['count'][key] = 1
+            # recreate example sentence with shown positions of subtree
+            if self.filters['example'] or self.filters['detailed_results_file']:
+                recreated_sentence = self.recreate_sentence(sentence, r)
+                self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
+                                                                       recreated_sentence)]
+        if self.filters['sentence_count_file']:
+            if key in sentence['count']:
+                sentence['count'][key] += 1
+            else:
+                sentence['count'][key] = 1
 
 
 class QueryCounter(Counter):

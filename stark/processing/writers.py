@@ -47,7 +47,7 @@ class Writer(object):
         other_representation_trees = self.other_summary.representation_trees if self.other_summary else None
         other_corpus_size = self.other_summary.corpus_size if self.other_summary else None
 
-        sorted_list = sorted(self.summary.representation_trees.items(), key=lambda x: x[1]['number'], reverse=True)
+        sorted_list = sorted(self.summary.representation_trees.items(), key=lambda x: (-x[1]['number'], x[0]))
 
         with open(os.path.join(here, '../resources/codes_mapper.json'), 'r') as f:
             codes_mapper = json.load(f)
@@ -98,8 +98,8 @@ class Writer(object):
 
         # body
         for k, v in tqdm(sorted_list, desc='Writing'):
-            word_array = v['object'].get_array(self.filters)
-            literal_key = v['object'].get_key(self.filters)
+            literal_key, word_array = v['object'].get_key_array(self.filters)
+
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
                 break

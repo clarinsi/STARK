@@ -53,6 +53,52 @@ class RepresentationTree(object):
 
         return self.copy(self.node, new_children, filters)
 
+    def get_key_array(self, filters):
+        """
+        A code that generates key and array of a tree simultaneously (for faster execution).
+        :return:
+        key: Key of a tree
+        array: Array of tree elements
+        """
+
+        array = []
+        key = ''
+        write_self_node_to_result = False
+        if self.children:
+            children = self.children
+            for child in children:
+                if filters['node_order'] and child.node.location < self.node.location:
+                    k, a = child.get_key_array(filters)
+                    array += a
+
+                    if filters['dependency_type']:
+                        separator = ' <' + child.node.deprel + ' '
+                    else:
+                        separator = ' < '
+                    key += k + separator
+                else:
+                    if not write_self_node_to_result:
+                        write_self_node_to_result = True
+                        key += self.node.name
+                        array += [self.node.name_parts]
+                    if filters['dependency_type']:
+                        separator = ' >' + child.node.deprel + ' '
+                    else:
+                        separator = ' > '
+                    k, a = child.get_key_array(filters)
+                    array += a
+                    key += separator + k
+
+            if not write_self_node_to_result:
+                key += self.node.name
+                array += [self.node.name_parts]
+            array = array
+            key = '(' + key + ')'
+        else:
+            array = [self.node.name_parts]
+            key = self.node.name
+        return key, array
+
     def get_key(self, filters):
         """
         A code that returns and (if necessary generates) key of a tree. (used for `Tree` column in output)

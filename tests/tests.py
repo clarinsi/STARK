@@ -156,22 +156,26 @@ def test_output_settings():
     """
     random.seed(12)
     config_file = os.path.join(CONFIGS_DIR, 'config_output_settings.ini')
-    settings = read_settings(config_file, parse_args([]))
+    settings = read_settings(config_file, parse_args(['--detailed_results_file', 'test_data/output/detailed_results_file_query.tsv']))
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_output_settings.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
                                                                                          'out_output_settings.tsv'))
-    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
-                                                                                           'detailed_results_file.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file_query.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                           'detailed_results_file_query.tsv'))
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'sentence_count_file.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
                                                                                          'sentence_count_file.tsv'))
 
     random.seed(12)
     config_file = os.path.join(CONFIGS_DIR, 'config_output_settings.ini')
-    settings = read_settings(config_file, parse_args(['--greedy_counter', 'yes']))
+    settings = read_settings(config_file, parse_args(['--detailed_results_file',
+                                                      'test_data/output/detailed_results_file_greedy.tsv',
+                                                      '--sentence_count_file',
+                                                      'test_data/output/sentence_count_file_greedy.tsv',
+                                                      '--greedy_counter', 'yes']))
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_output_settings.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
                                                                                          'out_output_settings.tsv'))
-    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
-                                                                                           'detailed_results_file.tsv'))
-    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'sentence_count_file.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
-                                                                                         'sentence_count_file.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file_greedy.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                           'detailed_results_file_greedy.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'sentence_count_file_greedy.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                         'sentence_count_file_greedy.tsv'))
