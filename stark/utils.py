@@ -50,23 +50,23 @@ def printable_answers(query):
 
 
 def create_output_string_form(tree):
-    return tree.form.get_value()
+    return tree.form
 
 
 def create_output_string_deprel(tree):
-    return tree.deprel.get_value()
+    return tree.deprel
 
 
 def create_output_string_lemma(tree):
-    return tree.lemma.get_value() if tree.lemma.get_value() is not None else '_'
+    return tree.lemma if tree.lemma is not None else '_'
 
 
 def create_output_string_upos(tree):
-    return tree.upos.get_value()
+    return tree.upos
 
 
 def create_output_string_xpos(tree):
-    return tree.xpos.get_value()
+    return tree.xpos
 
 
 def create_output_string_feats(tree):

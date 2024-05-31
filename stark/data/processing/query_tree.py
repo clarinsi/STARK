@@ -93,21 +93,21 @@ class QueryTree(Tree):
 
         for feat in query_tree['feats_detailed'].keys():
             if (feat not in self.feats_detailed or
-                    query_tree['feats_detailed'][feat] != next(iter(self.feats_detailed[feat].values())).get_value()):
+                    query_tree['feats_detailed'][feat] != next(iter(self.feats_detailed[feat].values()))):
                 return False
 
         return True
 
     def _fits_permanent_requirements(self, filters):
-        return Filter.check_root_whitelist(self.form.get_value(), self.lemma.get_value(), self.upos.get_value(),
-                                           self.feats, self.deprel.get_value(), filters)
+        return Filter.check_root_whitelist(self.form, self.lemma, self.upos,
+                                           self.feats, self.deprel, filters)
 
     def _fits_temporary_requirements(self, filters):
-        return Filter.check_label_whitelist(self.deprel.get_value(), filters)
+        return Filter.check_label_whitelist(self.deprel, filters)
 
     def _fits_static_requirements(self, query_tree, filters):
-        return Filter.check_query_tree(query_tree, self.form.get_value(), self.lemma.get_value(), self.upos.get_value(),
-                                       self.xpos.get_value(), self.feats, self.deprel.get_value(),
+        return Filter.check_query_tree(query_tree, self.form, self.lemma, self.upos,
+                                       self.xpos, self.feats, self.deprel,
                                        self.children, filters)
 
 

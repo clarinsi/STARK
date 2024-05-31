@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from stark.data.processing.value import Value
 from stark.utils import create_output_string_lemma
 
 
@@ -25,25 +24,25 @@ class Tree(object):
             self.feats_detailed = {}
 
         if form not in document.form_dict:
-            document.form_dict[form] = Value(form)
+            document.form_dict[form] = form
         self.form = document.form_dict[form]
         if lemma not in document.lemma_dict:
-            document.lemma_dict[lemma] = Value(lemma)
+            document.lemma_dict[lemma] = lemma
         self.lemma = document.lemma_dict[lemma]
         if upos not in document.upos_dict:
-            document.upos_dict[upos] = Value(upos)
+            document.upos_dict[upos] = upos
         self.upos = document.upos_dict[upos]
         if xpos not in document.xpos_dict:
-            document.xpos_dict[xpos] = Value(xpos)
+            document.xpos_dict[xpos] = xpos
         self.xpos = document.xpos_dict[xpos]
         if deprel not in document.deprel_dict:
-            document.deprel_dict[deprel] = Value(deprel)
+            document.deprel_dict[deprel] = deprel
         self.deprel = document.deprel_dict[deprel]
         for feat in feats_detailed.keys():
             if feat not in feats_dict:
                 feats_dict[feat] = {}
             if next(iter(feats_detailed[feat])) not in feats_dict[feat]:
-                feats_dict[feat][next(iter(feats_detailed[feat]))] = Value(next(iter(feats_detailed[feat])))
+                feats_dict[feat][next(iter(feats_detailed[feat]))] = next(iter(feats_detailed[feat]))
             if feat not in self.feats_detailed:
                 self.feats_detailed[feat] = {}
             self.feats_detailed[feat][next(iter(feats_detailed[feat]))] = (

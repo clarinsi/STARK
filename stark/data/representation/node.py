@@ -19,11 +19,12 @@ class RepresentationNode(object):
     def __init__(self, node, architecture_order, create_output_strings):
         self.name_parts, self.name = self.generate_name(node, create_output_strings)
         self.location = architecture_order
-        self.deprel = node.deprel.get_value()
-        self.form = node.form.get_value()
-        self.lemma = node.lemma.get_value()
-        self.upos = node.upos.get_value()
-        self.xpos = node.xpos.get_value()
+        self.node = node
+        self.deprel = node.deprel
+        self.form = node.form
+        self.lemma = node.lemma
+        self.upos = node.upos
+        self.xpos = node.xpos
         for k, v in node.feats_detailed.items():
             assert len(v.keys()) == 1
 

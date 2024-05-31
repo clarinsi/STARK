@@ -95,13 +95,13 @@ def count_subtrees(configs, filters):
     else:
         processor.run([configs['input_path']], summary)
 
-    print('summary memory size (MB):')
-    mem_size = asizeof.asizeof(summary)
-    print(mem_size/1000000)
-
-    print('summary.representation_trees memory size (MB):')
-    mem_size = asizeof.asizeof(summary.representation_trees)
-    print(mem_size / 1000000)
+    # print('summary memory size (MB):')
+    # mem_size = asizeof.asizeof(summary)
+    # print(mem_size/1000000)
+    #
+    # print('summary.representation_trees memory size (MB):')
+    # mem_size = asizeof.asizeof(summary.representation_trees)
+    # print(mem_size / 1000000)
     #
     # # DELETING STUFF
     # print('summary.representation_trees memory size (MB):')
