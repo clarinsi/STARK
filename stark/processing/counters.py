@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import gc
 import random
 from abc import abstractmethod
 from multiprocessing import Pool
@@ -55,6 +55,8 @@ class Counter(object):
                         self.postprocess_query_results(subtree, self.document.sentence_statistics[i])
                     i += 1
                     pbar.update()
+                    # if i % 1000 == 0:
+                    #     gc.collect()
 
     def run_single_processor(self):
         for tree, sentence in tqdm(zip(self.document.trees, self.document.sentence_statistics), desc='Processing',

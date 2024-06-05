@@ -185,18 +185,20 @@ class Writer(object):
             node_result[location_mapper[node.location]] = []
             for node_type in node_types:
                 if node_type == 'deprel':
-                    node_result[location_mapper[node.location]].append(f'deprel={node.deprel}')
+                    node_result[location_mapper[node.location]].append(f'deprel={node.node.deprel}')
                 elif node_type == 'lemma':
-                    node_result[location_mapper[node.location]].append(f'lemma="{node.lemma}"')
+                    node_result[location_mapper[node.location]].append(f'lemma="{node.node.lemma}"')
                 elif node_type == 'upos':
-                    node_result[location_mapper[node.location]].append(f'upos={node.upos}')
+                    node_result[location_mapper[node.location]].append(f'upos={node.node.upos}')
                 elif node_type == 'xpos':
-                    node_result[location_mapper[node.location]].append(f'xpos={node.xpos}')
+                    node_result[location_mapper[node.location]].append(f'xpos={node.node.xpos}')
+                elif node_type == 'generic':
+                    node_result[location_mapper[node.location]].append(f'_')
                 elif node_type == 'feats':
                     for k, v in node.feats.items():
                         node_result[location_mapper[node.location]].append(f'{k}={v}')
                 else:
-                    node_result[location_mapper[node.location]].append(f'form="{node.form}"')
+                    node_result[location_mapper[node.location]].append(f'form="{node.node.form}"')
         link_result = []
         order_result = []
         for link in links:
@@ -208,7 +210,7 @@ class Writer(object):
                     order_result.append([location_mapper[link[0].location], location_mapper[link[1].location], '>>'])
         grew = 'pattern {'
         grew += '; '.join([node_k + ' [' + ', '.join(v) + ']' for node_k, v in node_result.items()]) + '; '
-        grew += '; '.join([f'{link[0]} -[{link_node[1].deprel}]-> {link[1]}' for link, link_node in
+        grew += '; '.join([f'{link[0]} -[{link_node[1].node.deprel}]-> {link[1]}' for link, link_node in
                            zip(link_result, links)]) if dependency_type else \
             '; '.join([f'{link[0]} -> {link[1]}' for link in link_result])
         grew += '; ' + '; '.join([f'{link[0]} {link[2]} {link[1]}' for link in order_result])

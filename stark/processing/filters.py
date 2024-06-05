@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from stark.utils import create_output_string_deprel, create_output_string_lemma, create_output_string_upos, \
-    create_output_string_xpos, create_output_string_feats, create_output_string_form
+    create_output_string_xpos, create_output_string_feats, create_output_string_form, create_output_string_none
 
 
 def read_filters(configs):
@@ -23,23 +23,27 @@ def read_filters(configs):
 
     # set filters
     node_type = configs['node_type']
-    node_types = node_type.split('+')
-    create_output_string_functs = []
-    for node_type in node_types:
-        assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
-        if node_type == 'deprel':
-            create_output_string_funct = create_output_string_deprel
-        elif node_type == 'lemma':
-            create_output_string_funct = create_output_string_lemma
-        elif node_type == 'upos':
-            create_output_string_funct = create_output_string_upos
-        elif node_type == 'xpos':
-            create_output_string_funct = create_output_string_xpos
-        elif node_type == 'feats':
-            create_output_string_funct = create_output_string_feats
-        else:
-            create_output_string_funct = create_output_string_form
-        create_output_string_functs.append(create_output_string_funct)
+    if node_type:
+        node_types = node_type.split('+')
+        create_output_string_functs = []
+        for node_type in node_types:
+            assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
+            if node_type == 'deprel':
+                create_output_string_funct = create_output_string_deprel
+            elif node_type == 'lemma':
+                create_output_string_funct = create_output_string_lemma
+            elif node_type == 'upos':
+                create_output_string_funct = create_output_string_upos
+            elif node_type == 'xpos':
+                create_output_string_funct = create_output_string_xpos
+            elif node_type == 'feats':
+                create_output_string_funct = create_output_string_feats
+            else:
+                create_output_string_funct = create_output_string_form
+            create_output_string_functs.append(create_output_string_funct)
+    else:
+        create_output_string_functs = [create_output_string_none]
+        node_types = ['generic']
 
     filters = {
         'create_output_string_functs': create_output_string_functs,
@@ -92,8 +96,8 @@ class Filter(object):
         """
         return (
                 Filter.check_tree_size(tree.tree_size, filters)
-                and Filter.check_root_whitelist(tree.node.form, tree.node.lemma, tree.node.upos, tree.node.feats,
-                                                tree.node.deprel, filters)
+                and Filter.check_root_whitelist(tree.node.node.form, tree.node.node.lemma, tree.node.node.upos, tree.node.node.feats,
+                                                tree.node.node.deprel, filters)
         )
 
     @staticmethod

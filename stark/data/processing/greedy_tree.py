@@ -34,7 +34,7 @@ class GreedyTree(Tree):
         # checks whether tree size is not too high
         # checks if label is in white list (if such a list exists)
         return (combinations[0] + child_active_tree.tree_size <= filters['tree_size_range'][-1] and
-                Filter.check_label_whitelist(child_active_tree.node.deprel, filters))
+                Filter.check_label_whitelist(child_active_tree.node.node.deprel, filters))
 
     @staticmethod
     def _merge_incomplete_combinations(combinations, child_active_trees, filters):

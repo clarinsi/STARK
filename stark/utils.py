@@ -69,5 +69,9 @@ def create_output_string_xpos(tree):
     return tree.xpos
 
 
+def create_output_string_none(tree):
+    return '_'
+
+
 def create_output_string_feats(tree):
     return '|'.join([f'{k}={list(v.keys())[0]}' for k, v in tree.feats_detailed.items()])

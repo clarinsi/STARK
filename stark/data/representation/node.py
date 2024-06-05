@@ -20,11 +20,6 @@ class RepresentationNode(object):
         self.name_parts, self.name = self.generate_name(node, create_output_strings)
         self.location = architecture_order
         self.node = node
-        self.deprel = node.deprel
-        self.form = node.form
-        self.lemma = node.lemma
-        self.upos = node.upos
-        self.xpos = node.xpos
         for k, v in node.feats_detailed.items():
             assert len(v.keys()) == 1
 

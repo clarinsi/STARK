@@ -122,7 +122,10 @@ def read_configs(config, args):
     else:
         configs['output'] = None
     configs['tree_size'] = config.get('settings', 'size', fallback='0') if not args.size else args.size
-    configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
+    if config.has_option('settings', 'node_type') or args.node_type:
+        configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
+    else:
+        configs['node_type'] = None
 
     # mandatory parameters with default value
     configs['greedy_counter'] = (config.getboolean('settings', 'greedy_counter') if not args.greedy_counter

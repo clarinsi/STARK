@@ -48,7 +48,7 @@ def test_query():
 
     random.seed(12)
     config_file = os.path.join(CONFIGS_DIR, 'config_query.ini')
-    settings = read_settings(config_file, parse_args(['--output', 'test_data/output/out_dir.tsv']))
+    settings = read_settings(config_file, parse_args(['--greedy_counter', 'yes']))
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_query.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_query.tsv'))
 

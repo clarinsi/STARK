@@ -45,7 +45,7 @@ class RepresentationTree(object):
         """
         Drops nodes in result tree, that are supposed to be ignored.
         """
-        children = [child for child in self.children if child.node.deprel not in filters['ignored_labels']]
+        children = [child for child in self.children if child.node.node.deprel not in filters['ignored_labels']]
 
         new_children = []
         for child in children:
@@ -72,7 +72,7 @@ class RepresentationTree(object):
                     array += a
 
                     if filters['dependency_type']:
-                        separator = ' <' + child.node.deprel + ' '
+                        separator = ' <' + child.node.node.deprel + ' '
                     else:
                         separator = ' < '
                     key += k + separator
@@ -82,7 +82,7 @@ class RepresentationTree(object):
                         key += self.node.name
                         array += [self.node.name_parts]
                     if filters['dependency_type']:
-                        separator = ' >' + child.node.deprel + ' '
+                        separator = ' >' + child.node.node.deprel + ' '
                     else:
                         separator = ' > '
                     k, a = child.get_key_array(filters)
@@ -112,7 +112,7 @@ class RepresentationTree(object):
             for child in children:
                 if filters['node_order'] and child.node.location < self.node.location:
                     if filters['dependency_type']:
-                        separator = ' <' + child.node.deprel + ' '
+                        separator = ' <' + child.node.node.deprel + ' '
                     else:
                         separator = ' < '
                     key += child.get_key(filters) + separator
@@ -121,7 +121,7 @@ class RepresentationTree(object):
                         write_self_node_to_result = True
                         key += self.node.name
                     if filters['dependency_type']:
-                        separator = ' >' + child.node.deprel + ' '
+                        separator = ' >' + child.node.node.deprel + ' '
                     else:
                         separator = ' > '
                     key += separator + child.get_key(filters)
@@ -143,7 +143,7 @@ class RepresentationTree(object):
                     write_self_node_to_result = True
                     key += self.node.name
                 if filters['dependency_type']:
-                    separator = ' >' + child.node.deprel + ' '
+                    separator = ' >' + child.node.node.deprel + ' '
                 else:
                     separator = ' > '
                 key += separator + child.get_key_sorted(filters)
@@ -162,7 +162,7 @@ class RepresentationTree(object):
             for child in self.children:
                 if filters['node_order'] and child.node.location < self.node.location:
                     if filters['dependency_type']:
-                        separator = ' <' + child.node.deprel + ' '
+                        separator = ' <' + child.node.node.deprel + ' '
                     else:
                         separator = ' < '
                     order_key += child.get_order_key(filters) + separator
@@ -171,7 +171,7 @@ class RepresentationTree(object):
                         write_self_node_to_result = True
                         order_key += str(self.node.location)
                     if filters['dependency_type']:
-                        separator = ' >' + child.node.deprel + ' '
+                        separator = ' >' + child.node.node.deprel + ' '
                     else:
                         separator = ' > '
                     order_key += separator + child.get_order_key(filters)

@@ -25,7 +25,7 @@ class GreedyRepresentationTree(RepresentationTree):
         if filters['node_order']:
             children_sorted = children[1]
         else:
-            children_sorted = sorted(children[1], key=lambda x: (x.get_key(filters), x.node.deprel))
+            children_sorted = sorted(children[1], key=lambda x: (x.get_key(filters), x.node.node.deprel))
         super().__init__(node, children_sorted)
 
     @classmethod
@@ -47,8 +47,8 @@ class GreedyRepresentationTree(RepresentationTree):
             return False
 
         # does node comparisons
-        filt = Filter.check_query_tree(query, self.node.form, self.node.lemma, self.node.upos, self.node.xpos,
-                                       self.node.feats, self.node.deprel, self.children, filters)
+        filt = Filter.check_query_tree(query, self.node.node.form, self.node.node.lemma, self.node.node.upos, self.node.node.xpos,
+                                       self.node.node.feats, self.node.node.deprel, self.children, filters)
 
         if not filt:
             return False
@@ -89,10 +89,3 @@ class GreedyRepresentationTree(RepresentationTree):
             if not pass_query:
                 return False
         return Filter.check_representation_tree(self, filters)
-
-    def _check_tree_size(self, filters):
-        """
-        Checks whether tree size is within filter parameters.
-        :return:
-        """
-        return filters['tree_size_range'][0] <= self.tree_size <= filters['tree_size_range'][-1]
