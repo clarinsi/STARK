@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
+
 
 class Summary(object):
     def __init__(self):
@@ -33,3 +35,13 @@ class Summary(object):
         s = cls()
         s.representation_trees, s.unigrams, s.corpus_size, s.feats_dict, s.samples = sum_data
         return s
+
+    # def get_size_representation_trees(self):
+    #     size = 0
+    #     for represetation_tree_k, represetation_tree_v in self.representation_trees.items():
+    #         size += sys.getsizeof(represetation_tree_k)
+    #         size += sys.getsizeof(represetation_tree_v['number'])
+    #         size += sys.getsizeof(represetation_tree_v['object'])
+    #         size += represetation_tree_v['object'].get_size()
+    #
+    #     return size

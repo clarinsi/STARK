@@ -50,12 +50,6 @@ class Tree(object):
 
         self.feats = {k: list(v.keys())[0] for k, v in self.feats_detailed.items()}
 
-        # self.lemma = None
-        # self.form = None
-        # self.xpos = None
-        # self.feats_detailed = {}
-        # self.feats = {}
-
         self.parent = head
         self.children = []
         self.children_split = -1

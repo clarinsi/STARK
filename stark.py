@@ -1,14 +1,8 @@
-import argparse
-import configparser
-import os
-import resource
 import sys
 import time
-from pathlib import Path
 
 import stark
 import logging
-import psutil
 from stark.stark import read_settings, parse_args
 logger = logging.getLogger('stark')
 

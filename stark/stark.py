@@ -21,7 +21,7 @@ from pathlib import Path
 import sys
 import logging
 
-from pympler import asizeof
+# from pympler import asizeof
 
 from stark.data.summary import Summary
 from stark.processing.filters import read_filters
@@ -98,16 +98,13 @@ def count_subtrees(configs, filters):
     # print('summary memory size (MB):')
     # mem_size = asizeof.asizeof(summary)
     # print(mem_size/1000000)
-    #
+
     # print('summary.representation_trees memory size (MB):')
     # mem_size = asizeof.asizeof(summary.representation_trees)
     # print(mem_size / 1000000)
-    #
-    # # DELETING STUFF
+
     # print('summary.representation_trees memory size (MB):')
-    # for k, v in summary.representation_trees.items():
-    #     del(v['object'])
-    # mem_size = asizeof.asizeof(summary.representation_trees)
+    # mem_size = summary.get_size_representation_trees()
     # print(mem_size / 1000000)
 
     return summary

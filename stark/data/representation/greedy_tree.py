@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import string
+import sys
+
 import networkx as nx
 from networkx.algorithms.bipartite import hopcroft_karp_matching
 
@@ -89,3 +91,12 @@ class GreedyRepresentationTree(RepresentationTree):
             if not pass_query:
                 return False
         return Filter.check_representation_tree(self, filters)
+
+    # def get_size(self):
+    #     size = 0
+    #     size += sys.getsizeof(self.node)
+    #     size += sys.getsizeof(self.tree_size)
+    #     size += sys.getsizeof(self.children)
+    #     for child in self.children:
+    #         size += child.get_size()
+    #     return size
