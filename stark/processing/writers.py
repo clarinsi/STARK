@@ -33,6 +33,9 @@ logger = logging.getLogger('stark')
 
 
 class Writer(object):
+    """
+    A class used for writing results.
+    """
     def __init__(self, summary, other_summary, filters, configs):
         self.summary = summary
         self.other_summary = other_summary
@@ -44,6 +47,10 @@ class Writer(object):
         return
 
     def lines_generator(self):
+        """
+        A generator that returns lines in array form, that can be used for further processing.
+        :return:
+        """
         other_representation_trees = self.other_summary.representation_trees if self.other_summary else None
         other_corpus_size = self.other_summary.corpus_size if self.other_summary else None
 
@@ -65,7 +72,7 @@ class Writer(object):
         if self.filters['tree_size_range'][-1]:
             len_words = self.filters['tree_size_range'][-1]
             if self.configs['greedy_counter'] and len(sorted_list) != 0:
-                len_words = max([row[1]['object'].tree_size for row in sorted_list])
+                len_words = self.summary.max_tree_size
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
         header = ["Tree"] + ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
@@ -98,7 +105,8 @@ class Writer(object):
 
         # body
         for k, v in tqdm(sorted_list, desc='Writing'):
-            literal_key, word_array = v['object'].get_key_array(self.filters)
+            literal_key = v['key']
+            word_array = v['word_array']
 
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
@@ -107,38 +115,44 @@ class Writer(object):
                 (len_words - len(word_array)) * len(word_array[0]))]
             key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
                 -1] == ')' else literal_key
-            grew_nodes, grew_links = v['object'].get_grew()
-            location_mapper = v['object'].get_location_mapper(self.filters)
-            key_grew = self.get_grew(grew_nodes, grew_links, self.filters['node_types'], self.filters['node_order'],
-                                     location_mapper, self.filters['dependency_type'],
-                                     self.filters['complete_tree_type'])
+
+
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]
             if self.filters['node_order']:
-                order_letters = v['object'].get_order_letters(v['object'].get_order(self.filters))
+                order_letters = v['order_letters']
                 row += [order_letters]
             if self.configs['grew_match']:
+                location_mapper = v['location']
+                grew_nodes, grew_links = v['grew']
+                key_grew = self.get_grew(grew_nodes, grew_links, self.filters['node_types'], self.filters['node_order'],
+                                         location_mapper, self.filters['dependency_type'],
+                                         self.filters['complete_tree_type'])
                 row += [key_grew]
-            if corpus and self.configs['grew_match']:
-                url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
-                row += [url]
+                if corpus:
+                    url = f'http://universal.grew.fr/?corpus={corpus}&request={urllib.parse.quote(key_grew)}'
+                    row += [url]
             if self.filters['node_order'] and self.configs['depsearch']:
-                row += [v['object'].get_key_sorted(self.filters)[1:-1]]
+                row += [v['key_sorted']]
             if self.filters['nodes_number']:
                 row += ['%d' % len(word_array)]
             if self.filters['print_root']:
-                row += [v['object'].node.name]
+                row += [v['root_name']]
             if self.filters['example']:
                 random_sentence_position = int(len(v['sentence']) * random.random())
                 row += [v['sentence'][random_sentence_position][1]]
             if self.filters['association_measures']:
-                row += self.get_collocabilities(v, self.summary.unigrams, self.summary.corpus_size, self.filters)
+                row += self.get_collocabilities(v, self.summary.unigrams, self.summary.corpus_size)
             if self.configs['compare']:
                 other_abs_freq = other_representation_trees[k]['number'] if k in other_representation_trees else 0
                 row += self.get_keyness(v['number'], other_abs_freq, self.summary.corpus_size, other_corpus_size)
             yield row
 
     def write_sentence_count_file(self):
+        """
+        Writes into sentence count file.
+        :return:
+        """
         if os.path.exists(self.configs['sentence_count_file']):
             os.remove(self.configs['sentence_count_file'])
         with open(self.configs['sentence_count_file'], "a", newline="", encoding="utf-8") as wf:
@@ -150,6 +164,10 @@ class Writer(object):
                     [str(sentence['count'][k]) if k in sentence['count'] else '0' for k in key_list]) + '\n')
 
     def write_detailed_results_file(self):
+        """
+        Writes into detailed results file.
+        :return:
+        """
         if os.path.exists(self.configs['detailed_results_file']):
             os.remove(self.configs['detailed_results_file'])
         with open(self.configs['detailed_results_file'], "a", newline="", encoding="utf-8") as wf:
@@ -159,6 +177,14 @@ class Writer(object):
 
     @staticmethod
     def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
+        """
+        Calculates keyness for statistic purposes.
+        :param abs_freq_A:
+        :param abs_freq_B:
+        :param count_A:
+        :param count_B:
+        :return:
+        """
         if abs_freq_B <= 0:
             abs_freq_B = 0.000000000000000001
         E1 = count_A * (abs_freq_A + abs_freq_B) / (count_A + count_B)
@@ -179,6 +205,17 @@ class Writer(object):
 
     @staticmethod
     def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type, complete):
+        """
+        Forms grew format for usage and comparison on external website.
+        :param nodes:
+        :param links:
+        :param node_types:
+        :param node_order:
+        :param location_mapper:
+        :param dependency_type:
+        :param complete:
+        :return:
+        """
         assert nodes
         node_result = {}
         for node in nodes:
@@ -224,10 +261,17 @@ class Writer(object):
         return grew + '}'
 
     @staticmethod
-    def get_collocabilities(ngram, unigrams, corpus_size, filters):
+    def get_collocabilities(ngram, unigrams, corpus_size):
+        """
+        Calculates collocabilities.
+        :param ngram:
+        :param unigrams:
+        :param corpus_size:
+        :return:
+        """
         sum_fwi = 0.0
         mul_fwi = 1.0
-        for key_array in ngram['object'].get_array(filters):
+        for key_array in ngram['word_array']:
             # create key for unigrams
             if len(key_array) > 1:
                 key = '&'.join(key_array)
@@ -243,7 +287,7 @@ class Writer(object):
         N = corpus_size
 
         # n of ngram
-        n = len(ngram['object'].get_array(filters))
+        n = len(ngram['word_array'])
         O = ngram['number']
         E = mul_fwi / pow(N, n - 1)
 
@@ -258,6 +302,9 @@ class Writer(object):
 
 
 class TSVWriter(Writer):
+    """
+    A class that writes into TSV file.
+    """
     def __init__(self, *configs):
         super().__init__(*configs)
 
@@ -270,6 +317,9 @@ class TSVWriter(Writer):
 
 
 class ObjectWriter(Writer):
+    """
+        A class that returns results in object.
+        """
     def __init__(self, *configs):
         super().__init__(*configs)
 

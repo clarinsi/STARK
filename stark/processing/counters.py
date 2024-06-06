@@ -19,12 +19,20 @@ from tqdm import tqdm
 
 
 class Counter(object):
-    def __init__(self, document, summary, filters):
+    """
+    A class designed for counting subtrees.
+    """
+    def __init__(self, document, summary, filters, configs):
         self.document = document
         self.summary = summary
         self.filters = filters
+        self.configs = configs
 
     def run(self):
+        """
+        Starts counting.
+        :return:
+        """
         if self.filters['cpu_cores'] > 1:
             self.run_multiprocessor()
         else:
@@ -36,6 +44,10 @@ class Counter(object):
         return []
 
     def run_multiprocessor(self):
+        """
+        Runs processing on multiple cores.
+        :return:
+        """
         with Pool(self.filters['cpu_cores']) as p:
             all_unigrams = p.map(self.get_unigrams,
                                  [(tree, self.filters) for tree in self.document.trees])
@@ -59,6 +71,10 @@ class Counter(object):
                     #     gc.collect()
 
     def run_single_processor(self):
+        """
+        Runs processing on single core.
+        :return:
+        """
         for tree, sentence in tqdm(zip(self.document.trees, self.document.sentence_statistics), desc='Processing',
                                    total=len(self.document.trees)):
             input_data = (tree, self.summary.query_trees, self.filters)
@@ -76,10 +92,21 @@ class Counter(object):
 
     @staticmethod
     def get_unigrams(input_data):
+        """
+        Returns unigrams.
+        :param input_data:
+        :return:
+        """
         tree, filters = input_data
         return tree.get_unigrams(filters['create_output_string_functs'])
 
     def recreate_sentence(self, sentence, r):
+        """
+        Recreates sentence for example or detailed results.
+        :param sentence:
+        :param r:
+        :return:
+        """
         recreated_sentence = ''
         for token_i, token in enumerate(sentence['tokens']):
             order = r.get_order(self.filters)
@@ -94,18 +121,23 @@ class Counter(object):
         return recreated_sentence
 
     def postprocess_query_results(self, r, sentence):
-        # for r in subtrees:
+        """
+        Gathers processing results, formats and stores them into Summary object.
+        :param r:
+        :param sentence:
+        :return:
+        """
+        key_raw, word_array = r.get_key_array(self.filters)
         if self.filters['ignored_labels']:
-            key, word_array = r.get_key_array(self.filters)
             if self.filters['tree_size_range'] and \
                     (len(word_array) > self.filters['tree_size_range'][-1] or len(word_array) <
                      self.filters['tree_size_range'][0]):
                 return
-        else:
-            key = r.get_key(self.filters)
         if self.filters['node_order']:
             order_letters = r.get_order_letters(r.get_order(self.filters))
-            key = key + order_letters
+            key = key_raw + order_letters
+        else:
+            key = key_raw
         if key in self.summary.representation_trees:
             if self.filters['detailed_results_file']:
                 recreated_sentence = self.recreate_sentence(sentence, r)
@@ -119,13 +151,26 @@ class Counter(object):
                                                                        recreated_sentence)]
             self.summary.representation_trees[key]['number'] += 1
         else:
-            self.summary.representation_trees[key] = {'object': r, 'number': 1}
+            self.summary.representation_trees[key] = {'number': 1, 'key': key_raw, 'word_array': word_array}
 
-            # recreate example sentence with shown positions of subtree
+            if self.configs['grew_match']:
+                self.summary.representation_trees[key]['grew'] = r.get_grew()
+                self.summary.representation_trees[key]['location'] = r.get_location_mapper(self.filters)
+
+                # recreate example sentence with shown positions of subtree
             if self.filters['example'] or self.filters['detailed_results_file']:
                 recreated_sentence = self.recreate_sentence(sentence, r)
                 self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
                                                                        recreated_sentence)]
+            if self.filters['node_order']:
+                self.summary.representation_trees[key]['order_letters'] = order_letters
+                if self.configs['depsearch']:
+                    self.summary.representation_trees[key]['key_sorted'] = r.get_key_sorted(self.filters)[1:-1]
+            if self.filters['print_root']:
+                self.summary.representation_trees[key]['root_name'] = r.node.name
+            if self.configs['greedy_counter'] and self.summary.max_tree_size < r.tree_size:
+                self.summary.max_tree_size = r.tree_size
+
         if self.filters['sentence_count_file']:
             if key in sentence['count']:
                 sentence['count'][key] += 1
@@ -164,6 +209,11 @@ class GreedyCounter(Counter):
 
     @staticmethod
     def filter_subtrees(query_trees, subtrees, filters):
-        subtrees = [subtree for subtree in subtrees if subtree.pass_filter(query_trees, filters)]
-        subtrees = [subtree.ignore_labels(filters) for subtree in subtrees]
-        return subtrees
+        """
+        Filters subtrees and ignores labels if necessary.
+        :param query_trees:
+        :param subtrees:
+        :param filters:
+        :return:
+        """
+        return [subtree.ignore_labels(filters) for subtree in subtrees if subtree.pass_filter(query_trees, filters)]

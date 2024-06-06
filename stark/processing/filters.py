@@ -17,6 +17,11 @@ from stark.utils import create_output_string_deprel, create_output_string_lemma,
 
 
 def read_filters(configs):
+    """
+    Prepares filters for faster execution.
+    :param configs:
+    :return:
+    """
     tree_size = configs['tree_size']
     tree_size_range = tree_size.split('-')
     tree_size_range = [int(r) for r in tree_size_range]
@@ -27,7 +32,8 @@ def read_filters(configs):
         node_types = node_type.split('+')
         create_output_string_functs = []
         for node_type in node_types:
-            assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], '"node_type" is not set up correctly'
+            assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], \
+                '"node_type" is not set up correctly'
             if node_type == 'deprel':
                 create_output_string_funct = create_output_string_deprel
             elif node_type == 'lemma':
@@ -96,12 +102,25 @@ class Filter(object):
         """
         return (
                 Filter.check_tree_size(tree.tree_size, filters)
-                and Filter.check_root_whitelist(tree.node.node.form, tree.node.node.lemma, tree.node.node.upos, tree.node.node.feats,
-                                                tree.node.node.deprel, filters)
+                and Filter.check_root_whitelist(tree.node.node.form, tree.node.node.lemma, tree.node.node.upos,
+                                                tree.node.node.feats, tree.node.node.deprel, filters)
         )
 
     @staticmethod
     def check_query_tree(query_tree, form, lemma, upos, xpos, feats, deprel, children, filters):
+        """
+        Checks if attributes of a tree fit attributes of query_tree.
+        :param query_tree:
+        :param form:
+        :param lemma:
+        :param upos:
+        :param xpos:
+        :param feats:
+        :param deprel:
+        :param children:
+        :param filters:
+        :return:
+        """
         return ('form' not in query_tree or query_tree['form'] == form) and \
             ('lemma' not in query_tree or query_tree['lemma'] == lemma) and \
             ('upos' not in query_tree or query_tree['upos'] == upos) and \
@@ -113,6 +132,12 @@ class Filter(object):
 
     @staticmethod
     def _check_query_tree_feats(query_tree, feats):
+        """
+        Checks if feats of a tree fit feats of query_tree.
+        :param query_tree:
+        :param feats:
+        :return:
+        """
         if 'feats_detailed' not in query_tree:
             return True
 

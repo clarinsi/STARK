@@ -36,6 +36,11 @@ sys.setrecursionlimit(25000)
 
 
 def parse_args(args):
+    """
+    Returns Namespace object containing given arguments.
+    :param args:
+    :return:
+    """
     parser = argparse.ArgumentParser()
 
     # Required parameters
@@ -80,6 +85,12 @@ def parse_args(args):
 
 
 def count_subtrees(configs, filters):
+    """
+    Counts subtrees that match filters.
+    :param configs:
+    :param filters:
+    :return:
+    """
     processor = Processor(configs, filters)
     summary = Summary()
     if not configs['greedy_counter'] or filters['tree_size_range'][0] == 0:
@@ -95,22 +106,18 @@ def count_subtrees(configs, filters):
     else:
         processor.run([configs['input_path']], summary)
 
-    # print('summary memory size (MB):')
-    # mem_size = asizeof.asizeof(summary)
-    # print(mem_size/1000000)
-
-    # print('summary.representation_trees memory size (MB):')
-    # mem_size = asizeof.asizeof(summary.representation_trees)
-    # print(mem_size / 1000000)
-
-    # print('summary.representation_trees memory size (MB):')
-    # mem_size = summary.get_size_representation_trees()
-    # print(mem_size / 1000000)
-
     return summary
 
 
 def read_configs(config, args):
+    """
+    Merges concrete settings from config files with arguments. When arguments are given, they override settings from
+    configuration file. Look into documentation for which parameters in config file are required.
+    :param config: ConfigParser object containing settings from configuration file.
+    :param args: Namespace object containing given arguments.
+    :return: Dictionary with configuration settings.
+    """
+
     configs = {}
     # mandatory parameters
     configs['input_path'] = config.get('settings', 'input') if not args.input else args.input
@@ -208,6 +215,12 @@ def read_configs(config, args):
 
 
 def read_settings(config_file, args):
+    """
+    Reads configuration file and merges it with arguments.
+    :param config_file: string pointing to config file.
+    :param args: Namespace object
+    :return:
+    """
     config = configparser.ConfigParser()
     config.read(config_file)
 
@@ -215,6 +228,12 @@ def read_settings(config_file, args):
 
 
 def run(configs):
+    """
+    Executes STARK processing.
+    :param configs: Dictionary containing execution settings.
+    :return: Either object with results or None, when results are stored into tsv file.
+    """
+
     filters = read_filters(configs)
     summary = count_subtrees(configs, filters)
 

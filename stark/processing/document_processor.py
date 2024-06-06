@@ -24,15 +24,28 @@ logger = logging.getLogger('stark')
 
 
 class DocumentProcessor(object):
+    """
+    A class that processes document.
+    """
     def __init__(self, path, processor):
         self.path = path
         self.processor = processor
         self.cache = DocumentCache(self, path)
 
     def form_trees(self, summary):
+        """
+        Forms trees by trying to load it from cache or processing it.
+        :param summary:
+        :return:
+        """
         return self.cache.create_trees(summary)
 
     def create_trees(self, summary):
+        """
+        Creates trees based on configs and stores them in Document object.
+        :param summary:
+        :return:
+        """
         document = Document()
 
         train = pyconll.load_from_file(self.path)
@@ -49,12 +62,11 @@ class DocumentProcessor(object):
                 token_deprel = token.deprel if self.processor.configs['label_subtypes'] \
                     else token.deprel.split(':')[0]
                 if self.processor.configs['greedy_counter']:
-                    node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel, token.head,
-                                token.feats, document, summary)
+                    node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
+                                      token.head, token.feats, document, summary)
                 else:
                     node = QueryTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
-                                      token.head,
-                                      token.feats, document, summary)
+                                     token.head, token.feats, document, summary)
                 token_nodes.append(node)
                 space_after = token.misc[
                                   'SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc \

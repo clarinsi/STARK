@@ -63,9 +63,9 @@ class Processor(object):
             logger.info("Trees formed time:")
             logger.info("--- %s seconds ---" % (time.time() - start_exe_time))
             if self.configs['greedy_counter']:
-                tree_counter = GreedyCounter(document, summary, self.filters)
+                tree_counter = GreedyCounter(document, summary, self.filters, self.configs)
             else:
-                tree_counter = QueryCounter(document, summary, self.filters)
+                tree_counter = QueryCounter(document, summary, self.filters, self.configs)
             tree_counter.run()
             summary.samples.extend(document.sentence_statistics)
 

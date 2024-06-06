@@ -11,10 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
 
 
 class Summary(object):
+    """
+    A class that is used to store results of processing.
+    """
     def __init__(self):
         self.feats_dict = {}
         self.query_trees = None
@@ -22,16 +24,31 @@ class Summary(object):
         self.corpus_size = 0
         self.unigrams = {}
         self.representation_trees = {}
+        self.max_tree_size = 0
 
     def set_query_trees(self, query_trees):
+        """
+        A function that sets query trees when they are needed.
+        :param query_trees:
+        :return:
+        """
         self.query_trees = query_trees
 
     def get_summary_data(self):
+        """
+        A function that returns summary data used for storing cache.
+        :return:
+        """
         return (self.representation_trees, self.unigrams, self.corpus_size, self.feats_dict,
                 self.samples)
 
     @classmethod
     def create_summary_from_cache(cls, sum_data):
+        """
+        A function that forms summary from cache.
+        :param sum_data:
+        :return:
+        """
         s = cls()
         s.representation_trees, s.unigrams, s.corpus_size, s.feats_dict, s.samples = sum_data
         return s

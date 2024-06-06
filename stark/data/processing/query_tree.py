@@ -281,7 +281,6 @@ class QueryTree(Tree):
             # order outputs and erase duplicates
             for tree, tree_index in zip(temp_trees, temp_trees_index):
                 new_tree_index, new_tree = (list(t) for t in zip(*sorted(zip(tree_index, tree))))
-                # TODO check if inside new_tree_architecture in ordered_built_trees_architecture and if not append!
                 is_unique = True
                 for unique_tree in unique_trees_architecture:
                     already_in = True

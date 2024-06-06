@@ -17,14 +17,23 @@ from stark.resources.constants import UNIVERSAL_FEATURES
 
 
 def add_node(tree):
+    """
+    Adds node to a tree.
+    :param tree:
+    :return:
+    """
     if 'children' in tree:
         tree['children'].append({})
     else:
         tree['children'] = [{}]
 
 
-# walk over all nodes in tree and add a node to each possible node
 def tree_grow(orig_tree):
+    """
+    Walks over all nodes in tree and add a node to each possible node.
+    :param orig_tree:
+    :return:
+    """
     new_trees = []
     new_tree = copy.deepcopy(orig_tree)
     add_node(new_tree)
@@ -43,6 +52,12 @@ def tree_grow(orig_tree):
 
 
 def compare_trees(tree1, tree2):
+    """
+    Compares two trees and returns True, when they match.
+    :param tree1:
+    :param tree2:
+    :return:
+    """
     if tree1 == {} and tree2 == {}:
         return True
 
@@ -67,6 +82,12 @@ def compare_trees(tree1, tree2):
 
 
 def create_ngrams_query_trees(n, trees):
+    """
+    Forms unique ngram query trees.
+    :param n:
+    :param trees:
+    :return:
+    """
     for i in range(n - 1):
         new_trees = []
         for tree in trees:
@@ -115,6 +136,12 @@ def split_query_text(input_string):
 
 
 def decode_query(orig_query, dependency_type):
+    """
+    Reads query and returns it in tree-form dictionary.
+    :param orig_query:
+    :param dependency_type:
+    :return:
+    """
     new_query = False
 
     # if command in bracelets remove them and treat command as new query
@@ -185,6 +212,12 @@ def decode_query(orig_query, dependency_type):
 
 
 def generate_query_trees(configs, filters):
+    """
+    Generates query trees based on configs and filters.
+    :param configs:
+    :param filters:
+    :return:
+    """
     query_tree = []
     if filters['tree_size_range'][0] > 0:
         if len(filters['tree_size_range']) == 1:
@@ -205,6 +238,11 @@ def generate_query_trees(configs, filters):
 
 
 def get_query_tree_size(query_tree):
+    """
+    Returns size of specific query tree.
+    :param query_tree:
+    :return:
+    """
     size = 1
     if 'children' in query_tree:
         for child in query_tree['children']:
@@ -214,6 +252,11 @@ def get_query_tree_size(query_tree):
 
 
 def get_query_tree_size_range(query_trees):
+    """
+    Returns tree size range.
+    :param query_trees:
+    :return:
+    """
     min_size = 1000000
     max_size = 0
     for query_tree in query_trees:
