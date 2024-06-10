@@ -26,6 +26,10 @@ def read_filters(configs):
     tree_size_range = tree_size.split('-')
     tree_size_range = [int(r) for r in tree_size_range]
 
+    display_size = configs['display_size']
+    display_size_range = display_size.split('-')
+    display_size_range = [int(r) for r in display_size_range]
+
     # set filters
     node_type = configs['node_type']
     if node_type:
@@ -55,6 +59,7 @@ def read_filters(configs):
         'create_output_string_functs': create_output_string_functs,
         'node_types': node_types,
         'tree_size_range': tree_size_range,
+        'display_size_range': display_size_range,
         'cpu_cores': configs['cpu_cores'],
         'internal_saves': configs['internal_saves'],
         'input': configs['input_path'],

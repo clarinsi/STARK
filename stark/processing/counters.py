@@ -129,9 +129,9 @@ class Counter(object):
         """
         key_raw, word_array = r.get_key_array(self.filters)
         if self.filters['ignored_labels']:
-            if self.filters['tree_size_range'] and \
-                    (len(word_array) > self.filters['tree_size_range'][-1] or len(word_array) <
-                     self.filters['tree_size_range'][0]):
+            if self.filters['display_size_range'][0] and \
+                    (len(word_array) > self.filters['display_size_range'][-1] or len(word_array) <
+                     self.filters['display_size_range'][0]):
                 return
         if self.filters['node_order']:
             order_letters = r.get_order_letters(r.get_order(self.filters))

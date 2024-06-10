@@ -69,10 +69,8 @@ class Writer(object):
         if self.configs['detailed_results_file']:
             self.write_detailed_results_file()
 
-        if self.filters['tree_size_range'][-1]:
-            len_words = self.filters['tree_size_range'][-1]
-            if self.configs['greedy_counter'] and len(sorted_list) != 0:
-                len_words = self.summary.max_tree_size
+        if self.filters['display_size_range'][-1]:
+            len_words = self.filters['display_size_range'][-1]
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
         header = ["Tree"] + ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
@@ -108,6 +106,11 @@ class Writer(object):
             literal_key = v['key']
             word_array = v['word_array']
 
+            # skip words that do not fit display size (when it is given)
+            if (self.filters['display_size_range'][-1] and not
+                    self.filters['display_size_range'][0] <= len(word_array) <= self.filters['display_size_range'][-1]):
+                continue
+
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
                 break
@@ -115,7 +118,6 @@ class Writer(object):
                 (len_words - len(word_array)) * len(word_array[0]))]
             key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
                 -1] == ')' else literal_key
-
 
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]

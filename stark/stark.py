@@ -52,7 +52,8 @@ def parse_args(args):
     parser.add_argument("--cpu_cores", default=None, type=int, help="Number of cores used.")
     parser.add_argument("--greedy_counter", default=None, type=str, help="Uses greedy counter.")
 
-    parser.add_argument("--size", default=None, type=str, help="Size of trees.")
+    parser.add_argument("--size", default=None, type=str, help="Size of trees displayed.")
+    parser.add_argument("--processing_size", default=None, type=str, help="Limits the size of trees during processing.")
     parser.add_argument("--complete", default=None, type=str, help="Tree type.")
     parser.add_argument("--labeled", default=None, type=str, help="Dependency type.")
     parser.add_argument("--fixed", default=None, type=str, help="Order of node.")
@@ -125,7 +126,9 @@ def read_configs(config, args):
         configs['output'] = config.get('settings', 'output') if not args.output else args.output
     else:
         configs['output'] = None
-    configs['tree_size'] = config.get('settings', 'size', fallback='0') if not args.size else args.size
+    configs['display_size'] = config.get('settings', 'size', fallback='0') if not args.size else args.size
+    configs['tree_size'] = config.get('settings', 'processing_size', fallback='0') if not args.processing_size else (
+        args.processing_size)
     if config.has_option('settings', 'node_type') or args.node_type:
         configs['node_type'] = config.get('settings', 'node_type') if not args.node_type else args.node_type
     else:
@@ -211,6 +214,17 @@ def read_configs(config, args):
 
     if configs['compare'] is not None:
         configs['other_input_path'] = configs['compare']
+
+    # when processing_size is not given and display_size is set processing_size or throw an error!
+    if configs['tree_size'] == '0' and configs['display_size'] != '0':
+        if configs['complete_tree_type'] and configs['greedy_counter']:
+            configs['tree_size'] = '1-10000000'
+        else:
+            raise ValueError('You have to specify `processing_size` parameter!')
+
+    if configs['tree_size'] != '0' and configs['display_size'] == '0':
+        raise ValueError('When `processing_size` setting is set, `size` has to be specified as well!')
+
     return configs
 
 

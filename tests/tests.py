@@ -23,6 +23,20 @@ def test_base():
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_base.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_base.tsv'))
 
 
+def test_greedy_complete():
+    """
+    Testing regular run.
+    :return:
+    """
+    random.seed(12)
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+    config_file = os.path.join(CONFIGS_DIR, 'config_greedy_complete.ini')
+    settings = read_settings(config_file, parse_args([]))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_greedy_complete.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_greedy_complete.tsv'))
+
+
 def test_compare():
     """
     Test compare.
