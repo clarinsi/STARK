@@ -9,12 +9,12 @@ Below is a list of customizable settings that can be used to define the type of 
 | [output](#--output) | [labeled](#--labeled) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
 |  | [label_subtypes](#--label_subtypes) | [ignore_labels](#--ignore_labels)| | [depsearch](#--depsearch) | |
 |  | [fixed](#--fixed) | [allowed_labels](#--allowed_labels)  |  |  |  |
-|  | [complete](#--complete) |  [query](#--query)|  |  |  |
+|  |  |  [query](#--query)|  |  |  |
 
 
 
 
-For details on the settings pertaining to the tool performance and testing see [advanced settings](/advanced.md).
+For details on the settings pertaining to the tool performance, testing and rare use cases see [advanced settings](/advanced.md).
 
 
 ## General settings
@@ -57,10 +57,6 @@ The obligatory `--fixed` parameter allows the users to specify whether they cons
 Note that each of the two options is associated with specific formatting of the trees in the output. When choosing the _fixed = yes_ option, the tree description in the first column reflects the word order of the nodes on the surface (e.g. '(seemingly < easy) < example'). On the other hand, when choosing the _fixed = no_ option, the description of the tree in the first column is order-agnostic, with heads always preceding their dependents, i.e. all the arrows always pointing to the right (e.g. 'example > (easy > seemingly)'. 
 
 The second, order-agnostic description of a tree can also be produced by using the `--depsearch` option (value _yes_), which, in combination with _fixed = yes_, might be useful for users investigating word order variation. 
-
-### `--complete`
-**Values:** _yes, no_
-The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract complete trees encompassing the head and _all_ its (in)direct dependants (value _yes_), or all possible subtrees (paths) spanning from the head, i.e. all combinations of a head and its dependants (value _no_). Most use cases can be solved with the first option, so **`complete=yes` is the recommended default setting**. If you nevertheless decide to go with the `complete=no`, make sure to uncomment the `--processing_size` parameter and set it to a relatively low number (e.g. _2-10_), because this function is much more computationally demanding and only trees with limited size can be retrieved.
 
 
 ## Restriction to specific structures
