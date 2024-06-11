@@ -44,12 +44,12 @@ General settings:
 -	`output`: location of the output file (list of trees in _.tsv_)
 
 Tree specification:
--	`size`: number of nodes in the tree (integer or range)
 - `node_type`: node characteristic under investigation (*form*, *lemma*, *upos*, *xpos*, *feats*, *deprel* or none)
 -	`labeled`: extraction of labeled or unlabeled trees (values *yes* or *no*)
 -	`fixed`: differentiating trees by surface word order (values *yes* or *no*)
 
 Tree restrictions:
+-	`size`: number of nodes in the tree (integer or range)
 -	`head`: predefined characteristics of the head node (e.g. _upos=NOUN_)
 -	`ignored_labels`: predefined list of dependency labels to be ignored when retrieving the trees (e.g. _punct_)
 -	`query`: predefined tree structure based on the DepSearch query language (e.g. _upos=VERB >obl upos=NOUN_).
