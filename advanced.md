@@ -1,5 +1,5 @@
 # Advanced settings
-In addition to the [basic settings](settings.md), which can be used to define the trees under investigation and the associated information in the output, STARK also features some advanced settings aimed at optimizing its performance. Please note that these were not extensively tested and should be used with caution.
+In addition to the [basic settings](settings.md), which can be used to define the trees under investigation and the associated information in the output, STARK also features some advanced settings aimed at optimizing its performance or adressing rare use cases. Please note that these were not extensively tested and should be used with caution.
 
 ## Performance
 
@@ -64,3 +64,10 @@ Gigafida
   -GF02
     -GF0231349-dedup.conllu
 ```
+
+## Extracting incomplete trees
+
+### `--complete`
+**Values:** _yes, no_
+The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract complete trees encompassing the head and _all_ its (in)direct dependants (value _yes_), or all possible subtrees (paths) spanning from the head, i.e. all combinations of a head and its dependants (value _no_). Most use cases can be solved with the first option, so **`complete=yes` is the recommended default setting**. If you nevertheless decide to go with the `complete=no`, make sure to uncomment the `--processing_size` parameter and set it to a relatively low number (e.g. _2-10_), because this function is much more computationally demanding and only trees with limited size can be retrieved.
+
