@@ -70,7 +70,7 @@ class Writer(object):
             self.write_detailed_results_file()
 
         if self.filters['display_size_range'][-1]:
-            len_words = self.filters['display_size_range'][-1]
+            len_words = min(self.filters['display_size_range'][-1], self.summary.max_tree_size)
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
         header = ["Tree"] + ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
