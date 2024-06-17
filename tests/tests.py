@@ -47,6 +47,11 @@ def test_compare():
     settings = read_settings(config_file, parse_args([]))
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_compare.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_compare.tsv'))
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_compare.ini')
+    settings = read_settings(config_file, parse_args(['--greedy_counter', 'yes']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_compare.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_compare.tsv'))
 
 
 def test_query():

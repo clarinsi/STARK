@@ -54,7 +54,27 @@ class Writer(object):
         other_representation_trees = self.other_summary.representation_trees if self.other_summary else None
         other_corpus_size = self.other_summary.corpus_size if self.other_summary else None
 
-        sorted_list = sorted(self.summary.representation_trees.items(), key=lambda x: (-x[1]['number'], x[0]))
+        # skip elements that do not fit filters
+        if self.filters['frequency_threshold'] or self.filters['display_size_range'][-1]:
+            # reset summary_size because some elements will be skipped!
+            self.summary.max_tree_size = 1
+            sorted_list = []
+            for k, v in self.summary.representation_trees.items():
+                # skip words that do not fit display size (when it is given)
+                if (self.filters['display_size_range'][-1] and not
+                        self.filters['display_size_range'][0] <= len(v['word_array']) <=
+                        self.filters['display_size_range'][-1]):
+                    continue
+
+                if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
+                    continue
+                if self.summary.max_tree_size < len(v['word_array']):
+                    self.summary.max_tree_size = len(v['word_array'])
+                sorted_list.append((k, v))
+        else:
+            sorted_list = self.summary.representation_trees.items()
+
+        sorted_list = sorted(sorted_list, key=lambda x: (-x[1]['number'], x[0]))
 
         with open(os.path.join(here, '../resources/codes_mapper.json'), 'r') as f:
             codes_mapper = json.load(f)
@@ -70,7 +90,10 @@ class Writer(object):
             self.write_detailed_results_file()
 
         if self.filters['display_size_range'][-1]:
-            len_words = min(self.filters['display_size_range'][-1], self.summary.max_tree_size)
+            if not self.configs['greedy_counter']:
+                len_words = self.filters['display_size_range'][-1]
+            else:
+                len_words = min(self.filters['display_size_range'][-1], self.summary.max_tree_size)
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
         header = ["Tree"] + ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
@@ -106,14 +129,7 @@ class Writer(object):
             literal_key = v['key']
             word_array = v['word_array']
 
-            # skip words that do not fit display size (when it is given)
-            if (self.filters['display_size_range'][-1] and not
-                    self.filters['display_size_range'][0] <= len(word_array) <= self.filters['display_size_range'][-1]):
-                continue
-
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
-            if self.filters['frequency_threshold'] and self.filters['frequency_threshold'] > v['number']:
-                break
             words_only = [word_att for word in word_array for word_att in word] + ['' for _ in range(
                 (len_words - len(word_array)) * len(word_array[0]))]
             key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
@@ -232,7 +248,7 @@ class Writer(object):
                 elif node_type == 'xpos':
                     node_result[location_mapper[node.location]].append(f'xpos={node.node.xpos}')
                 elif node_type == 'generic':
-                    node_result[location_mapper[node.location]].append(f'_')
+                    node_result[location_mapper[node.location]].append(f'')
                 elif node_type == 'feats':
                     for k, v in node.feats.items():
                         node_result[location_mapper[node.location]].append(f'{k}={v}')
