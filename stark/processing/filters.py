@@ -15,6 +15,8 @@
 from stark.utils import create_output_string_deprel, create_output_string_lemma, create_output_string_upos, \
     create_output_string_xpos, create_output_string_feats, create_output_string_form, create_output_string_none
 
+ROOT_WHITELIST_OPTIONS = ['deprel', 'feats', 'form', 'lemma', 'upos']
+
 
 def read_filters(configs):
     """
@@ -85,10 +87,16 @@ def read_filters(configs):
             attribute_dict = {}
             for attribute in option.split('&'):
                 value = attribute.split('=')
-                if len(value) == 1:
-                    attribute_dict['form'] = value[0]
+                # look for negation sign, if there is only one character - ! it will search for form ! instead
+                if value[0][0] == '!' and len(value[0]) > 1:
+                    negation = True
+                    value[0] = value[0][1:]
                 else:
-                    attribute_dict[value[0]] = value[1]
+                    negation = False
+                if len(value) == 1:
+                    attribute_dict['form'] = (negation, value[0])
+                else:
+                    attribute_dict[value[0]] = (negation, value[1])
             filters['root_whitelist'].append(attribute_dict)
     else:
         filters['root_whitelist'] = []
@@ -126,29 +134,45 @@ class Filter(object):
         :param filters:
         :return:
         """
-        return ('form' not in query_tree or query_tree['form'] == form) and \
-            ('lemma' not in query_tree or query_tree['lemma'] == lemma) and \
-            ('upos' not in query_tree or query_tree['upos'] == upos) and \
-            ('xpos' not in query_tree or query_tree['xpos'] == xpos) and \
-            ('deprel' not in query_tree or query_tree['deprel'] == deprel) and \
-            (not filters['complete_tree_type'] or (len(children) == 0 and 'children' not in query_tree) or
-             ('children' in query_tree and len(children) == len(query_tree['children']))) and \
-            Filter._check_query_tree_feats(query_tree, feats)
+        filter_passed = (not filters['complete_tree_type'] or (len(children) == 0 and 'children' not in query_tree) or
+                         ('children' in query_tree and len(children) == len(query_tree['children'])))
+
+        # restrictions might not be in query tree when dealing with query counter and size
+        if 'restrictions' not in query_tree or not query_tree['restrictions']:
+            return filter_passed
+
+        # ('deprel' not in option or (option['deprel'][1] == deprel) == (not option['deprel'][0])) and \
+        for option in query_tree['restrictions']:
+            filter_passed = ('form' not in option or (option['form'][1] == form) == (not option['form'][0])) and \
+                ('lemma' not in option or (option['lemma'][1] == lemma) == (not option['lemma'][0])) and \
+                ('upos' not in option or (option['upos'][1] == upos) == (not option['upos'][0])) and \
+                ('xpos' not in option or (option['xpos'][1] == xpos) == (not option['xpos'][0])) and \
+                ('deprel' not in option or (option['deprel'][1] == deprel) == (not option['deprel'][0])) and \
+                Filter._check_query_tree_feats(option, feats)
+
+            if filter_passed:
+                return True
+
+        return False
 
     @staticmethod
-    def _check_query_tree_feats(query_tree, feats):
+    def _check_query_tree_feats(option, feats):
         """
-        Checks if feats of a tree fit feats of query_tree.
-        :param query_tree:
+        Checks if feats of a tree fit feats of option.
+        :param option:
         :param feats:
         :return:
         """
-        if 'feats_detailed' not in query_tree:
+        if 'feats_detailed' not in option:
             return True
 
-        for feat in query_tree['feats_detailed'].keys():
-            if (feat not in feats or
-                    query_tree['feats_detailed'][feat] != feats[feat]):
+        for feat in option['feats_detailed'].keys():
+            if feat not in feats:
+                if not option['feats_detailed'][feat][0]:
+                    return False
+            elif option['feats_detailed'][feat][1] != feats[feat] and not option['feats_detailed'][feat][0]:
+                return False
+            elif option['feats_detailed'][feat][1] == feats[feat] and option['feats_detailed'][feat][0]:
                 return False
         return True
 
@@ -177,23 +201,27 @@ class Filter(object):
         if not filters['root_whitelist']:
             return True
 
-        main_attributes = ['deprel', 'feats', 'form', 'lemma', 'upos']
         for option in filters['root_whitelist']:
             filter_passed = True
-
             # check if attributes are valid
             for key in option.keys():
-                if key not in main_attributes:
+                if key not in ROOT_WHITELIST_OPTIONS:
+                    # key not in feats and not negated
                     if key not in feats:
+                        if not option[key][0]:
+                            filter_passed = False
+                    # key different, then in head and not negated
+                    elif option[key][1] != feats[key] and not option[key][0]:
                         filter_passed = False
-                    elif option[key] != feats[key]:
+                    # key equal, and negated
+                    elif option[key][1] == feats[key] and option[key][0]:
                         filter_passed = False
 
             filter_passed = filter_passed and \
-                            ('deprel' not in option or option['deprel'] == deprel) and \
-                            ('form' not in option or option['form'] == form) and \
-                            ('lemma' not in option or option['lemma'] == lemma) and \
-                            ('upos' not in option or option['upos'] == upos)
+                ('deprel' not in option or (option['deprel'][1] == deprel) == (not option['deprel'][0])) and \
+                ('form' not in option or (option['form'][1] == form) == (not option['form'][0])) and \
+                ('lemma' not in option or (option['lemma'][1] == lemma) == (not option['lemma'][0])) and \
+                ('upos' not in option or (option['upos'][1] == upos) == (not option['upos'][0]))
 
             if filter_passed:
                 return True

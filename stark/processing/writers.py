@@ -117,7 +117,7 @@ class Writer(object):
         if self.filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if self.configs['compare']:
-            header += ['Absolute frequency in second treebank', 'Relative frequency in second treebank', 'LL',
+            header += ['Absolute frequency in second treebank', 'Relative frequency in second treebank', 'ratio', 'LL',
                        'BIC', 'Log ratio', 'OR', '%DIFF']
         yield header
 
@@ -203,23 +203,25 @@ class Writer(object):
         :param count_B:
         :return:
         """
+        ratio = '%.2f' % ((abs_freq_A / count_A) / (abs_freq_B / count_B)) if abs_freq_B else 'NaN'
         if abs_freq_B <= 0:
             abs_freq_B = 0.000000000000000001
         E1 = count_A * (abs_freq_A + abs_freq_B) / (count_A + count_B)
         E2 = count_B * (abs_freq_A + abs_freq_B) / (count_A + count_B)
 
         LL = 2 * ((abs_freq_A * math.log(abs_freq_A / E1)) + (
-                    abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 0
+                abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 0
         BIC = LL - math.log(count_A + count_B) if abs_freq_B > 0 else 0
         log_ratio = math.log(((abs_freq_A / count_A) / (abs_freq_B / count_B)), 2) if abs_freq_B > 0 else 0
         OR = (abs_freq_A / (count_A - abs_freq_A)) / (abs_freq_B / (count_B - abs_freq_B)) if abs_freq_B > 0 else 0
         diff = (((abs_freq_A / count_A) * 1000000 - (abs_freq_B / count_B) * 1000000) * 100) / (
-                    (abs_freq_B / count_B) * 1000000) if abs_freq_B > 0 else 0
+                (abs_freq_B / count_B) * 1000000) if abs_freq_B > 0 else 0
 
         if abs_freq_B <= 0:
-            return ['%.0f' % abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), LL, BIC, log_ratio, OR, diff]
-        return ['%.0f' % abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), '%.2f' % LL, '%.2f' % BIC,
-                '%.2f' % log_ratio, '%.2f' % OR, '%.2f' % diff]
+            return ['%.0f' % abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), ratio, LL, BIC, log_ratio, OR,
+                    diff]
+        return ['%.0f' % abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), ratio, '%.2f' % LL,
+                '%.2f' % BIC, '%.2f' % log_ratio, '%.2f' % OR, '%.2f' % diff]
 
     @staticmethod
     def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type, complete):
@@ -264,11 +266,13 @@ class Writer(object):
                 else:
                     order_result.append([location_mapper[link[0].location], location_mapper[link[1].location], '>>'])
         grew = 'pattern {'
-        grew += '; '.join([node_k + ' [' + ', '.join(v) + ']' for node_k, v in node_result.items()]) + '; '
-        grew += '; '.join([f'{link[0]} -[{link_node[1].node.deprel}]-> {link[1]}' for link, link_node in
-                           zip(link_result, links)]) if dependency_type else \
-            '; '.join([f'{link[0]} -> {link[1]}' for link in link_result])
-        grew += '; ' + '; '.join([f'{link[0]} {link[2]} {link[1]}' for link in order_result])
+        grew += '; '.join([node_k + ' [' + ', '.join(v) + ']' for node_k, v in node_result.items()])
+        if links:
+            grew += '; '
+            grew += '; '.join([f'{link[0]} -[{link_node[1].node.deprel}]-> {link[1]}' for link, link_node in
+                               zip(link_result, links)]) if dependency_type else \
+                '; '.join([f'{link[0]} -> {link[1]}' for link in link_result])
+            grew += '; ' + '; '.join([f'{link[0]} {link[2]} {link[1]}' for link in order_result])
 
         if complete:
             without_statements = []

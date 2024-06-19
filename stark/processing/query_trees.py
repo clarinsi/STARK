@@ -149,39 +149,59 @@ def decode_query(orig_query, dependency_type):
         new_query = True
         orig_query = orig_query[1:-1]
 
+    decoded_query = {'restrictions': []}
     if dependency_type != '':
-        decoded_query = {'deprel': dependency_type}
+        if dependency_type[0] == '!':
+            negation = True
+            dependency_type = dependency_type[1:]
+        else:
+            negation = False
+        dependency_restriction = (negation, dependency_type)
     else:
-        decoded_query = {}
+        dependency_restriction = None
 
     if orig_query == '_':
+        if dependency_restriction:
+            decoded_query['restrictions'].append({'deprel': dependency_restriction})
         return decoded_query
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
-        orig_query_split_parts = orig_query.split(' ')[0].split('&')
-        for orig_query_split_part in orig_query_split_parts:
-            orig_query_split = orig_query_split_part.split('=', 1)
-            if len(orig_query_split) > 1:
-                if orig_query_split[0] == 'L':
-                    decoded_query['lemma'] = orig_query_split[1]
-                elif orig_query_split[0] == 'upos':
-                    decoded_query['upos'] = orig_query_split[1]
-                elif orig_query_split[0] == 'xpos':
-                    decoded_query['xpos'] = orig_query_split[1]
-                elif orig_query_split[0] == 'form':
-                    decoded_query['form'] = orig_query_split[1]
-                elif orig_query_split[0] == 'feats':
-                    decoded_query['feats'] = orig_query_split[1]
-                elif orig_query_split[0] in UNIVERSAL_FEATURES:
-                    decoded_query['feats_detailed'] = {}
-                    decoded_query['feats_detailed'][orig_query_split[0]] = orig_query_split[1]
-                    return decoded_query
-                elif not new_query:
-                    raise Exception('Not supported yet!')
+        for orig_query_or_split_parts in orig_query.split(' ')[0].split('|'):
+            restriction = {}
+            orig_query_split_parts = orig_query_or_split_parts.split(' ')[0].split('&')
+            for orig_query_split_part in orig_query_split_parts:
+                if orig_query_split_part[0] == '!' and len(orig_query_split_part) > 1:
+                    negation = True
+                    orig_query_split_part = orig_query_split_part[1:]
                 else:
-                    raise Exception('Unexpected behaviour!')
-            elif not new_query:
-                decoded_query['form'] = orig_query_split_part
+                    negation = False
+                orig_query_split = orig_query_split_part.split('=', 1)
+                if len(orig_query_split) > 1:
+                    if orig_query_split[0] == 'L':
+                        restriction['lemma'] = (negation, orig_query_split[1])
+                    elif orig_query_split[0] == 'upos':
+                        restriction['upos'] = (negation, orig_query_split[1])
+                    elif orig_query_split[0] == 'xpos':
+                        restriction['xpos'] = (negation, orig_query_split[1])
+                    elif orig_query_split[0] == 'form':
+                        restriction['form'] = (negation, orig_query_split[1])
+                    elif orig_query_split[0] == 'feats':
+                        restriction['feats'] = (negation, orig_query_split[1])
+                    elif orig_query_split[0] in UNIVERSAL_FEATURES:
+                        restriction['feats_detailed'] = {}
+                        restriction['feats_detailed'][orig_query_split[0]] = (negation, orig_query_split[1])
+                        # decoded_query['restrictions'].append(restriction)
+                        # # TODO WHAT IS THIS RETURN???
+                        # return decoded_query
+                    elif not new_query:
+                        raise Exception('Not supported yet!')
+                    else:
+                        raise Exception('Unexpected behaviour!')
+                elif not new_query:
+                    restriction['form'] = (negation, orig_query_split_part)
+            if dependency_restriction:
+                restriction['deprel'] = dependency_restriction
+            decoded_query['restrictions'].append(restriction)
         return decoded_query
 
     # split over spaces if not inside braces

@@ -173,6 +173,9 @@ def read_configs(config, args):
 
     if config.has_option('settings', 'query') or args.query:
         configs['query'] = (config.get('settings', 'query') if not args.query else args.query)
+        # query has priority over the size, so we set it to 0
+        configs['display_size'] = '0'
+        configs['tree_size'] = '0'
 
     if args.compare:
         configs['compare'] = args.compare
