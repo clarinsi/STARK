@@ -1,5 +1,5 @@
 # STARK: a tool for analyzing dependency (sub-)trees
-STARK is a highly customizable tool designed for extracting and analyzing different types of syntactic (sub-)trees from parsed corpora (treebanks). It quantifies these trees with respect to frequency and provides other useful statistics, such as the strength of association between the nodes of a tree and its significance in comparison to another treebank. STARK is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other single-rooted dependency treebank in the CONLL-U format as input.
+STARK is a highly customizable tool designed for extracting and analyzing different types of syntactic (sub-)trees from parsed corpora (treebanks). It quantifies these trees with respect to frequency and provides other useful statistics, such as the strength of association between the nodes of a tree and its significance in comparison to another treebank. STARK is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the CONLL-U format as input.
 
 ## Installation and execution
 Install Python 3 on your system (https://www.python.org/downloads/). 
@@ -49,7 +49,7 @@ Tree specification:
 -	`fixed`: differentiating trees by surface word order (values *yes* or *no*)
 
 Tree restrictions:
--	`size`: number of nodes in the tree (integer or range)
+-	`size`: number of nodes in the tree (integer or range, e.g. _2-10_)
 -	`head`: predefined characteristics of the head node (e.g. _upos=NOUN_)
 -	`ignored_labels`: predefined list of dependency labels to be ignored when retrieving the trees (e.g. _punct_)
 -	`query`: predefined tree structure based on the DepSearch query language (e.g. _upos=VERB >obl upos=NOUN_).
