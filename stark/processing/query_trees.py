@@ -151,18 +151,22 @@ def decode_query(orig_query, dependency_type):
 
     decoded_query = {'restrictions': []}
     if dependency_type != '':
-        if dependency_type[0] == '!':
-            negation = True
-            dependency_type = dependency_type[1:]
-        else:
-            negation = False
-        dependency_restriction = (negation, dependency_type)
+        dependency_restrictions = []
+        for dependency_type_el in dependency_type.split('|'):
+            if dependency_type_el[0] == '!':
+                negation = True
+                dependency_type = dependency_type_el[1:]
+            else:
+                negation = False
+            dependency_restrictions.append((negation, dependency_type_el))
     else:
-        dependency_restriction = None
+        dependency_restrictions = None
 
     if orig_query == '_':
-        if dependency_restriction:
-            decoded_query['restrictions'].append({'deprel': dependency_restriction})
+        if dependency_restrictions:
+            decoded_query['restrictions'] = [{'deprel': dependency_restriction}
+                                             for dependency_restriction in dependency_restrictions]
+            # decoded_query['restrictions'].append({'deprel': dependency_restriction})
         return decoded_query
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
@@ -199,9 +203,17 @@ def decode_query(orig_query, dependency_type):
                         raise Exception('Unexpected behaviour!')
                 elif not new_query:
                     restriction['form'] = (negation, orig_query_split_part)
-            if dependency_restriction:
-                restriction['deprel'] = dependency_restriction
             decoded_query['restrictions'].append(restriction)
+
+        # merge restrictions from dependencies and other restrictions (this solves 'or' cases in both simultaneously)
+        if dependency_restrictions:
+            new_restrictions = []
+            for dependency_restriction in dependency_restrictions:
+                for restriction in decoded_query['restrictions']:
+                    new_restriction = restriction.copy()
+                    new_restriction['deprel'] = dependency_restriction
+                    new_restrictions.append(new_restriction)
+            decoded_query['restrictions'] = new_restrictions
         return decoded_query
 
     # split over spaces if not inside braces
