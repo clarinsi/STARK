@@ -117,7 +117,7 @@ class Writer(object):
         if self.filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if self.configs['compare']:
-            header += ['Absolute frequency in second treebank', 'Relative frequency in second treebank', 'ratio', 'LL',
+            header += ['Absolute frequency in second treebank', 'Relative frequency in second treebank', 'Ratio', 'LL',
                        'BIC', 'Log ratio', 'OR', '%DIFF']
         yield header
 
