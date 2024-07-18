@@ -98,7 +98,11 @@ class Counter(object):
         :return:
         """
         tree, filters = input_data
-        return tree.get_unigrams(filters['create_output_string_functs'])
+        unigrams = []
+        # there might be multiple roots in a sentence/tree
+        for tree_root in tree:
+            unigrams += tree_root.get_unigrams(filters['create_output_string_functs'])
+        return unigrams
 
     def recreate_sentence(self, sentence, r):
         """
@@ -188,7 +192,11 @@ class QueryCounter(Counter):
     @staticmethod
     def tree_calculations(input_data):
         tree, query_trees, filters = input_data
-        _, subtrees = tree.get_subtrees(query_trees, [], filters)
+        subtrees = []
+        # there might be multiple roots in a sentence/tree
+        for tree_root in tree:
+            _, subtrees_part = tree_root.get_subtrees(query_trees, [], filters)
+            subtrees += subtrees_part
         return [subtree for query_results in subtrees for subtree in query_results]
 
 
@@ -203,7 +211,12 @@ class GreedyCounter(Counter):
     @staticmethod
     def tree_calculations(input_data):
         tree, query_trees, filters = input_data
-        _, subtrees = tree.get_subtrees(filters)
+        subtrees = []
+        # there might be multiple roots in a sentence/tree
+        for tree_root in tree:
+            _, subtrees_part = tree_root.get_subtrees(filters)
+            subtrees += subtrees_part
+
         subtrees = GreedyCounter.filter_subtrees(query_trees, subtrees, filters)
         return subtrees
 

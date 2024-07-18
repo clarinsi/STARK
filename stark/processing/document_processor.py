@@ -51,7 +51,6 @@ class DocumentProcessor(object):
         train = pyconll.load_from_file(self.path)
 
         for sentence in train:
-            root = None
             token_nodes = []
             tokens = []
             for token in sentence:
@@ -72,18 +71,17 @@ class DocumentProcessor(object):
                                   'SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc \
                     else True
                 tokens.append((token_form, space_after))
-                if token_deprel == 'root':
-                    root = node
 
                 summary.corpus_size += 1
             document.sentence_statistics.append({'id': sentence.id, 'tokens': tokens, 'count': {}})
+            roots = []
             for token_id, token in enumerate(token_nodes):
                 if isinstance(token.parent, int) or token.parent == '':
-                    root = None
                     logger.warning('No parent: ' + sentence.id)
                     break
                 if int(token.parent) == 0:
                     token.set_parent(None)
+                    roots.append(token)
                 else:
                     parent_id = int(token.parent) - 1
                     if token_nodes[parent_id].children_split == -1 and token_id > parent_id:
@@ -95,9 +93,9 @@ class DocumentProcessor(object):
                 if token.children_split == -1:
                     token.children_split = len(token.children)
 
-            if root == None:
+            if not roots:
                 logger.warning('No root: ' + sentence.id)
-                continue
-            document.trees.append(root)
+
+            document.trees.append(roots)
 
         return document
