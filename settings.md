@@ -7,7 +7,7 @@ Below is a list of customizable settings that can be used to define the type of 
 | --- | --- | --- | --- | --- |  --- | 
 | [input](#--input) | [node_type](#--node_type) | [size](#--size) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
 | [output](#--output) | [labeled](#--labeled) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
-|  | [label_subtypes](#--label_subtypes) | [ignore_labels](#--ignore_labels)| | [depsearch](#--depsearch) | |
+|  | [label_subtypes](#--label_subtypes) | [ignored_labels](#--ignored_labels)| | [depsearch](#--depsearch) | |
 |  | [fixed](#--fixed) | [allowed_labels](#--allowed_labels)  |  |  |  |
 |  |  |  [query](#--query)|  |  |  |
 
@@ -80,19 +80,19 @@ The optional `--head` parameter allows the users to define specific constraints 
 
 For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR),  '&' (AND) and '!' (NOT) operators, e.g. specifying _lemma=chair&upos=NOUN|lemma=bank&upos=VERB_ to extract trees spanning from the verb or noun 'chair'. 
 
-### `--ignore_labels`
+### `--ignored_labels`
 **Value:** _\<list of dependency relations to be ignored\>_
 
-The optional `--ignore_labels` parameter defines a list of dependency relations that are to be ignored when matching the trees and thus not displayed in the results file. 
+The optional `--ignored_labels` parameter defines a list of dependency relations that are to be ignored when matching the trees and thus not displayed in the results file. 
 
-For example, specifying _ignore_labels = punct_ produces a list of matched trees that do not include the _punct_ relation (even if it is present in the actual tree). In addition to ignoring a certain type of relations, such as punctuation or other clause-peripheral phenomena, this is a particularly useful feature for users interested in a limited set of relations only, such as core predicate arguments. Such users would then use this parameter as a negative filter by specifying all relations except those pertaining to the core predicate arguments (e.g. _nsubj, obj_). In contrast to the `--allowed_labels` parameter below, this parameter does not exclude trees containing a given relation, but only ignores them when they occur in a tree. Two or more relations specified should be separated by the '|' operator.
+For example, specifying _ignored_labels = punct_ produces a list of matched trees that do not include the _punct_ relation (even if it is present in the actual tree). In addition to ignoring a certain type of relations, such as punctuation or other clause-peripheral phenomena, this is a particularly useful feature for users interested in a limited set of relations only, such as core predicate arguments. Such users would then use this parameter as a negative filter by specifying all relations except those pertaining to the core predicate arguments (e.g. _nsubj, obj_). In contrast to the `--allowed_labels` parameter below, this parameter does not exclude trees containing a given relation, but only ignores them when they occur in a tree. Two or more relations specified should be separated by the '|' operator.
 
 ### `--allowed_labels`
 **Value:** _\<whitelist of allowed dependency relations\>_
 
 The optional `--allowed_labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. 
 
-For example, specifying _allowed_labels = obj|iobj|nsubj_ extracts trees featuring only these three relations (and no other) and ignores all others. In contrast to the `--ignore_labels` parameter above, the presence of any other label in the tree automatically excludes such tree from being matched and counted.  
+For example, specifying _allowed_labels = obj|iobj|nsubj_ extracts trees featuring only these three relations (and no other) and ignores all others. In contrast to the `--ignored_labels` parameter above, the presence of any other label in the tree automatically excludes such tree from being matched and counted.  
 
 ### `--query`
 **Value:** _\<pre-defined tree query\>_
