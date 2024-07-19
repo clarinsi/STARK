@@ -166,7 +166,6 @@ def decode_query(orig_query, dependency_type):
         if dependency_restrictions:
             decoded_query['restrictions'] = [{'deprel': dependency_restriction}
                                              for dependency_restriction in dependency_restrictions]
-            # decoded_query['restrictions'].append({'deprel': dependency_restriction})
         return decoded_query
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
@@ -194,9 +193,6 @@ def decode_query(orig_query, dependency_type):
                     elif orig_query_split[0] in UNIVERSAL_FEATURES:
                         restriction['feats_detailed'] = {}
                         restriction['feats_detailed'][orig_query_split[0]] = (negation, orig_query_split[1])
-                        # decoded_query['restrictions'].append(restriction)
-                        # # TODO WHAT IS THIS RETURN???
-                        # return decoded_query
                     elif not new_query:
                         raise Exception('Not supported yet!')
                     else:

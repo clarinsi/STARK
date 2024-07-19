@@ -44,7 +44,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--config_file", default=str(Path.joinpath(Path(__file__).parent, "config.ini")), type=str,
+    parser.add_argument("--config_file", default=str(Path.joinpath(Path(__file__).parent.parent, "config.ini")), type=str,
                         help="The input config file.")
     parser.add_argument("--input", default=None, type=str, help="The input file/folder.")
     parser.add_argument("--output", default=None, type=str, help="The output file.")
