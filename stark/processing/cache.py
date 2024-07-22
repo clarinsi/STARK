@@ -57,7 +57,7 @@ class ProcessorCache(object):
         summary: Loaded summary
         """
         self.already_processed, summary_data = load_zipped_pickle(self._checkpoint_path)
-        summary = Summary.create_summary_from_cache
+        summary = Summary.create_summary_from_cache(summary_data)
         return summary
 
     def _save_cache(self, summary):
@@ -78,12 +78,12 @@ class ProcessorCache(object):
         :return:
         summary: A collection of datapoints used for result generation.
         """
-        path_list = path.glob('**/*.conllu')
-        if path.name in self.already_processed:
-            return
+        if str(path) in self.already_processed:
+            logger.info(f'Skipping: {str(path)}')
+            return summary
 
-        summary = self.processor.run(path_list, summary)
-        self.already_processed.add(path.name)
+        summary = self.processor.run(path, summary)
+        self.already_processed.add(str(path))
         if self._checkpoint_path:
             self._save_cache(summary)
 

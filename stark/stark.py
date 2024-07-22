@@ -79,8 +79,8 @@ def parse_args(args):
 
     parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
-    parser.add_argument("--association_measures", default=None, type=bool, help="Association measures.")
-    parser.add_argument("--continuation_processing", default=None, type=bool, help="Nodes number.")
+    parser.add_argument("--association_measures", default=None, type=str, help="Association measures.")
+    parser.add_argument("--continuation_processing", default=None, type=str, help="Nodes number.")
     parser.add_argument("--compare", default=None, type=str, help="Corpus with which we want to compare statistics.")
     return parser.parse_args(args)
 
@@ -102,10 +102,10 @@ def count_subtrees(configs, filters):
             filters['tree_size_range'] = get_query_tree_size_range(summary.query_trees)
 
     if os.path.isdir(configs['input_path']):
-        processor.run_dir(summary)
+        summary = processor.run_dir(summary)
 
     else:
-        processor.run([configs['input_path']], summary)
+        summary = processor.run(configs['input_path'], summary)
 
     return summary
 
@@ -188,7 +188,7 @@ def read_configs(config, args):
         if not args.max_lines else args.max_lines
 
     configs['continuation_processing'] = config.getboolean('settings', 'continuation_processing', fallback=False) \
-        if not args.continuation_processing else args.continuation_processing
+        if not args.continuation_processing else args.continuation_processing == 'yes'
 
     configs['grew_match'] = config.getboolean('settings',
                                               'grew_match') if not args.grew_match else args.grew_match == 'yes'
