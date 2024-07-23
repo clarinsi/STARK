@@ -1,5 +1,5 @@
 # Advanced settings
-In addition to the [basic settings](settings.md), which can be used to define the trees under investigation and the associated information in the output, STARK also features some advanced settings aimed at optimizing its performance or adressing rare use cases. Please note that these were not extensively tested and should be used with caution.
+In addition to the [basic settings](settings.md), which can be used to define the trees under investigation and the associated information in the output, STARK also features some advanced settings aimed at optimizing its performance or addressing rare use cases. Please note that these were not extensively tested and should be used with caution.
 
 ## Large corpora
 
