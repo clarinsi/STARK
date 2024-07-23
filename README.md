@@ -79,7 +79,7 @@ The description of the tree is given in the first column, while subsequent colum
 | ADJ <amod NOUN | ADJ | NOUN |   | 117 | 4652.3 | AB | 2 | NOUN
 
 ### Description of tree structure
-The description of the trees given in the first column of the output is based on the [dep_search](https://fginter.github.io/dep_search/) query language, which is simple to learn and easy to read:
+The description of the trees given in the first column of the output is based on the [dep_search](https://fginter.github.io/dep_search/) query language (archived [here](https://orodja.cjvt.si/drevesnik/help/en/)), which is simple to learn and easy to read:
 - Dependencies are expressed using < and > operators, which mimic the "arrows" in the dependency graph.
   - A < B means that token A is governed by token B, e.g. _rainy < morning_
   - A > B means that token A governs token B, e.g. _read > newspapers_
