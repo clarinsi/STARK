@@ -120,7 +120,7 @@ If a tree occurring in the first treebank is absent from the second treebank (i.
 
 ## Alternative visualisation and examples
 
-In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the easy-to-read DepSearch query language (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree, which also enable the users to visualisize specific instances of the trees in the related treebank-browsing services.
+In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the easy-to-read dep\_search query language (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree, which also enable the users to visualize specific instances of the trees in the related treebank-browsing services.
 
 ### `--grew_match`
 **Values:** _yes, no_
@@ -132,7 +132,7 @@ If the name of the input treebank begins with the standard declaration of the la
 ### `--depsearch`
 **Values:** _yes, no_
 
-Second, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
+Second, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [dep_search query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
 
 ### `--example`
 **Values:** _yes, no_
