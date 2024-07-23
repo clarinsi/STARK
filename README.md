@@ -30,10 +30,10 @@ By default, running the program as described above extracts trees from the sampl
 ```bash
 python3 stark.py --config_file my-settings.ini
 ```
-Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the `config.ini` configuration file. In the example below, the tool extracts verb-headed trees consisting of exactly three words from a treebank named `my-treebank.conllu`, while all other options remain the same as in the default `config.ini` configuration file.
+Alternatively, you can change a specific setting by introducing it as a command line argument directly, which overrides the default setting specified in the `config.ini` configuration file. In the example below, the tool extracts verb-headed trees with lemmas as nodes from a treebank named `my-treebank.conllu`, while all other options remain the same as in the default `config.ini` configuration file.
 
 ```bash
-python3 stark.py --input my-treebank.conllu --size 3 --head upos=VERB
+python3 stark.py --input my-treebank.conllu --node_type lemma --head upos=VERB
 ```
 
 ## List of main settings
