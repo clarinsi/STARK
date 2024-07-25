@@ -153,6 +153,7 @@ def decode_query(orig_query, dependency_type):
     if dependency_type != '':
         dependency_restrictions = []
         for dependency_type_el in dependency_type.split('|'):
+            dependency_type_el = dependency_type_el[1:]
             if dependency_type_el[0] == '!':
                 negation = True
                 dependency_type_el = dependency_type_el[1:]
@@ -229,9 +230,9 @@ def decode_query(orig_query, dependency_type):
     root = None
     for i, node_action in enumerate(node_actions):
         if i < root_index:
-            children.append(decode_query(node_action, priority_actions[i][1:]))
+            children.append(decode_query(node_action, priority_actions[i]))
         elif i > root_index:
-            children.append(decode_query(node_action, priority_actions[i - 1][1:]))
+            children.append(decode_query(node_action, priority_actions[i - 1]))
         else:
             root = decode_query(node_action, dependency_type)
     if children:
