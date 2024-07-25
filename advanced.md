@@ -26,7 +26,7 @@ The optional `--internal_saves` parameter speeds up performance for users repeat
 ### `--cpu_cores`
 **Value:** _\<integer number\>_
 
-By default, STARK uses all available processors except one. The optional `--cpu_core` parameter allows the users to define a specific number of processors to be used in the process, for example to boost the tool's performance by running it on all available CPU cores.
+By default, STARK uses a single processor to execute. The optional `--cpu_core` parameter allows the users to define a specific number of processors to be used in the process, for example to boost the tool's performance by running it on all available CPU cores.
 
 ### `--greedy_counter`
 **Values:** _yes, no_
@@ -40,7 +40,7 @@ The obligatory `--greedy_counter` parameter defines the way trees are extracted 
 
 **Values:** _yes, no_
 
-The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract complete trees encompassing the head and _all_ its (in)direct dependants (value _yes_), or all possible subtrees (paths) spanning from the head, i.e. all possible combinations of a head and its dependants (value _no_). Most use cases can be solved with the first option, so **`complete=yes` is the recommended default setting**. If you nevertheless decide to go with the `complete=no`, make sure to uncomment the `--processing_size` parameter (see below) and set it to a relatively low number (e.g. _2-7_), as only trees of limited size can be retrieved.
+The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract complete trees encompassing the head and _all_ its (in)direct dependants (value _yes_), or all possible subtrees (paths) spanning from the head, i.e. all possible combinations of a head and its dependants (value _no_). Most use cases can be solved with the first option, so **`complete=yes` is the recommended default setting**. If you nevertheless decide to go with the `complete=no`, make sure to uncomment the `--processing_size` parameter (see below) and set it to a relatively low number (e.g. _2-7_), as only trees of limited size can be retrieved. In addition, we recommend increasing the [number of processor](#--cpu_cores) for even faster results.
 
 ### `--processing_size`
 
