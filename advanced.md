@@ -4,10 +4,9 @@ In addition to the [basic settings](settings.md), which can be used to define th
 ## Large corpora
 
 ### `--continuation_processing `
-**Value:** _\<path to folder with corpus files\>_
+**Value:** _yes, no_
 
 This parameter can be used for running STARK on large corpora, as it performs intermittent storing of results for each of the subcorpora provided. To use it, the input folder must be structured the right way, e.g.
-Gigafida
 
 ```bash
   -GF01
