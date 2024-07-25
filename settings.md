@@ -99,7 +99,7 @@ For example, specifying _allowed_labels = obj|iobj|nsubj_ extracts trees featuri
 
 Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [dep_search query language](https://orodja.cjvt.si/drevesnik/help/en/). 
 
-For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. The query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_) and also supports using the '|' (OR),  '&' (AND), and '!' (NOT) operators, with some minor deviations. 
+For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. The query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_) and also supports using the '|' (OR),  '&' (AND), and '!' (NOT) operators. For the latter, the program enables negations of specific relation types (e.g. _A >!case B_), while negations of relations as such (e.g. _A !> B_ ) are currently not supported.
 
 When `--query` is specified, the output takes into account [tree specification settings](#tree-specification), such as `--node_type`, but ignores all other [tree restriction settings](#restriction-to-specific-structure), such as `--size`.
 
