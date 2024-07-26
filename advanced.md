@@ -6,22 +6,14 @@ In addition to the [basic settings](settings.md), which can be used to define th
 ### `--continuation_processing `
 **Value:** _yes, no_
 
-This parameter can be used for running STARK on large corpora, as it performs intermittent storing of results for each of the subcorpora provided. To use it, the input folder must be structured the right way, e.g.
-
-```bash
-  -GF01
-    -GF0148879-dedup.conllu
-    -GF0151323-dedup.conllu
-  -GF02
-    -GF0231349-dedup.conllu
-```
+This parameter can be used for running STARK on large corpora, as it performs intermittent storing of results for each of the subcorpora provided. It is only relevant when input is a directory. For it to work properly `--internal_saves` parameter has to be provided.
 
 ## Performance
 
 ### `--internal_saves`
 **Value:** _\<path to folder for internal storage\>_
 
-The optional `--internal_saves` parameter speeds up performance for users repeating several different queries on the same treebank, as it avoids repeating same parts of the execution twice. To test it, simply uncomment the parameter in the `config.ini` file or provide a different path for the internal data storage.
+The optional `--internal_saves` parameter speeds up performance for users repeating several different queries on the same treebank, as it avoids repeating same parts of the execution twice. It is based on caching, so if input file with the same name changes you have to delete cache or program might produce incorrect results. To test it, simply uncomment the parameter in the `config.ini` file or provide a different path for the internal data storage.
 
 ### `--cpu_cores`
 **Value:** _\<integer number\>_
@@ -40,13 +32,13 @@ The obligatory `--greedy_counter` parameter defines the way trees are extracted 
 
 **Values:** _yes, no_
 
-The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract complete trees encompassing the head and _all_ its (in)direct dependants (value _yes_), or all possible subtrees (paths) spanning from the head, i.e. all possible combinations of a head and its dependants (value _no_). Most use cases can be solved with the first option, so **`complete=yes` is the recommended default setting**. If you nevertheless decide to go with the `complete=no`, make sure to uncomment the `--processing_size` parameter (see below) and set it to a relatively low number (e.g. _2-7_), as only trees of limited size can be retrieved. In addition, we recommend increasing the [number of processors](#--cpu_cores) for even faster results.
+The obligatory `--complete` parameter defines whether STARK, for a given tree size, should only extract complete trees encompassing the head and _all_ its (in)direct dependants (value _yes_), or all possible subtrees (paths) spanning from the head, i.e. all possible combinations of a head and its dependants (value _no_). Most use cases can be solved with the first option, so **`complete=yes` is the recommended default setting**. If you nevertheless decide to go with the `complete=no`, make sure to uncomment the `--processing_size` parameter (see below) and set it to a relatively low number (e.g. _2-5_), as only trees of limited size can be retrieved. In addition, we recommend increasing the [number of processors](#--cpu_cores) for even faster results.
 
 ### `--processing_size`
 
 **Value:** _\<integer number or range\>_
 
-By default, STARK searches for _all_ relevant trees based on the user-defined tree specifications and prints only those featuring the number of nodes specified by the [`--size`](settings.md\"--size) parameter, which means that it acts as a filter determining the size of the trees to be displayed. To also enable limiting the size of the trees to be extracted in the first place, the optional `--processing_size` parameter is introduced, which acts as a filter determining the size of the trees to be matched. Note that this is only relevant for the (rare) use cases interested in incomplete trees (see the [complete=no](#--complete) setting above). The recommended maximum size is 7 nodes or less.
+By default, STARK searches for _all_ relevant trees based on the user-defined tree specifications and prints only those featuring the number of nodes specified by the [`--size`](settings.md\"--size) parameter, which means that it acts as a filter determining the size of the trees to be displayed. To also enable limiting the size of the trees to be extracted in the first place, the optional `--processing_size` parameter is introduced, which acts as a filter determining the size of the trees to be matched. Note that this is only relevant for the (rare) use cases interested in incomplete trees (see the [complete=no](#--complete) setting above). The recommended maximum size is 7 nodes or less for [--greedy_counter=yes](#--greedy_counter) and 5 nodes or less for [--greedy_counter=no](#--greedy_counter).
 
 
 ## Debugging
