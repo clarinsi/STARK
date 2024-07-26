@@ -16,7 +16,6 @@
 import argparse
 import configparser
 import os
-from multiprocessing import cpu_count
 from pathlib import Path
 import sys
 import logging
@@ -141,7 +140,7 @@ def read_configs(config, args):
                                  if config.has_option('settings', 'internal_saves') else None) \
         if not args.internal_saves else args.internal_saves
     configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if config.has_option('settings', 'cpu_cores')
-                            else max(cpu_count() - 1, 1)) if not args.cpu_cores else args.cpu_cores
+                            else 1) if not args.cpu_cores else args.cpu_cores
     configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete
                                      else args.complete == 'yes')
     configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled

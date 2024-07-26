@@ -154,12 +154,13 @@ def decode_query(orig_query, dependency_type):
         dependency_restrictions = []
         for dependency_type_el in dependency_type.split('|'):
             dependency_type_el = dependency_type_el[1:]
-            if dependency_type_el[0] == '!':
+            if dependency_type_el and dependency_type_el[0] == '!':
                 negation = True
                 dependency_type_el = dependency_type_el[1:]
             else:
                 negation = False
-            dependency_restrictions.append((negation, dependency_type_el))
+            if dependency_type_el:
+                dependency_restrictions.append((negation, dependency_type_el))
     else:
         dependency_restrictions = None
 
