@@ -191,10 +191,7 @@ class Writer(object):
         with open(self.configs['detailed_results_file'], "a", newline="", encoding="utf-8") as wf:
             for k, v in self.summary.representation_trees.items():
                 for s in v['sentence']:
-                    if (not self.configs['greedy_counter'] or not self.filters['display_size_range'][-1] or
-                            self.filters['display_size_range'][0] <= len(v['word_array']) <= self.filters['display_size_range'][
-                                -1]):
-                        wf.write(k + '\t' + s[0] + '\t' + s[1] + '\n')
+                    wf.write(k + '\t' + s[0] + '\t' + s[1] + '\n')
 
     @staticmethod
     def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
