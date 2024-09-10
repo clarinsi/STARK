@@ -132,8 +132,7 @@ class Writer(object):
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             words_only = [word_att for word in word_array for word_att in word] + ['' for _ in range(
                 (len_words - len(word_array)) * len(word_array[0]))]
-            key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
-                -1] == ')' else literal_key
+            key = literal_key[1:-1] if (len(literal_key) > 0 and literal_key[0] == '(' and literal_key[-1] == ')') else literal_key
 
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]
