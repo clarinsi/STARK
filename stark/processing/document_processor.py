@@ -48,8 +48,8 @@ class DocumentProcessor(object):
         """
         document = Document()
 
-        logger.info("Reading file: " + self.path)
-        train = pyconll.load_from_file(self.path)
+        logger.info(f"Reading file: {self.path}")
+        train = pyconll.iter_from_file(self.path)
 
         for sentence in train:
             token_nodes = []
