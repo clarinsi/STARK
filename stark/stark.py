@@ -77,6 +77,7 @@ def parse_args(args):
                         help="Path to a file where all examples will be stored.")
 
     parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
+    parser.add_argument("--node_info", default=None, type=str, help="Information about nodes in separate columns.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
     parser.add_argument("--association_measures", default=None, type=str, help="Association measures.")
     parser.add_argument("--continuation_processing", default=None, type=str, help="Nodes number.")
@@ -148,6 +149,8 @@ def read_configs(config, args):
     configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed == 'yes')
     configs['association_measures'] = (config.getboolean('settings', 'association_measures')
                                        if not args.association_measures else args.association_measures == 'yes')
+    configs['node_info'] = (config.getboolean('settings', 'node_info')
+                                       if not args.node_info else args.node_info == 'yes')
 
     # optional parameters
     if config.has_option('settings', 'allowed_labels') or args.allowed_labels:

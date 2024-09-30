@@ -96,10 +96,12 @@ class Writer(object):
                 len_words = min(self.filters['display_size_range'][-1], self.summary.max_tree_size)
         else:
             len_words = int(len(self.configs['query'].split(" ")) / 2 + 1)
-        header = ["Tree"] + ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
+        header = ["Tree"]
+        if self.configs['node_info']:
+            header += ["Node " + string.ascii_uppercase[i % 26] + str(int(i/26)) + "-" + node_type if i >= 26 else
                              "Node " + string.ascii_uppercase[i % 26] + "-" + node_type for i in range(len_words) for
-                             node_type in self.filters['node_types']] + ['Absolute frequency']
-        header += ['Relative frequency']
+                             node_type in self.filters['node_types']]
+        header += ['Absolute frequency', 'Relative frequency']
         if self.filters['node_order']:
             header += ['Order']
         if self.configs['grew_match']:
@@ -135,8 +137,10 @@ class Writer(object):
             key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
                 -1] == ')' else literal_key
 
-            row = [key] + words_only + [str(v['number'])]
-            row += ['%.1f' % relative_frequency]
+            row = [key]
+            if self.configs['node_info']:
+                row += words_only
+            row += [str(v['number']), '%.1f' % relative_frequency]
             if self.filters['node_order']:
                 order_letters = v['order_letters']
                 row += [order_letters]
