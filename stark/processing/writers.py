@@ -217,7 +217,11 @@ class Writer(object):
                 abs_freq_B * math.log(abs_freq_B / E2))) if abs_freq_B > 0 else 0
         BIC = LL - math.log(count_A + count_B) if abs_freq_B > 0 else 0
         log_ratio = math.log(((abs_freq_A / count_A) / (abs_freq_B / count_B)), 2) if abs_freq_B > 0 else 0
-        OR = (abs_freq_A / (count_A - abs_freq_A)) / (abs_freq_B / (count_B - abs_freq_B)) if abs_freq_B > 0 else 0
+        if count_A == abs_freq_A or count_B == abs_freq_B:
+            OR = 'NaN'
+        else:
+            OR = (abs_freq_A / (count_A - abs_freq_A)) / (abs_freq_B / (count_B - abs_freq_B)) if abs_freq_B > 0 else 0
+            OR = '%.2f' % OR
         diff = (((abs_freq_A / count_A) * 1000000 - (abs_freq_B / count_B) * 1000000) * 100) / (
                 (abs_freq_B / count_B) * 1000000) if abs_freq_B > 0 else 0
 
@@ -225,7 +229,7 @@ class Writer(object):
             return ['%.0f' % abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), ratio, LL, BIC, log_ratio, OR,
                     diff]
         return ['%.0f' % abs_freq_B, '%.1f' % (abs_freq_B * 1000000.0 / count_B), ratio, '%.2f' % LL,
-                '%.2f' % BIC, '%.2f' % log_ratio, '%.2f' % OR, '%.2f' % diff]
+                '%.2f' % BIC, '%.2f' % log_ratio, OR, '%.2f' % diff]
 
     @staticmethod
     def get_grew(nodes, links, node_types, node_order, location_mapper, dependency_type, complete):
