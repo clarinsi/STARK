@@ -53,6 +53,7 @@ class Tree(object):
         self.parent = head
         self.children = []
         self.children_split = -1
+        self.conll = None
 
         self.index = index
 
@@ -70,6 +71,20 @@ class Tree(object):
         for child in self.children:
             unigrams += child.get_unigrams(create_output_strings)
         return unigrams
+
+    def add_conll_sentence(self, conll):
+        self.conll = conll
+
+    def get_root(self):
+        """
+        Get root of a node.
+        :return:
+        """
+        root = self
+        while root.parent is not None:
+            root = root.parent
+
+        return root
 
     @staticmethod
     def _generate_key(node, create_output_strings, print_lemma=True):

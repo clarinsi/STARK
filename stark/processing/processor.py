@@ -57,7 +57,7 @@ class Processor(object):
         start_exe_time = time.time()
 
         document_processor = DocumentProcessor(str(path), self)
-        document = document_processor.form_trees(summary)
+        document = document_processor.form_trees(summary, self.configs)
         logger.info("Trees formed time:")
         logger.info("--- %s seconds ---" % (time.time() - start_exe_time))
         if self.configs['greedy_counter']:

@@ -104,9 +104,9 @@ class DocumentCache(object):
         # do not save cache if input is dir
         self._save = not os.path.isdir(configs['input_path'])
 
-    def create_trees(self, summary):
+    def create_trees(self, summary, configs):
         if self._internal_file is None or not os.path.exists(self._internal_file) or not self._save:
-            document = self.document_processor.create_trees(summary)
+            document = self.document_processor.create_trees(summary, configs)
 
             if self._internal_file is not None and self._save:
                 self._save_cache(document, summary)

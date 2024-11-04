@@ -18,6 +18,7 @@ import json
 import math
 import os
 import random
+import shutil
 import string
 from abc import abstractmethod
 from pathlib import Path
@@ -53,6 +54,7 @@ class Writer(object):
         """
         other_representation_trees = self.other_summary.representation_trees if self.other_summary else None
         other_corpus_size = self.other_summary.corpus_size if self.other_summary else None
+        random_sentence_position = 0
 
         # skip elements that do not fit filters
         if self.filters['frequency_threshold'] or self.filters['display_size_range'][-1]:
@@ -89,6 +91,9 @@ class Writer(object):
         if self.configs['detailed_results_file']:
             self.write_detailed_results_file()
 
+        if self.configs['annodoc_example_dir'] and (self.configs['detailed_results_file'] or self.configs['example']):
+            self.write_annodoc_files()
+
         if self.filters['display_size_range'][-1]:
             if not self.configs['greedy_counter']:
                 len_words = self.filters['display_size_range'][-1]
@@ -116,6 +121,8 @@ class Writer(object):
             header += ['Head node']
         if self.filters['example']:
             header += ['Example']
+        if self.filters['annodoc']:
+            header += ['Annodoc']
         if self.filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if self.configs['compare']:
@@ -163,6 +170,10 @@ class Writer(object):
             if self.filters['example']:
                 random_sentence_position = int(len(v['sentence']) * random.random())
                 row += [v['sentence'][random_sentence_position][1]]
+            if self.filters['annodoc'] and (self.configs['detailed_results_file'] or self.filters['example']):
+                annodoc_dict = {'id': v['sentence'][random_sentence_position][0],'positions': v['sentence'][random_sentence_position][2][1]}
+                annodoc_json = json.dumps(annodoc_dict)
+                row += [annodoc_json]
             if self.filters['association_measures']:
                 row += self.get_collocabilities(v, self.summary.unigrams, self.summary.corpus_size)
             if self.configs['compare']:
@@ -196,6 +207,23 @@ class Writer(object):
             for k, v in self.summary.representation_trees.items():
                 for s in v['sentence']:
                     wf.write(k + '\t' + s[0] + '\t' + s[1] + '\n')
+
+    def write_annodoc_files(self):
+        """
+        Writes conllu files separated by examples.
+        :return:
+        """
+        annodoc_dir = Path(self.configs['annodoc_example_dir'])
+        if annodoc_dir.exists():
+            shutil.rmtree(annodoc_dir, ignore_errors=True)
+        annodoc_dir.mkdir()
+        for k, v in self.summary.representation_trees.items():
+            for s in v['sentence']:
+                annodoc_path = Path(self.configs['annodoc_example_dir'], s[0])
+                if not annodoc_path.exists():
+                    with open(annodoc_path, "w", newline="",
+                              encoding="utf-8") as wf:
+                        wf.write(s[2][0])
 
     @staticmethod
     def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):

@@ -13,6 +13,8 @@
 # limitations under the License.
 import gc
 import logging
+import os
+
 import pyconll
 
 from stark.data.document import Document
@@ -32,15 +34,15 @@ class DocumentProcessor(object):
         self.processor = processor
         self.cache = DocumentCache(self, path)
 
-    def form_trees(self, summary):
+    def form_trees(self, summary, configs):
         """
         Forms trees by trying to load it from cache or processing it.
         :param summary:
         :return:
         """
-        return self.cache.create_trees(summary)
+        return self.cache.create_trees(summary, configs)
 
-    def create_trees(self, summary):
+    def create_trees(self, summary, configs):
         """
         Creates trees based on configs and stores them in Document object.
         :param summary:
@@ -82,6 +84,9 @@ class DocumentProcessor(object):
                     break
                 if int(token.parent) == 0:
                     token.set_parent(None)
+                    # add a conllu string if necessary
+                    if configs['annodoc_example_dir'] is not None:
+                        token.add_conll_sentence(sentence.conll())
                     roots.append(token)
                 else:
                     parent_id = int(token.parent) - 1

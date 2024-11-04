@@ -72,6 +72,7 @@ def read_filters(configs):
         'example': configs['example'],
         'sentence_count_file': configs['sentence_count_file'],
         'detailed_results_file': configs['detailed_results_file'],
+        'annodoc': configs['annodoc_example_dir'],
         'complete_tree_type': configs['complete_tree_type'],
         'association_measures': configs['association_measures'],
         'nodes_number': configs['nodes_number'],
