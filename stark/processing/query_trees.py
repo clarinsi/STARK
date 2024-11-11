@@ -15,58 +15,40 @@
 import copy
 from stark.resources.constants import UNIVERSAL_FEATURES
 
-from collections import deque, ChainMap
-#import functools
 import bisect
+from typing import List, Tuple, Dict, Generator, Any, Union
 
-def add_node(tree):
+def add_node(tree: dict) -> None:
     """
     Adds node to a tree.
     :param tree:
     :return:
     """
     if 'children' in tree:
-        #tree['children'].append({})
-        tree['children'].append(ChainMap())
+        tree['children'].append({})
     else:
-        #tree['children'] = [{}]
-        tree['children'] = [ChainMap()]
+        tree['children'] = [{}]
 
 
-def tree_grow(orig_tree):
+def tree_grow(orig_tree: dict) -> Generator[dict, None, None]:
     """
     Walks over all nodes in tree and add a node to each possible node.
     :param orig_tree:
     :return:
     """
-    #new_tree = copy.deepcopy(orig_tree)
     new_tree = orig_tree
     add_node(new_tree)
     yield new_tree
 
     if 'children' in orig_tree:
-        """
-        children = []
-        for child_tree in orig_tree['children']:
-            children.append(tree_grow(child_tree))
-        """
         children = (tree_grow(child_tree) for child_tree in orig_tree['children'])
         for i, child in enumerate(children):
-            """
-            for child_res in child:
-                new_tree = copy.deepcopy(orig_tree)
-                new_tree['children'][i] = child_res
-                yield new_tree
-            """
-
-            #new_tree = copy.deepcopy(orig_tree)
             for child_res in child:
                 new_tree['children'][i] = child_res
                 yield new_tree
 
 
-#@functools.cache
-def compare_trees(tree1, tree2):
+def compare_trees(tree1: dict, tree2: dict) -> bool:
     """
     Compares two trees and returns True, when they match.
     :param tree1:
@@ -74,46 +56,10 @@ def compare_trees(tree1, tree2):
     :return:
     """
 
-    #return len({str(tree1), str(tree2)}) == 1
     return tree1 == tree2
 
-    '''
-    if tree1 == {} and tree2 == {}:
-        return True
 
-    if 'children' not in tree1 or 'children' not in tree2 or len(tree1['children']) != len(tree2['children']):
-        return False
-
-    """
-    children2_connections = []
-
-    for child1_i, child1 in enumerate(tree1['children']):
-        child_duplicated = False
-        for child2_i, child2 in enumerate(tree2['children']):
-            if child2_i in children2_connections:
-                pass
-            if compare_trees(child1, child2):
-                children2_connections.append(child2_i)
-                child_duplicated = True
-                break
-        if not child_duplicated:
-            return False
-    """
-
-    for child1 in tree1['children']:
-        child_duplicated = False
-        for child2 in tree2['children']:
-            if compare_trees(child1, child2):
-                child_duplicated = True
-                break
-        if not child_duplicated:
-            return False
-
-    return True
-    '''
-
-
-def create_ngrams_query_trees(n, trees):
+def create_ngrams_query_trees(n: int, trees: List[dict]) -> List[dict]:
     """
     Forms unique ngram query trees.
     :param n:
@@ -121,12 +67,10 @@ def create_ngrams_query_trees(n, trees):
     :return:
     """
     for i in range(n - 1):
-        #new_trees = []
-        new_trees = deque()
+        new_trees: List[dict] = []
         for tree in trees:
             # append new_tree only if it is not already inside
             for new_tree in tree_grow(tree):
-                ''' # works, do not remove
                 duplicate = False
                 for confirmed_new_tree in new_trees:
                     #if compare_trees(new_tree, confirmed_new_tree):
@@ -135,34 +79,18 @@ def create_ngrams_query_trees(n, trees):
                         break
                 if not duplicate:
                     new_trees.append(new_tree)
-                '''
 
+                '''
                 index = bisect.bisect_left(new_trees, new_tree)
                 if new_trees[index] != new_tree:
                     new_trees.insert(index, new_tree)
+                '''
 
         trees = new_trees
-    #return trees
     return list(trees)
 
-    """
-    def f(_n, _trees):
-        #new_trees = []
-        new_trees = deque()
-        for tree in trees:
-            # append new_tree only if it is not already inside
-            for new_tree in tree_grow(tree):
-                duplicate = False
-                for confirmed_new_tree in new_trees:
-                    if compare_trees(new_tree, confirmed_new_tree):
-                        duplicate = True
-                        break
-                if not duplicate:
-                    new_trees.append(new_tree)
-    """
 
-
-def split_query_text(input_string):
+def split_query_text(input_string: str) -> List[str]:
     """
     Splits query by ignoring everything in brackets and otherwise splitting by spaces.
     :param input_string: Raw query in string
@@ -184,7 +112,6 @@ def split_query_text(input_string):
             brackets_depth += 1
 
         if brackets_depth >= 1:
-            #replace_string += char
             if replace_string_start == None:
                 replace_string_start = char_id
 
@@ -199,12 +126,14 @@ def split_query_text(input_string):
                 input_string = input_string.replace(replace_string, f'<BRACKET{brackets_count}>', 1)
                 replacements[f'<BRACKET{brackets_count}>'] = replace_string
                 brackets_count += 1
-                #replace_string = ''
 
     return [el if el not in replacements else replacements[el] for el in input_string.split()]
 
 
-def decode_query(orig_query, dependency_type):
+#def decode_query(orig_query: str, dependency_type: str) \
+#-> Union[Dict[Any, Any], None]:
+def decode_query(orig_query: str, dependency_type: str) \
+-> Dict[Any, Any]:
     """
     Reads query and returns it in tree-form dictionary.
     :param orig_query:
@@ -218,7 +147,7 @@ def decode_query(orig_query, dependency_type):
         new_query = True
         orig_query = orig_query[1:-1]
 
-    decoded_query = {'restrictions': []}
+    decoded_query: Dict[Any, Any] = {'restrictions': []}
     if dependency_type != '':
         dependency_restrictions = []
         for dependency_type_el in dependency_type.split('|'):
@@ -241,7 +170,8 @@ def decode_query(orig_query, dependency_type):
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
         for orig_query_or_split_parts in orig_query.split(' ')[0].split('|'):
-            restriction = {}
+            restriction: Dict[str, Union[Tuple[bool, str], Dict[str, \
+            Tuple[bool, str]]]] = {}
             orig_query_split_parts = orig_query_or_split_parts.split(' ')[0].split('&')
             for orig_query_split_part in orig_query_split_parts:
                 if orig_query_split_part[0] == '!' and len(orig_query_split_part) > 1:
@@ -262,8 +192,12 @@ def decode_query(orig_query, dependency_type):
                     elif orig_query_split[0] == 'feats':
                         restriction['feats'] = (negation, orig_query_split[1])
                     elif orig_query_split[0] in UNIVERSAL_FEATURES:
+                        """
                         restriction['feats_detailed'] = {}
                         restriction['feats_detailed'][orig_query_split[0]] = (negation, orig_query_split[1])
+                        """
+                        restriction['feats_detailed'] = {orig_query_split[0]:
+                        (negation, orig_query_split[1])}
                     elif not new_query:
                         raise Exception('Not supported yet!')
                     else:
@@ -297,7 +231,7 @@ def decode_query(orig_query, dependency_type):
         root_index = len(priority_actions)
 
     children = []
-    root = None
+    root: Dict[Any, Any] = {}
     for i, node_action in enumerate(node_actions):
         if i < root_index:
             children.append(decode_query(node_action, priority_actions[i]))
@@ -310,7 +244,7 @@ def decode_query(orig_query, dependency_type):
     return root
 
 
-def generate_query_trees(configs, filters):
+def generate_query_trees(configs: dict, filters: dict) -> List[dict]:
     """
     Generates query trees based on configs and filters.
     :param configs:
@@ -320,13 +254,11 @@ def generate_query_trees(configs, filters):
     query_tree = []
     if filters['tree_size_range'][0] > 0:
         if len(filters['tree_size_range']) == 1:
-            #query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [{}])
-            query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [ChainMap()])
+            query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [{}])
         elif len(filters['tree_size_range']) == 2:
             query_tree = []
             for i in range(filters['tree_size_range'][0], filters['tree_size_range'][1] + 1):
-                #query_tree.extend(create_ngrams_query_trees(i, [{}]))
-                query_tree.extend(create_ngrams_query_trees(i, [ChainMap()]))
+                query_tree.extend(create_ngrams_query_trees(i, [{}]))
     else:
         if filters['tree_size_range'][0] == 0 and 'query' not in configs:
             raise ValueError('You should specify either tree_size or query!')
@@ -338,7 +270,7 @@ def generate_query_trees(configs, filters):
     return query_tree
 
 
-def get_query_tree_size(query_tree):
+def get_query_tree_size(query_tree: dict) -> int:
     """
     Returns size of specific query tree.
     :param query_tree:
@@ -352,7 +284,7 @@ def get_query_tree_size(query_tree):
     return size
 
 
-def get_query_tree_size_range(query_trees):
+def get_query_tree_size_range(query_trees: List[dict]) -> Tuple[int, int]:
     """
     Returns tree size range.
     :param query_trees:
