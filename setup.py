@@ -1,7 +1,8 @@
 import re
 from os import path
+import os
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 
 here = path.abspath(path.dirname(__file__))
 
@@ -22,4 +23,17 @@ setup(name='stark',
     'networkx>=3.3',
     'tqdm>=4.66.4'
   ],
+  ext_modules = [
+      Extension(
+          name="_stark",
+          sources=[os.sep.join(["stark", "src", "_starkmodule.c"])],
+          include_dirs=[],
+          define_macros=[],
+          library_dirs=[],
+          libraries=[],
+          extra_compile_args=["-Wall", "-Wextra", "-std=c99", "-pedantic",
+          "-Werror", "-DNDEBUG"]
+      )
+  ]
 )
+

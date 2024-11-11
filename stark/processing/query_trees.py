@@ -17,7 +17,9 @@ from stark.resources.constants import UNIVERSAL_FEATURES
 
 import bisect
 from typing import List, Tuple, Dict, Generator, Any, Union
+from _stark import add_node
 
+''' # rewritten in C
 def add_node(tree: dict) -> None:
     """
     Adds node to a tree.
@@ -28,6 +30,7 @@ def add_node(tree: dict) -> None:
         tree['children'].append({})
     else:
         tree['children'] = [{}]
+'''
 
 
 def tree_grow(orig_tree: dict) -> Generator[dict, None, None]:
