@@ -51,6 +51,11 @@ class DocumentProcessor(object):
         logger.info(f"Reading file: {self.path}")
         train = pyconll.iter_from_file(self.path)
 
+        if self.processor.configs["greedy_counter"]:
+            ClassTree = GreedyTree
+        else:
+            ClassTree = QueryTree
+
         for sentence in train:
             token_nodes = []
             tokens = []
@@ -61,12 +66,16 @@ class DocumentProcessor(object):
                 token_form = token.form if token.form is not None else '_'
                 token_deprel = token.deprel if self.processor.configs['label_subtypes'] \
                     else token.deprel.split(':')[0]
+                """
                 if self.processor.configs['greedy_counter']:
                     node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
                                       token.head, token.feats, document, summary)
                 else:
                     node = QueryTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
                                      token.head, token.feats, document, summary)
+                """
+                node = ClassTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
+                                 token.head, token.feats, document, summary)
                 token_nodes.append(node)
                 space_after = token.misc[
                                   'SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc \

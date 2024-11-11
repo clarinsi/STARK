@@ -15,7 +15,15 @@ import gc
 import random
 from abc import abstractmethod
 from multiprocessing import Pool
+
+import os
+import sys
+
+if not os.isatty(sys.stdout.fileno()): # if it is not an interactive shell
+    os.environ["TQDM_DISABLE"] = "1"
+
 from tqdm import tqdm
+from collections import Counter as collections_Counter
 
 
 class Counter(object):
@@ -51,24 +59,32 @@ class Counter(object):
         with Pool(self.filters['cpu_cores']) as p:
             all_unigrams = p.map(self.get_unigrams,
                                  [(tree, self.filters) for tree in self.document.trees])
+            self.summary.unigrams = collections_Counter()
             for unigrams in all_unigrams:
+                """ # works, but trying to improve it
                 for unigram in unigrams:
                     if unigram in self.summary.unigrams:
                         self.summary.unigrams[unigram] += 1
                     else:
                         self.summary.unigrams[unigram] = 1
+                """
 
-            i = 0
+                self.summary.unigrams += collections_Counter(unigrams)
+
+            #i = 0
             with tqdm(desc='Creating subtrees', total=len(self.document.trees)) as pbar:
-                for subtrees in p.imap(self.tree_calculations,
-                                                [(tree, self.summary.query_trees, self.filters) for tree in self.document.trees]):
+                for i, subtrees in enumerate(p.imap(self.tree_calculations,
+                                                [(tree,
+                                                self.summary.query_trees,
+                                                self.filters) for tree in
+                                                self.document.trees])):
 
                     for subtree in subtrees:
                         self.postprocess_query_results(subtree, self.document.sentence_statistics[i])
-                    i += 1
+                    #i += 1
                     pbar.update()
-                    # if i % 1000 == 0:
-                    #     gc.collect()
+                    #if i % 256 == 0:
+                    #    pbar.update(256)
 
     def run_single_processor(self):
         """

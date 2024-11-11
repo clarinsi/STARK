@@ -24,6 +24,7 @@ def main():
     t_start = time.time()
 
     prcs_res = os.system(f"python3 -OO stark.py --config_file benchmark{os.sep}config_benchmark.ini")
+    #prcs_res = os.system(f"python3 -OO stark.py --config_file benchmark{os.sep}config_benchmark.ini > benchmark_output.txt &")
     if prcs_res != 0:
         raise Exception(f"prcs_res: {prcs_res}")
 

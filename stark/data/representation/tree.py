@@ -156,28 +156,45 @@ class RepresentationTree(object):
         return key
 
     def get_order_key(self, filters):
-        order_key = ''
+        #order_key = ''
         write_self_node_to_result = False
+        #filters_dependency_type = bool(filters['dependency_type'])
+        if filters['dependency_type']:
+            separator_function = lambda x: f" <{x} "
+        else:
+            separator_function = lambda x: " < "
         if self.children:
+            order_key_list = ["("]
             for child in self.children:
                 if filters['node_order'] and child.node.location < self.node.location:
-                    if filters['dependency_type']:
+                    """
+                    if filters_dependency_type:
                         separator = ' <' + child.node.node.deprel + ' '
                     else:
                         separator = ' < '
-                    order_key += child.get_order_key(filters) + separator
+                    """
+                    separator = separator_function(child.node.node.deprel)
+                    #order_key += child.get_order_key(filters) + separator
+                    order_key_list.append(child.get_order_key(filters) + separator)
                 else:
                     if not write_self_node_to_result:
                         write_self_node_to_result = True
                         order_key += str(self.node.location)
-                    if filters['dependency_type']:
+                    """
+                    if filters_dependency_type:
                         separator = ' >' + child.node.node.deprel + ' '
                     else:
                         separator = ' > '
-                    order_key += separator + child.get_order_key(filters)
+                    """
+                    separator = separator_function(child.node.node.deprel)
+                    #order_key += separator + child.get_order_key(filters)
+                    order_key_list.append(separator + child.get_order_key(filters))
             if not write_self_node_to_result:
-                order_key += str(self.node.location)
-            order_key = '(' + order_key + ')'
+                #order_key += str(self.node.location)
+                order_key_list.append(str(self.node.location))
+            #order_key = '(' + order_key + ')'
+            order_key_list.append(")")
+            order_key = "".join(order_key_list)
         else:
             order_key = str(self.node.location)
         return order_key
@@ -203,9 +220,10 @@ class RepresentationTree(object):
         return order
 
     def get_array(self, filters):
-        array = []
+        #array = []
         write_self_node_to_result = False
         if self.children:
+            array = []
             for child in self.children:
                 if filters['node_order'] and child.node.location < self.node.location:
                     array += child.get_array(filters)
@@ -225,8 +243,11 @@ class RepresentationTree(object):
     @staticmethod
     def get_order_letters(order):
         order_letters = [''] * len(order)
+        order_sorted = sorted(list(enumerate(order)), key=lambda x:x[1])
         for i in range(len(order)):
-            ind = order.index(min(order))
+            #ind = order.index(min(order))
+            #ind, val = min(enumerate(order), key=lambda x:x[1])
+            ind = order_sorted[i][0]
             order[ind] = 10000
             order_letters[ind] = string.ascii_uppercase[i % 26]
         return ''.join(order_letters)
