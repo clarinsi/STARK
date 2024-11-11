@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import gc
+#import gc
 import logging
 import pyconll
 
@@ -99,7 +99,7 @@ class DocumentProcessor(object):
 
             document.trees.append(roots)
 
-        del train
-        gc.collect()
+        #del train
+        #gc.collect()
 
         return document

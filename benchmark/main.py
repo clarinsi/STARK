@@ -24,6 +24,8 @@ def main():
     t_start = time.time()
 
     prcs_res = os.system(f"python3 -OO stark.py --config_file benchmark{os.sep}config_benchmark.ini")
+    if prcs_res != 0:
+        raise Exception(f"prcs_res: {prcs_res}")
 
     t_end = time.time()
     t_delta = t_end - t_start

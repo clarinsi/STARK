@@ -15,6 +15,9 @@
 import copy
 from stark.resources.constants import UNIVERSAL_FEATURES
 
+from collections import deque, ChainMap
+#import functools
+import bisect
 
 def add_node(tree):
     """
@@ -23,9 +26,11 @@ def add_node(tree):
     :return:
     """
     if 'children' in tree:
-        tree['children'].append({})
+        #tree['children'].append({})
+        tree['children'].append(ChainMap())
     else:
-        tree['children'] = [{}]
+        #tree['children'] = [{}]
+        tree['children'] = [ChainMap()]
 
 
 def tree_grow(orig_tree):
@@ -34,23 +39,33 @@ def tree_grow(orig_tree):
     :param orig_tree:
     :return:
     """
-    new_trees = []
-    new_tree = copy.deepcopy(orig_tree)
+    #new_tree = copy.deepcopy(orig_tree)
+    new_tree = orig_tree
     add_node(new_tree)
-    new_trees.append(new_tree)
+    yield new_tree
+
     if 'children' in orig_tree:
+        """
         children = []
         for child_tree in orig_tree['children']:
             children.append(tree_grow(child_tree))
+        """
+        children = (tree_grow(child_tree) for child_tree in orig_tree['children'])
         for i, child in enumerate(children):
+            """
             for child_res in child:
                 new_tree = copy.deepcopy(orig_tree)
                 new_tree['children'][i] = child_res
-                new_trees.append(new_tree)
+                yield new_tree
+            """
 
-    return new_trees
+            #new_tree = copy.deepcopy(orig_tree)
+            for child_res in child:
+                new_tree['children'][i] = child_res
+                yield new_tree
 
 
+#@functools.cache
 def compare_trees(tree1, tree2):
     """
     Compares two trees and returns True, when they match.
@@ -58,12 +73,18 @@ def compare_trees(tree1, tree2):
     :param tree2:
     :return:
     """
+
+    #return len({str(tree1), str(tree2)}) == 1
+    return tree1 == tree2
+
+    '''
     if tree1 == {} and tree2 == {}:
         return True
 
     if 'children' not in tree1 or 'children' not in tree2 or len(tree1['children']) != len(tree2['children']):
         return False
 
+    """
     children2_connections = []
 
     for child1_i, child1 in enumerate(tree1['children']):
@@ -77,8 +98,19 @@ def compare_trees(tree1, tree2):
                 break
         if not child_duplicated:
             return False
+    """
+
+    for child1 in tree1['children']:
+        child_duplicated = False
+        for child2 in tree2['children']:
+            if compare_trees(child1, child2):
+                child_duplicated = True
+                break
+        if not child_duplicated:
+            return False
 
     return True
+    '''
 
 
 def create_ngrams_query_trees(n, trees):
@@ -89,7 +121,34 @@ def create_ngrams_query_trees(n, trees):
     :return:
     """
     for i in range(n - 1):
-        new_trees = []
+        #new_trees = []
+        new_trees = deque()
+        for tree in trees:
+            # append new_tree only if it is not already inside
+            for new_tree in tree_grow(tree):
+                ''' # works, do not remove
+                duplicate = False
+                for confirmed_new_tree in new_trees:
+                    #if compare_trees(new_tree, confirmed_new_tree):
+                    if new_tree == confirmed_new_tree:
+                        duplicate = True
+                        break
+                if not duplicate:
+                    new_trees.append(new_tree)
+                '''
+
+                index = bisect.bisect_left(new_trees, new_tree)
+                if new_trees[index] != new_tree:
+                    new_trees.insert(index, new_tree)
+
+        trees = new_trees
+    #return trees
+    return list(trees)
+
+    """
+    def f(_n, _trees):
+        #new_trees = []
+        new_trees = deque()
         for tree in trees:
             # append new_tree only if it is not already inside
             for new_tree in tree_grow(tree):
@@ -100,9 +159,7 @@ def create_ngrams_query_trees(n, trees):
                         break
                 if not duplicate:
                     new_trees.append(new_tree)
-
-        trees = new_trees
-    return trees
+    """
 
 
 def split_query_text(input_string):
@@ -117,20 +174,32 @@ def split_query_text(input_string):
     brackets_depth = 0
     replace_string = ''
 
-    for char in input_string:
+    replace_string_start = None
+    replace_string_end = None
+
+    input_string_initial = input_string[:]
+
+    for char_id, char in enumerate(input_string_initial):
         if char == '(':
             brackets_depth += 1
 
         if brackets_depth >= 1:
-            replace_string += char
+            #replace_string += char
+            if replace_string_start == None:
+                replace_string_start = char_id
 
         if char == ')':
             brackets_depth -= 1
             if brackets_depth == 0:
+                replace_string_end = char_id + 1
+                replace_string = input_string_initial[replace_string_start:replace_string_end]
+                replace_string_start = None
+                replace_string_end = None
+
                 input_string = input_string.replace(replace_string, f'<BRACKET{brackets_count}>', 1)
                 replacements[f'<BRACKET{brackets_count}>'] = replace_string
                 brackets_count += 1
-                replace_string = ''
+                #replace_string = ''
 
     return [el if el not in replacements else replacements[el] for el in input_string.split()]
 
@@ -251,11 +320,13 @@ def generate_query_trees(configs, filters):
     query_tree = []
     if filters['tree_size_range'][0] > 0:
         if len(filters['tree_size_range']) == 1:
-            query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [{}])
+            #query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [{}])
+            query_tree = create_ngrams_query_trees(filters['tree_size_range'][0], [ChainMap()])
         elif len(filters['tree_size_range']) == 2:
             query_tree = []
             for i in range(filters['tree_size_range'][0], filters['tree_size_range'][1] + 1):
-                query_tree.extend(create_ngrams_query_trees(i, [{}]))
+                #query_tree.extend(create_ngrams_query_trees(i, [{}]))
+                query_tree.extend(create_ngrams_query_trees(i, [ChainMap()]))
     else:
         if filters['tree_size_range'][0] == 0 and 'query' not in configs:
             raise ValueError('You should specify either tree_size or query!')
@@ -295,4 +366,4 @@ def get_query_tree_size_range(query_trees):
             max_size = size
         if size < min_size:
             min_size = size
-    return [min_size, max_size]
+    return (min_size, max_size)
