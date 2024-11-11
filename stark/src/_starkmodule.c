@@ -203,11 +203,12 @@ args){
         capacity_new_trees = mem_capacity;
 
         // Py_DECREF(list_trees);
-        PyGC_Collect();
+        if(i % 16 == 0){PyGC_Collect();}
     }
 
     Py_DECREF(globals);
     Py_DECREF(key_tree_grow);
+    Py_DECREF(list_new_trees);
 
     // return list_trees;
     return PyList_GetSlice(list_trees, 0, card_trees);
