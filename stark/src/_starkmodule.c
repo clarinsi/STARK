@@ -1,5 +1,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <stdlib.h>
 
 static PyObject* interface_add_node(PyObject* self, PyObject* args){
     (void) self;
@@ -212,12 +213,93 @@ args){
     return PyList_GetSlice(list_trees, 0, card_trees);
 }
 
+static PyObject* interface_split_query_text(PyObject* self, PyObject* args){
+    (void) self;
+
+    char * input_str;
+    size_t input_str_len;
+
+    if(!PyArg_ParseTuple(args, "s#", &input_str, &input_str_len)){
+        PyErr_SetString(PyExc_Exception, "Failed to parse arguments!");
+        return NULL;
+    }
+
+    typedef uint32_t index_t;
+
+    const uint64_t PAGE_SIZE = 4096;
+
+    uint64_t index_pages = 1;
+    uint64_t capacity_indices = PAGE_SIZE / sizeof(index_t);
+    uint64_t card_indices = 0;
+
+    size_t alloc_size = index_pages * PAGE_SIZE;
+    index_t * index_array = malloc(alloc_size);
+    if(index_array == NULL){
+        PyErr_SetString(PyExc_Exception, "Failed to malloc");
+        return NULL;
+    }
+    memset(index_array, '\0', alloc_size);
+
+    uint64_t i = 0;
+    uint64_t open_parenthesis = 0;
+
+    while(i < input_str_len){
+        switch(input_str[i]){
+            case '(':
+                open_parenthesis++;
+                break;
+            case ')':
+                open_parenthesis--;
+                break;
+            case ' ':
+                if(!open_parenthesis){
+                    if(card_indices == capacity_indices){
+                        index_pages++;
+                        alloc_size = index_pages * PAGE_SIZE;
+                        index_array = realloc(index_array, alloc_size);
+                        if(index_array == NULL){
+                            PyErr_SetString(PyExc_Exception, "Failed to realloc");
+                            return NULL;
+                        }
+                        capacity_indices = alloc_size / sizeof(index_t);
+                    }
+                    index_array[card_indices] = i;
+                    card_indices++;
+                }
+                break;
+            case '\0':
+                break;
+        }
+        i++;
+    }
+
+    PyObject * list_result = PyList_New(card_indices + 1);
+
+    index_t start_index = 0;
+    for(uint64_t j = 0 ; j < card_indices ; j++){
+        // PyList_SetItem(list_result, j, PyString_GetSlice(
+        input_str[index_array[j]] = '\0';
+        PyList_SetItem(list_result, j, PyUnicode_FromString(input_str + \
+        start_index));
+        input_str[index_array[j]] = ' ';
+        start_index = index_array[j];
+    }
+    PyList_SetItem(list_result, card_indices, PyUnicode_FromString(input_str + \
+    start_index));
+
+    free(index_array);
+
+    return list_result;
+}
+
 static PyMethodDef _starkmethods[] = {
     {"add_node", interface_add_node, METH_VARARGS, "Add a node."},
     {"get_query_tree_size_range", interface_get_query_tree_size_range,
     METH_VARARGS, "Returns a tuple of (min_size, max_size)."},
     {"create_ngrams_query_trees", interface_create_ngrams_query_trees,
     METH_VARARGS, "Forms unique ngram query trees."},
+    {"split_query_text", interface_split_query_text,
+    METH_VARARGS, "Splits query by ignoring everything in brackets and otherwise splitting by spaces."},
     {NULL, NULL, 0, NULL}
 };
 

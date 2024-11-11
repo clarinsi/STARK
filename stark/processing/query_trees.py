@@ -18,7 +18,7 @@ from stark.resources.constants import UNIVERSAL_FEATURES
 import bisect
 from typing import List, Tuple, Dict, Generator, Any, Union
 from _stark import add_node, get_query_tree_size_range, \
-create_ngrams_query_trees
+create_ngrams_query_trees, split_query_text
 
 ''' # rewritten in C
 def add_node(tree: dict) -> None:
@@ -96,6 +96,7 @@ def create_ngrams_query_trees(n: int, trees: List[dict]) -> List[dict]:
 '''
 
 
+''' # rewritten in C
 def split_query_text(input_string: str) -> List[str]:
     """
     Splits query by ignoring everything in brackets and otherwise splitting by spaces.
@@ -134,10 +135,9 @@ def split_query_text(input_string: str) -> List[str]:
                 brackets_count += 1
 
     return [el if el not in replacements else replacements[el] for el in input_string.split()]
+'''
 
 
-#def decode_query(orig_query: str, dependency_type: str) \
-#-> Union[Dict[Any, Any], None]:
 def decode_query(orig_query: str, dependency_type: str) \
 -> Dict[Any, Any]:
     """
