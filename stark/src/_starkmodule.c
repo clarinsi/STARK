@@ -107,10 +107,110 @@ args){
     return return_tuple;
 }
 
+
+
+static PyObject* interface_create_ngrams_query_trees(PyObject* self, PyObject*
+args){
+    (void) self;
+
+    int32_t n;
+    PyObject * list_trees;
+    PyObject * list_new_trees;
+
+    if(!PyArg_ParseTuple(args, "iO!", &n, &PyList_Type, &list_trees)){
+        PyErr_SetString(PyExc_Exception, "Failed to parse arguments!");
+        return NULL;
+    }
+
+    PyObject * globals = PyEval_GetGlobals();
+    PyObject * key_tree_grow = PyUnicode_FromString("tree_grow");
+    PyObject * tree_grow_func = PyDict_GetItem(globals, key_tree_grow);
+
+    // PyObject * tree_grow_args = PyTuple_New(1);
+
+    Py_ssize_t card_trees = PyList_Size(list_trees);
+    Py_ssize_t card_new_trees = 0;
+
+    Py_ssize_t capacity_trees = card_trees;
+    Py_ssize_t capacity_new_trees = capacity_new_trees;
+
+    list_new_trees = PyList_New(card_new_trees);
+
+    int32_t i;
+    for(i = 0 ; i < n ; i++){
+
+        // card_trees = PyList_Size(list_trees);
+        Py_ssize_t j;
+        for(j = 0 ; j < card_trees ; j++){
+            PyObject * tree = PyList_GetItem(list_trees, j);
+    
+            /*
+            PyTuple_SetItem(tree_grow_args, 0, tree);
+            PyObject * tree_grow_iterator = PyObject_CallObject(tree_grow_func,
+            tree_grow_args);
+            */
+            PyObject * tree_grow_iterator = \
+            PyObject_CallOneArg(tree_grow_func, tree);
+
+            PyObject * new_tree;
+
+            while((new_tree = PyIter_Next(tree_grow_iterator))){
+                int32_t duplicate = 0;
+
+                // card_new_trees = PyList_Size(new_tree);
+                Py_ssize_t k;
+                for(k = 0 ; k < card_new_trees ; k++){
+                    PyObject * confirmed_new_tree = \
+                    PyList_GetItem(list_new_trees, k);
+
+                    if(PyObject_RichCompareBool(new_tree, confirmed_new_tree,
+                    Py_EQ)){
+                        duplicate = 1;
+                        break;
+                    }
+                }
+
+                if(!duplicate){
+                    if(card_new_trees == capacity_new_trees){
+                        PyList_Append(list_new_trees, new_tree);
+                        capacity_new_trees++;
+                    } else {
+                        PyList_SetItem(list_new_trees, card_new_trees,
+                        new_tree);
+                    }
+                    card_new_trees++;
+                }
+            }
+
+        }
+
+        void* mem = list_trees;
+        // Py_ssize_t mem_card = card_trees;
+        Py_ssize_t mem_capacity = capacity_trees;
+
+        list_trees = list_new_trees;
+        card_trees = card_new_trees;
+        capacity_trees = capacity_new_trees;
+
+        list_new_trees = mem;
+        // card_new_trees = mem_card;
+        card_new_trees = 0;
+        capacity_new_trees = mem_capacity;
+
+        // Py_DECREF(list_trees);
+        PyGC_Collect();
+    }
+
+    // return list_trees;
+    return PyList_GetSlice(list_trees, 0, card_trees);
+}
+
 static PyMethodDef _starkmethods[] = {
     {"add_node", interface_add_node, METH_VARARGS, "Add a node."},
     {"get_query_tree_size_range", interface_get_query_tree_size_range,
     METH_VARARGS, "Returns a tuple of (min_size, max_size)."},
+    {"create_ngrams_query_trees", interface_create_ngrams_query_trees,
+    METH_VARARGS, "Forms unique ngram query trees."},
     {NULL, NULL, 0, NULL}
 };
 

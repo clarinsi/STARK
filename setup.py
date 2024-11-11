@@ -32,7 +32,7 @@ setup(name='stark',
           library_dirs=[],
           libraries=[],
           extra_compile_args=["-Wall", "-Wextra", "-std=c99", "-pedantic",
-          "-Werror", "-DNDEBUG"]
+          "-Werror", "-DNDEBUG", "-O3"]
       )
   ]
 )

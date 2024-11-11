@@ -17,7 +17,8 @@ from stark.resources.constants import UNIVERSAL_FEATURES
 
 import bisect
 from typing import List, Tuple, Dict, Generator, Any, Union
-from _stark import add_node, get_query_tree_size_range
+from _stark import add_node, get_query_tree_size_range, \
+create_ngrams_query_trees
 
 ''' # rewritten in C
 def add_node(tree: dict) -> None:
@@ -62,6 +63,7 @@ def compare_trees(tree1: dict, tree2: dict) -> bool:
     return tree1 == tree2
 
 
+''' # rewritten in C
 def create_ngrams_query_trees(n: int, trees: List[dict]) -> List[dict]:
     """
     Forms unique ngram query trees.
@@ -83,14 +85,15 @@ def create_ngrams_query_trees(n: int, trees: List[dict]) -> List[dict]:
                 if not duplicate:
                     new_trees.append(new_tree)
 
-                '''
+                """
                 index = bisect.bisect_left(new_trees, new_tree)
                 if new_trees[index] != new_tree:
                     new_trees.insert(index, new_tree)
-                '''
+                """
 
         trees = new_trees
-    return list(trees)
+    return trees
+'''
 
 
 def split_query_text(input_string: str) -> List[str]:
