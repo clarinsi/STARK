@@ -42,8 +42,75 @@ static PyObject* interface_add_node(PyObject* self, PyObject* args){
     return Py_None;
 }
 
+Py_ssize_t get_query_tree_size(PyObject* query_tree){
+    Py_ssize_t size = 1;
+
+    PyObject * list_children;
+
+    PyObject * children_key = Py_BuildValue("s#", "children", 8);
+
+
+    const int res_contains = PyDict_Contains(query_tree, children_key);
+
+    Py_ssize_t i;
+
+    switch(res_contains){
+        /*
+        case -1:
+            PyErr_SetString(PyExc_Exception, "Failed to test for 'contain'.");
+            return NULL;
+        */
+        case 0:
+            break;
+        case 1:
+            list_children = PyDict_GetItem(query_tree, children_key);
+
+            Py_ssize_t len_list_children = PyList_Size(list_children);
+
+            for(i = 0 ; i < len_list_children ; i++){
+                size += get_query_tree_size(PyList_GetItem(list_children, i));
+            }
+
+            break;
+    }
+
+    return size;
+}
+
+static PyObject* interface_get_query_tree_size_range(PyObject* self, PyObject*
+args){
+    (void) self;
+
+    Py_ssize_t min_size = 1000000;
+    Py_ssize_t max_size = 0;
+
+    PyObject * list_query_trees;
+
+    if(!PyArg_ParseTuple(args, "O!", &PyList_Type, &list_query_trees)){
+        PyErr_SetString(PyExc_Exception, "Failed to parse arguments!");
+        return NULL;
+    }
+
+    const Py_ssize_t len_list_query_trees = PyList_Size(list_query_trees);
+    Py_ssize_t i;
+    for(i = 0 ; i < len_list_query_trees ; i++){
+        Py_ssize_t size = get_query_tree_size(PyList_GetItem(list_query_trees,
+        i));
+        if(size > max_size){max_size = size;}
+        if(size < min_size){min_size = size;}
+    }
+
+    PyObject * return_tuple = PyTuple_New(2);
+    PyTuple_SetItem(return_tuple, 0, Py_BuildValue("i", min_size));
+    PyTuple_SetItem(return_tuple, 1, Py_BuildValue("i", max_size));
+
+    return return_tuple;
+}
+
 static PyMethodDef _starkmethods[] = {
     {"add_node", interface_add_node, METH_VARARGS, "Add a node."},
+    {"get_query_tree_size_range", interface_get_query_tree_size_range,
+    METH_VARARGS, "Returns a tuple of (min_size, max_size)."},
     {NULL, NULL, 0, NULL}
 };
 

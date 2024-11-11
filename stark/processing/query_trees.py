@@ -17,7 +17,7 @@ from stark.resources.constants import UNIVERSAL_FEATURES
 
 import bisect
 from typing import List, Tuple, Dict, Generator, Any, Union
-from _stark import add_node
+from _stark import add_node, get_query_tree_size_range
 
 ''' # rewritten in C
 def add_node(tree: dict) -> None:
@@ -273,6 +273,7 @@ def generate_query_trees(configs: dict, filters: dict) -> List[dict]:
     return query_tree
 
 
+''' # rewritten in C
 def get_query_tree_size(query_tree: dict) -> int:
     """
     Returns size of specific query tree.
@@ -302,3 +303,4 @@ def get_query_tree_size_range(query_trees: List[dict]) -> Tuple[int, int]:
         if size < min_size:
             min_size = size
     return (min_size, max_size)
+'''
