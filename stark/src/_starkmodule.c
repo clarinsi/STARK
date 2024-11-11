@@ -39,6 +39,8 @@ static PyObject* interface_add_node(PyObject* self, PyObject* args){
             break;
     }
 
+    Py_DECREF(children_key);
+
     return Py_None;
 }
 
@@ -73,6 +75,8 @@ Py_ssize_t get_query_tree_size(PyObject* query_tree){
 
             break;
     }
+
+    Py_DECREF(children_key);
 
     return size;
 }
@@ -200,6 +204,9 @@ args){
         // Py_DECREF(list_trees);
         PyGC_Collect();
     }
+
+    Py_DECREF(globals);
+    Py_DECREF(key_tree_grow);
 
     // return list_trees;
     return PyList_GetSlice(list_trees, 0, card_trees);
