@@ -203,7 +203,10 @@ args){
         capacity_new_trees = mem_capacity;
 
         // Py_DECREF(list_trees);
+// check if at least python3.10
+#if PY_HEX_VERSION >= 0x03100000
         if(i % 16 == 0){PyGC_Collect();}
+#endif
     }
 
     Py_DECREF(globals);
