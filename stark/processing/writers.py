@@ -31,6 +31,8 @@ here = path.abspath(path.dirname(__file__))
 logging.basicConfig(level=logging.NOTSET)
 logger = logging.getLogger('stark')
 
+with open(os.path.join(here, '../resources/codes_mapper.json'), 'r') as f:
+    codes_mapper = json.load(f)
 
 class Writer(object):
     """
@@ -76,12 +78,10 @@ class Writer(object):
 
         sorted_list = sorted(sorted_list, key=lambda x: (-x[1]['number'], x[0]))
 
-        with open(os.path.join(here, '../resources/codes_mapper.json'), 'r') as f:
-            codes_mapper = json.load(f)
         path = Path(self.configs['input_path']).name
         lang = path.split('_')[0]
         corpus_name = path.split('_')[1].split('-')[0].lower() if len(path.split('_')) > 1 else 'unknown'
-        corpus = codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
+        corpus = self.codes_mapper[lang][corpus_name] if lang in codes_mapper and corpus_name in codes_mapper[lang] else None
 
         if self.configs['sentence_count_file']:
             self.write_sentence_count_file()
@@ -132,8 +132,7 @@ class Writer(object):
             relative_frequency = v['number'] * 1000000.0 / self.summary.corpus_size
             words_only = [word_att for word in word_array for word_att in word] + ['' for _ in range(
                 (len_words - len(word_array)) * len(word_array[0]))]
-            key = literal_key[1:-1] if literal_key[0] == '(' and literal_key[
-                -1] == ')' else literal_key
+            key = literal_key[1:-1] if (len(literal_key) > 0 and literal_key[0] == '(' and literal_key[-1] == ')') else literal_key
 
             row = [key] + words_only + [str(v['number'])]
             row += ['%.1f' % relative_frequency]
@@ -346,4 +345,5 @@ class ObjectWriter(Writer):
         super().__init__(*configs)
 
     def write(self):
-        return list(self.lines_generator())
+        #return list(self.lines_generator())
+        return self.lines_generator()

@@ -100,13 +100,13 @@ def test_dir():
     """
     random.seed(12)
     config_file = os.path.join(CONFIGS_DIR, 'config_base.ini')
-    settings = read_settings(config_file, parse_args(['--input', 'test_data/input/',
+    settings = read_settings(config_file, parse_args(['--input', 'test_data/input/dir_input/',
                                                       '--output', 'test_data/output/out_dir.tsv']))
     stark.run(settings)
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_dir.tsv'), os.path.join(CORRECT_OUTPUT_DIR, 'out_dir.tsv'))
     random.seed(12)
     config_file = os.path.join(CONFIGS_DIR, 'config_base.ini')
-    settings = read_settings(config_file, parse_args(['--input', 'test_data/input/',
+    settings = read_settings(config_file, parse_args(['--input', 'test_data/input/dir_input/',
                                                       '--output', 'test_data/output/out_dir.tsv',
                                                       '--greedy_counter', 'yes']))
     stark.run(settings)

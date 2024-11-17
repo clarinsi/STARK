@@ -7,7 +7,7 @@ Below is a list of customizable settings that can be used to define the type of 
 | --- | --- | --- | --- | --- |  --- | 
 | [input](#--input) | [node_type](#--node_type) | [size](#--size) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
 | [output](#--output) | [labeled](#--labeled) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
-|  | [label_subtypes](#--label_subtypes) | [ignore_labels](#--ignore_labels)| | [depsearch](#--depsearch) | |
+|  | [label_subtypes](#--label_subtypes) | [ignored_labels](#--ignored_labels)| | [depsearch](#--depsearch) | |
 |  | [fixed](#--fixed) | [allowed_labels](#--allowed_labels)  |  |  |  |
 |  |  |  [query](#--query)|  |  |  |
 
@@ -80,26 +80,26 @@ The optional `--head` parameter allows the users to define specific constraints 
 
 For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR),  '&' (AND) and '!' (NOT) operators, e.g. specifying _lemma=chair&upos=NOUN|lemma=bank&upos=VERB_ to extract trees spanning from the verb or noun 'chair'. 
 
-### `--ignore_labels`
+### `--ignored_labels`
 **Value:** _\<list of dependency relations to be ignored\>_
 
-The optional `--ignore_labels` parameter defines a list of dependency relations that are to be ignored when matching the trees and thus not displayed in the results file. 
+The optional `--ignored_labels` parameter defines a list of dependency relations that are to be ignored when matching the trees and thus not displayed in the results file. 
 
-For example, specifying _ignore_labels = punct_ produces a list of matched trees that do not include the _punct_ relation (even if it is present in the actual tree). In addition to ignoring a certain type of relations, such as punctuation or other clause-peripheral phenomena, this is a particularly useful feature for users interested in a limited set of relations only, such as core predicate arguments. Such users would then use this parameter as a negative filter by specifying all relations except those pertaining to the core predicate arguments (e.g. _nsubj, obj_). In contrast to the `--allowed_labels` parameter below, this parameter does not exclude trees containing a given relation, but only ignores them when they occur in a tree. Two or more relations specified should be separated by the '|' operator.
+For example, specifying _ignored_labels = punct_ produces a list of matched trees that do not include the _punct_ relation (even if it is present in the actual tree). In addition to ignoring a certain type of relations, such as punctuation or other clause-peripheral phenomena, this is a particularly useful feature for users interested in a limited set of relations only, such as core predicate arguments. Such users would then use this parameter as a negative filter by specifying all relations except those pertaining to the core predicate arguments (e.g. _nsubj, obj_). In contrast to the `--allowed_labels` parameter below, this parameter does not exclude trees containing a given relation, but only ignores them when they occur in a tree. Two or more relations specified should be separated by the '|' operator.
 
 ### `--allowed_labels`
 **Value:** _\<whitelist of allowed dependency relations\>_
 
 The optional `--allowed_labels` parameter defines a list of dependency relations that are allowed to occur in the trees to be extracted (i.e. a whitelist subset of all possible dependency labels) in the form of a list separated by the '|' operator. 
 
-For example, specifying _allowed_labels = obj|iobj|nsubj_ extracts trees featuring only these three relations (and no other) and ignores all others. In contrast to the `--ignore_labels` parameter above, the presence of any other label in the tree automatically excludes such tree from being matched and counted.  
+For example, specifying _allowed_labels = obj|iobj|nsubj_ extracts trees featuring only these three relations (and no other) and ignores all others. In contrast to the `--ignored_labels` parameter above, the presence of any other label in the tree automatically excludes such tree from being matched and counted.  
 
 ### `--query`
 **Value:** _\<pre-defined tree query\>_
 
-Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/). 
+Finally, the optional `--query` parameter allows the users to define a specific tree structure to be extracted by using the [dep_search query language](https://orodja.cjvt.si/drevesnik/help/en/). 
 
-For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. The query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_) and also supports using the '|' (OR),  '&' (AND), and '!' (NOT) operators. 
+For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that govern an adjectival modifier modified by an adverbial modifier, e.g. trees of the type '_seemingly easy example_'. The query language requires the attributes to be written in full (e.g. _upos=VERB_, _form=went_, _L=go_) and also supports using the '|' (OR),  '&' (AND), and '!' (NOT) operators. For the latter, the program enables negations of specific relation types (e.g. _A >!case B_), while negations of relations as such (e.g. _A !> B_ ) are currently not supported.
 
 When `--query` is specified, the output takes into account [tree specification settings](#tree-specification), such as `--node_type`, but ignores all other [tree restriction settings](#restriction-to-specific-structure), such as `--size`.
 
@@ -120,7 +120,7 @@ If a tree occurring in the first treebank is absent from the second treebank (i.
 
 ## Alternative visualisation and examples
 
-In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the easy-to-read DepSearch query language (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree, which also enable the users to visualisize specific instances of the trees in the related treebank-browsing services.
+In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the easy-to-read dep\_search query language (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree, which also enable the users to visualize specific instances of the trees in the related treebank-browsing services.
 
 ### `--grew_match`
 **Values:** _yes, no_
@@ -132,7 +132,7 @@ If the name of the input treebank begins with the standard declaration of the la
 ### `--depsearch`
 **Values:** _yes, no_
 
-Second, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [DepSearch query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
+Second, the optional `--depsearch` parameter (value _yes_) produces trees in accordance with the [dep_search query language](https://orodja.cjvt.si/drevesnik/help/en/) (e.g. 'NOUN >amod ADJ'), which is used by the [SETS](http://depsearch-depsearch.rahtiapp.fi/ds_demo/) online treebank-browsing service. Unfortunately, SETS is no longer maintained, but some derivations of it still exist, such as [Drevesnik](https://orodja.cjvt.si/drevesnik/).
 
 ### `--example`
 **Values:** _yes, no_

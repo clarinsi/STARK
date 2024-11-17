@@ -41,13 +41,12 @@ class Processor(object):
         processor_cache = ProcessorCache(self)
         summary = processor_cache.load_cache(summary)
 
-        for directory in sorted(os.listdir(self.configs['input_path'])):
-            path = Path(self.configs['input_path'], directory)
+        for path in sorted(Path(self.configs['input_path']).rglob('*.conllu')):
             summary = processor_cache.process_trees(path, summary)
 
         return summary
 
-    def run(self, path_list, summary):
+    def run(self, path, summary):
         """
         Run processing.
         :param path_list: List of paths to documents that need to be processed.
@@ -57,17 +56,16 @@ class Processor(object):
         """
         start_exe_time = time.time()
 
-        for path in sorted(path_list):
-            document_processor = DocumentProcessor(str(path), self)
-            document = document_processor.form_trees(summary)
-            logger.info("Trees formed time:")
-            logger.info("--- %s seconds ---" % (time.time() - start_exe_time))
-            if self.configs['greedy_counter']:
-                tree_counter = GreedyCounter(document, summary, self.filters, self.configs)
-            else:
-                tree_counter = QueryCounter(document, summary, self.filters, self.configs)
-            tree_counter.run()
-            summary.samples.extend(document.sentence_statistics)
+        document_processor = DocumentProcessor(str(path), self)
+        document = document_processor.form_trees(summary)
+        logger.info("Trees formed time:")
+        logger.info("--- %s seconds ---" % (time.time() - start_exe_time))
+        if self.configs['greedy_counter']:
+            tree_counter = GreedyCounter(document, summary, self.filters, self.configs)
+        else:
+            tree_counter = QueryCounter(document, summary, self.filters, self.configs)
+        tree_counter.run()
+        summary.samples.extend(document.sentence_statistics)
 
         logger.info(f"{len(summary.representation_trees)} unique trees counted time (execution time):")
         logger.info("Trees counted time (execution time):")

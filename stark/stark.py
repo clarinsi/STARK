@@ -16,7 +16,6 @@
 import argparse
 import configparser
 import os
-from multiprocessing import cpu_count
 from pathlib import Path
 import sys
 import logging
@@ -44,7 +43,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--config_file", default=str(Path.joinpath(Path(__file__).parent, "config.ini")), type=str,
+    parser.add_argument("--config_file", default=str(Path.joinpath(Path(__file__).parent.parent, "config.ini")), type=str,
                         help="The input config file.")
     parser.add_argument("--input", default=None, type=str, help="The input file/folder.")
     parser.add_argument("--output", default=None, type=str, help="The output file.")
@@ -79,8 +78,8 @@ def parse_args(args):
 
     parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
-    parser.add_argument("--association_measures", default=None, type=bool, help="Association measures.")
-    parser.add_argument("--continuation_processing", default=None, type=bool, help="Nodes number.")
+    parser.add_argument("--association_measures", default=None, type=str, help="Association measures.")
+    parser.add_argument("--continuation_processing", default=None, type=str, help="Nodes number.")
     parser.add_argument("--compare", default=None, type=str, help="Corpus with which we want to compare statistics.")
     return parser.parse_args(args)
 
@@ -102,10 +101,10 @@ def count_subtrees(configs, filters):
             filters['tree_size_range'] = get_query_tree_size_range(summary.query_trees)
 
     if os.path.isdir(configs['input_path']):
-        processor.run_dir(summary)
+        summary = processor.run_dir(summary)
 
     else:
-        processor.run([configs['input_path']], summary)
+        summary = processor.run(configs['input_path'], summary)
 
     return summary
 
@@ -141,7 +140,7 @@ def read_configs(config, args):
                                  if config.has_option('settings', 'internal_saves') else None) \
         if not args.internal_saves else args.internal_saves
     configs['cpu_cores'] = (config.getint('settings', 'cpu_cores') if config.has_option('settings', 'cpu_cores')
-                            else max(cpu_count() - 1, 1)) if not args.cpu_cores else args.cpu_cores
+                            else 1) if not args.cpu_cores else args.cpu_cores
     configs['complete_tree_type'] = (config.getboolean('settings', 'complete') if not args.complete
                                      else args.complete == 'yes')
     configs['dependency_type'] = (config.getboolean('settings', 'labeled') if not args.labeled
@@ -188,7 +187,7 @@ def read_configs(config, args):
         if not args.max_lines else args.max_lines
 
     configs['continuation_processing'] = config.getboolean('settings', 'continuation_processing', fallback=False) \
-        if not args.continuation_processing else args.continuation_processing
+        if not args.continuation_processing else args.continuation_processing == 'yes'
 
     configs['grew_match'] = config.getboolean('settings',
                                               'grew_match') if not args.grew_match else args.grew_match == 'yes'

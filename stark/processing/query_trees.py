@@ -15,8 +15,13 @@
 import copy
 from stark.resources.constants import UNIVERSAL_FEATURES
 
+import bisect
+from typing import List, Tuple, Dict, Generator, Any, Union
+from _stark import add_node, get_query_tree_size_range, \
+create_ngrams_query_trees, split_query_text
 
-def add_node(tree):
+''' # rewritten in C
+def add_node(tree: dict) -> None:
     """
     Adds node to a tree.
     :param tree:
@@ -26,62 +31,40 @@ def add_node(tree):
         tree['children'].append({})
     else:
         tree['children'] = [{}]
+'''
 
 
-def tree_grow(orig_tree):
+def tree_grow(orig_tree: dict) -> Generator[dict, None, None]:
     """
     Walks over all nodes in tree and add a node to each possible node.
     :param orig_tree:
     :return:
     """
-    new_trees = []
-    new_tree = copy.deepcopy(orig_tree)
+    new_tree = orig_tree
     add_node(new_tree)
-    new_trees.append(new_tree)
+    yield new_tree
+
     if 'children' in orig_tree:
-        children = []
-        for child_tree in orig_tree['children']:
-            children.append(tree_grow(child_tree))
+        children = (tree_grow(child_tree) for child_tree in orig_tree['children'])
         for i, child in enumerate(children):
             for child_res in child:
-                new_tree = copy.deepcopy(orig_tree)
                 new_tree['children'][i] = child_res
-                new_trees.append(new_tree)
-
-    return new_trees
+                yield new_tree
 
 
-def compare_trees(tree1, tree2):
+def compare_trees(tree1: dict, tree2: dict) -> bool:
     """
     Compares two trees and returns True, when they match.
     :param tree1:
     :param tree2:
     :return:
     """
-    if tree1 == {} and tree2 == {}:
-        return True
 
-    if 'children' not in tree1 or 'children' not in tree2 or len(tree1['children']) != len(tree2['children']):
-        return False
-
-    children2_connections = []
-
-    for child1_i, child1 in enumerate(tree1['children']):
-        child_duplicated = False
-        for child2_i, child2 in enumerate(tree2['children']):
-            if child2_i in children2_connections:
-                pass
-            if compare_trees(child1, child2):
-                children2_connections.append(child2_i)
-                child_duplicated = True
-                break
-        if not child_duplicated:
-            return False
-
-    return True
+    return tree1 == tree2
 
 
-def create_ngrams_query_trees(n, trees):
+''' # rewritten in C
+def create_ngrams_query_trees(n: int, trees: List[dict]) -> List[dict]:
     """
     Forms unique ngram query trees.
     :param n:
@@ -89,23 +72,32 @@ def create_ngrams_query_trees(n, trees):
     :return:
     """
     for i in range(n - 1):
-        new_trees = []
+        new_trees: List[dict] = []
         for tree in trees:
             # append new_tree only if it is not already inside
             for new_tree in tree_grow(tree):
                 duplicate = False
                 for confirmed_new_tree in new_trees:
-                    if compare_trees(new_tree, confirmed_new_tree):
+                    #if compare_trees(new_tree, confirmed_new_tree):
+                    if new_tree == confirmed_new_tree:
                         duplicate = True
                         break
                 if not duplicate:
                     new_trees.append(new_tree)
 
+                """
+                index = bisect.bisect_left(new_trees, new_tree)
+                if new_trees[index] != new_tree:
+                    new_trees.insert(index, new_tree)
+                """
+
         trees = new_trees
     return trees
+'''
 
 
-def split_query_text(input_string):
+''' # rewritten in C
+def split_query_text(input_string: str) -> List[str]:
     """
     Splits query by ignoring everything in brackets and otherwise splitting by spaces.
     :param input_string: Raw query in string
@@ -117,25 +109,37 @@ def split_query_text(input_string):
     brackets_depth = 0
     replace_string = ''
 
-    for char in input_string:
+    replace_string_start = None
+    replace_string_end = None
+
+    input_string_initial = input_string[:]
+
+    for char_id, char in enumerate(input_string_initial):
         if char == '(':
             brackets_depth += 1
 
         if brackets_depth >= 1:
-            replace_string += char
+            if replace_string_start == None:
+                replace_string_start = char_id
 
         if char == ')':
             brackets_depth -= 1
             if brackets_depth == 0:
+                replace_string_end = char_id + 1
+                replace_string = input_string_initial[replace_string_start:replace_string_end]
+                replace_string_start = None
+                replace_string_end = None
+
                 input_string = input_string.replace(replace_string, f'<BRACKET{brackets_count}>', 1)
                 replacements[f'<BRACKET{brackets_count}>'] = replace_string
                 brackets_count += 1
-                replace_string = ''
 
     return [el if el not in replacements else replacements[el] for el in input_string.split()]
+'''
 
 
-def decode_query(orig_query, dependency_type):
+def decode_query(orig_query: str, dependency_type: str) \
+-> Dict[Any, Any]:
     """
     Reads query and returns it in tree-form dictionary.
     :param orig_query:
@@ -149,16 +153,18 @@ def decode_query(orig_query, dependency_type):
         new_query = True
         orig_query = orig_query[1:-1]
 
-    decoded_query = {'restrictions': []}
+    decoded_query: Dict[Any, Any] = {'restrictions': []}
     if dependency_type != '':
         dependency_restrictions = []
         for dependency_type_el in dependency_type.split('|'):
-            if dependency_type_el[0] == '!':
+            dependency_type_el = dependency_type_el[1:]
+            if dependency_type_el and dependency_type_el[0] == '!':
                 negation = True
-                dependency_type = dependency_type_el[1:]
+                dependency_type_el = dependency_type_el[1:]
             else:
                 negation = False
-            dependency_restrictions.append((negation, dependency_type_el))
+            if dependency_type_el:
+                dependency_restrictions.append((negation, dependency_type_el))
     else:
         dependency_restrictions = None
 
@@ -166,12 +172,12 @@ def decode_query(orig_query, dependency_type):
         if dependency_restrictions:
             decoded_query['restrictions'] = [{'deprel': dependency_restriction}
                                              for dependency_restriction in dependency_restrictions]
-            # decoded_query['restrictions'].append({'deprel': dependency_restriction})
         return decoded_query
     # if no spaces in query then this is query node and do this otherwise further split query
     elif len(orig_query.split(' ')) == 1:
         for orig_query_or_split_parts in orig_query.split(' ')[0].split('|'):
-            restriction = {}
+            restriction: Dict[str, Union[Tuple[bool, str], Dict[str, \
+            Tuple[bool, str]]]] = {}
             orig_query_split_parts = orig_query_or_split_parts.split(' ')[0].split('&')
             for orig_query_split_part in orig_query_split_parts:
                 if orig_query_split_part[0] == '!' and len(orig_query_split_part) > 1:
@@ -192,11 +198,12 @@ def decode_query(orig_query, dependency_type):
                     elif orig_query_split[0] == 'feats':
                         restriction['feats'] = (negation, orig_query_split[1])
                     elif orig_query_split[0] in UNIVERSAL_FEATURES:
+                        """
                         restriction['feats_detailed'] = {}
                         restriction['feats_detailed'][orig_query_split[0]] = (negation, orig_query_split[1])
-                        # decoded_query['restrictions'].append(restriction)
-                        # # TODO WHAT IS THIS RETURN???
-                        # return decoded_query
+                        """
+                        restriction['feats_detailed'] = {orig_query_split[0]:
+                        (negation, orig_query_split[1])}
                     elif not new_query:
                         raise Exception('Not supported yet!')
                     else:
@@ -230,12 +237,12 @@ def decode_query(orig_query, dependency_type):
         root_index = len(priority_actions)
 
     children = []
-    root = None
+    root: Dict[Any, Any] = {}
     for i, node_action in enumerate(node_actions):
         if i < root_index:
-            children.append(decode_query(node_action, priority_actions[i][1:]))
+            children.append(decode_query(node_action, priority_actions[i]))
         elif i > root_index:
-            children.append(decode_query(node_action, priority_actions[i - 1][1:]))
+            children.append(decode_query(node_action, priority_actions[i - 1]))
         else:
             root = decode_query(node_action, dependency_type)
     if children:
@@ -243,7 +250,7 @@ def decode_query(orig_query, dependency_type):
     return root
 
 
-def generate_query_trees(configs, filters):
+def generate_query_trees(configs: dict, filters: dict) -> List[dict]:
     """
     Generates query trees based on configs and filters.
     :param configs:
@@ -269,7 +276,8 @@ def generate_query_trees(configs, filters):
     return query_tree
 
 
-def get_query_tree_size(query_tree):
+''' # rewritten in C
+def get_query_tree_size(query_tree: dict) -> int:
     """
     Returns size of specific query tree.
     :param query_tree:
@@ -283,7 +291,7 @@ def get_query_tree_size(query_tree):
     return size
 
 
-def get_query_tree_size_range(query_trees):
+def get_query_tree_size_range(query_trees: List[dict]) -> Tuple[int, int]:
     """
     Returns tree size range.
     :param query_trees:
@@ -297,4 +305,5 @@ def get_query_tree_size_range(query_trees):
             max_size = size
         if size < min_size:
             min_size = size
-    return [min_size, max_size]
+    return (min_size, max_size)
+'''

@@ -90,6 +90,12 @@ class GreedyRepresentationTree(RepresentationTree):
                     pass_query = True
             if not pass_query:
                 return False
+
+        # drop too small trees
+        if (filters['display_size_range'][-1] and not (filters['display_size_range'][0]
+                <= self.tree_size <= filters['display_size_range'][-1])):
+            return False
+
         return Filter.check_representation_tree(self, filters)
 
     # def get_size(self):

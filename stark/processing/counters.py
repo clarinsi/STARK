@@ -15,7 +15,15 @@ import gc
 import random
 from abc import abstractmethod
 from multiprocessing import Pool
+
+import os
+import sys
+
+if not os.isatty(sys.stdout.fileno()): # if it is not an interactive shell
+    os.environ["TQDM_DISABLE"] = "1"
+
 from tqdm import tqdm
+from collections import Counter as collections_Counter
 
 
 class Counter(object):
@@ -51,24 +59,32 @@ class Counter(object):
         with Pool(self.filters['cpu_cores']) as p:
             all_unigrams = p.map(self.get_unigrams,
                                  [(tree, self.filters) for tree in self.document.trees])
+            self.summary.unigrams = collections_Counter()
             for unigrams in all_unigrams:
+                """ # works, but trying to improve it
                 for unigram in unigrams:
                     if unigram in self.summary.unigrams:
                         self.summary.unigrams[unigram] += 1
                     else:
                         self.summary.unigrams[unigram] = 1
+                """
 
-            i = 0
+                self.summary.unigrams += collections_Counter(unigrams)
+
+            #i = 0
             with tqdm(desc='Creating subtrees', total=len(self.document.trees)) as pbar:
-                for subtrees in p.imap(self.tree_calculations,
-                                                [(tree, self.summary.query_trees, self.filters) for tree in self.document.trees]):
+                for i, subtrees in enumerate(p.imap(self.tree_calculations,
+                                                [(tree,
+                                                self.summary.query_trees,
+                                                self.filters) for tree in
+                                                self.document.trees])):
 
                     for subtree in subtrees:
                         self.postprocess_query_results(subtree, self.document.sentence_statistics[i])
-                    i += 1
+                    #i += 1
                     pbar.update()
-                    # if i % 1000 == 0:
-                    #     gc.collect()
+                    #if i % 256 == 0:
+                    #    pbar.update(256)
 
     def run_single_processor(self):
         """
@@ -98,7 +114,11 @@ class Counter(object):
         :return:
         """
         tree, filters = input_data
-        return tree.get_unigrams(filters['create_output_string_functs'])
+        unigrams = []
+        # there might be multiple roots in a sentence/tree
+        for tree_root in tree:
+            unigrams += tree_root.get_unigrams(filters['create_output_string_functs'])
+        return unigrams
 
     def recreate_sentence(self, sentence, r):
         """
@@ -188,7 +208,11 @@ class QueryCounter(Counter):
     @staticmethod
     def tree_calculations(input_data):
         tree, query_trees, filters = input_data
-        _, subtrees = tree.get_subtrees(query_trees, [], filters)
+        subtrees = []
+        # there might be multiple roots in a sentence/tree
+        for tree_root in tree:
+            _, subtrees_part = tree_root.get_subtrees(query_trees, [], filters)
+            subtrees += subtrees_part
         return [subtree for query_results in subtrees for subtree in query_results]
 
 
@@ -203,7 +227,12 @@ class GreedyCounter(Counter):
     @staticmethod
     def tree_calculations(input_data):
         tree, query_trees, filters = input_data
-        _, subtrees = tree.get_subtrees(filters)
+        subtrees = []
+        # there might be multiple roots in a sentence/tree
+        for tree_root in tree:
+            _, subtrees_part = tree_root.get_subtrees(filters)
+            subtrees += subtrees_part
+
         subtrees = GreedyCounter.filter_subtrees(query_trees, subtrees, filters)
         return subtrees
 

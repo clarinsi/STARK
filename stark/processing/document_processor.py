@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#import gc
 import logging
 import pyconll
 
@@ -48,10 +48,15 @@ class DocumentProcessor(object):
         """
         document = Document()
 
-        train = pyconll.load_from_file(self.path)
+        logger.info(f"Reading file: {self.path}")
+        train = pyconll.iter_from_file(self.path)
+
+        if self.processor.configs["greedy_counter"]:
+            ClassTree = GreedyTree
+        else:
+            ClassTree = QueryTree
 
         for sentence in train:
-            root = None
             token_nodes = []
             tokens = []
             for token in sentence:
@@ -61,29 +66,32 @@ class DocumentProcessor(object):
                 token_form = token.form if token.form is not None else '_'
                 token_deprel = token.deprel if self.processor.configs['label_subtypes'] \
                     else token.deprel.split(':')[0]
+                """
                 if self.processor.configs['greedy_counter']:
                     node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
                                       token.head, token.feats, document, summary)
                 else:
                     node = QueryTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
                                      token.head, token.feats, document, summary)
+                """
+                node = ClassTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
+                                 token.head, token.feats, document, summary)
                 token_nodes.append(node)
                 space_after = token.misc[
                                   'SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc \
                     else True
                 tokens.append((token_form, space_after))
-                if token_deprel == 'root':
-                    root = node
 
                 summary.corpus_size += 1
             document.sentence_statistics.append({'id': sentence.id, 'tokens': tokens, 'count': {}})
+            roots = []
             for token_id, token in enumerate(token_nodes):
                 if isinstance(token.parent, int) or token.parent == '':
-                    root = None
                     logger.warning('No parent: ' + sentence.id)
                     break
                 if int(token.parent) == 0:
                     token.set_parent(None)
+                    roots.append(token)
                 else:
                     parent_id = int(token.parent) - 1
                     if token_nodes[parent_id].children_split == -1 and token_id > parent_id:
@@ -95,9 +103,12 @@ class DocumentProcessor(object):
                 if token.children_split == -1:
                     token.children_split = len(token.children)
 
-            if root == None:
+            if not roots:
                 logger.warning('No root: ' + sentence.id)
-                continue
-            document.trees.append(root)
+
+            document.trees.append(roots)
+
+        #del train
+        #gc.collect()
 
         return document

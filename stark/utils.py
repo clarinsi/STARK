@@ -30,23 +30,30 @@ def load_zipped_pickle(filename):
         return loaded_object
 
 
-def printable_answers(query):
-    all_orders = re.split(r"\s+(?=[^()]*(?:\(|$))", query)
-    node_actions = all_orders[::2]
+def _printable_answers():
+    local_regex = re.compile(r"\s+(?=[^()]*(?:\(|$))")
+    def printable_answers(query):
+        nonlocal local_regex
 
-    if len(node_actions) > 1:
-        res = []
-        for node_action in node_actions:
-            # if command in bracelets remove them and treat command as new query
-            if not node_action:
-                res.extend(['('])
-            elif node_action[0] == '(' and node_action[-1] == ')':
-                res.extend(printable_answers(node_action[1:-1]))
-            else:
-                res.extend([node_action])
-        return res
-    else:
-        return [query]
+        all_orders = local_regex.split(query)
+        node_actions = all_orders[::2]
+    
+        if len(node_actions) > 1:
+            res = []
+            for node_action in node_actions:
+                # if command in bracelets remove them and treat command as new query
+                if not node_action:
+                    res.extend(['('])
+                elif node_action[0] == '(' and node_action[-1] == ')':
+                    res.extend(printable_answers(node_action[1:-1]))
+                else:
+                    res.extend([node_action])
+            return res
+        else:
+            return [query]
+    return printable_answers
+
+printable_answers = _printable_answers()
 
 
 def create_output_string_form(tree):
@@ -74,4 +81,5 @@ def create_output_string_none(tree):
 
 
 def create_output_string_feats(tree):
-    return '|'.join([f'{k}={list(v.keys())[0]}' for k, v in tree.feats_detailed.items()])
+    #return '|'.join([f'{k}={list(v.keys())[0]}' for k, v in tree.feats_detailed.items()])
+    return '|'.join([f'{k}={list(v.keys())[0]}' for k, v in sorted(tree.feats_detailed.items(), key=lambda x: x[0])])

@@ -40,7 +40,7 @@ class Summary(object):
         :return:
         """
         return (self.representation_trees, self.unigrams, self.corpus_size, self.feats_dict,
-                self.samples)
+                self.samples, self.max_tree_size, self.query_trees)
 
     @classmethod
     def create_summary_from_cache(cls, sum_data):
@@ -50,7 +50,8 @@ class Summary(object):
         :return:
         """
         s = cls()
-        s.representation_trees, s.unigrams, s.corpus_size, s.feats_dict, s.samples = sum_data
+        s.representation_trees, s.unigrams, s.corpus_size, s.feats_dict, s.samples, s.max_tree_size, s.query_trees = (
+            sum_data)
         return s
 
     # def get_size_representation_trees(self):
