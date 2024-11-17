@@ -327,6 +327,13 @@ class Writer(object):
         :param corpus_size:
         :return:
         """
+        # n of ngram
+        n = len(ngram['word_array'])
+
+        # collocabilities are supported for n <= 10
+        if n > 10:
+            return ['NaN'] * 6
+
         sum_fwi = 0.0
         mul_fwi = 1.0
         for key_array in ngram['word_array']:
@@ -344,8 +351,6 @@ class Writer(object):
         # number of all words
         N = corpus_size
 
-        # n of ngram
-        n = len(ngram['word_array'])
         O = ngram['number']
         E = mul_fwi / pow(N, n - 1)
 
