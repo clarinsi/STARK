@@ -109,7 +109,7 @@ By default, STARK produces a list of trees with the absolute frequency (raw coun
 ### `--association_measures`
 **Values:** _yes, no_
 
-The optional `--association_measures` parameter (value _yes_) produces information on the strength of statistical association between the nodes of the tree by computing several common association scores (MI, MI3 , Dice, logDice, t-score, simple-LL). This is a particularly useful feature for treebank-driven collocation extraction and lexical analysis.
+The optional `--association_measures` parameter (value _yes_) produces information on the strength of statistical association between the nodes of the tree by computing several common association scores (MI, MI3 , Dice, logDice, t-score, simple-LL). This is a particularly useful feature for treebank-driven collocation extraction and lexical analysis. Therefore, association scores are computed only for trees with a maximum length of 10 words. Trees exceeding this length are assigned a NaN value.
 
 ### `--compare`
 **Values:** _yes, no_
