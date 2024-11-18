@@ -1,6 +1,7 @@
 import yaml
 import json
 
+# get yaml from https://github.com/UniversalDependencies/docs-automation/blob/master/codes_and_flags.yaml
 with open("codes_and_flags.yaml", "r") as stream:
     try:
         codes_and_flags = yaml.safe_load(stream)
@@ -28,5 +29,5 @@ for cname in corpus_names:
         json_dict[code_mapper[lang]] = {}
     json_dict[code_mapper[lang]][corp.lower()] = cname
 
-with open("codes_mapper.json", "w") as outfile:
+with open("../stark/resources/codes_mapper.json", "w") as outfile:
     json.dump(json_dict, outfile, indent=4)
