@@ -77,6 +77,8 @@ def parse_args(args):
                         help="Path to a file where all examples will be stored.")
     parser.add_argument("--annodoc_example_dir", default=None, type=str,
                         help="Path to a directory where annodoc example files are stored (js library for visualization).")
+    parser.add_argument("--annodoc_detailed_dir", default=None, type=str,
+                        help="Path to a directory where annodoc detailed files are stored (js library for visualization).")
 
     parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
     parser.add_argument("--node_info", default=None, type=str, help="Information about nodes in separate columns.")
@@ -218,6 +220,12 @@ def read_configs(config, args):
     else:
         configs['annodoc_example_dir'] = config.get('settings', 'annodoc_example_dir') \
             if config.has_option('settings', 'annodoc_example_dir') else None
+
+    if args.annodoc_detailed_dir:
+        configs['annodoc_detailed_dir'] = args.annodoc_detailed_dir
+    else:
+        configs['annodoc_detailed_dir'] = config.get('settings', 'annodoc_detailed_dir') \
+            if config.has_option('settings', 'annodoc_detailed_dir') else None
 
     configs['depsearch'] = config.getboolean('settings', 'depsearch') \
         if not args.depsearch else args.depsearch == 'yes'

@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import csv
+import hashlib
 import json
 import math
 import os
@@ -93,6 +94,9 @@ class Writer(object):
 
         if self.configs['annodoc_example_dir'] and (self.configs['detailed_results_file'] or self.configs['example']):
             self.write_annodoc_files()
+
+        if self.configs['annodoc_example_dir'] and self.configs['detailed_results_file']:
+            self.write_annodoc_detailed_files()
 
         if self.filters['display_size_range'][-1]:
             if not self.configs['greedy_counter']:
@@ -223,6 +227,25 @@ class Writer(object):
                     with open(annodoc_path, "w", newline="",
                               encoding="utf-8") as wf:
                         wf.write(s[2][0])
+
+    def write_annodoc_detailed_files(self):
+        """
+        Writes tsv files that contain hashes of subtrees in a name. Each file contains a list with sentence_id and
+        positions of subtree in a sentence.
+        :return:
+        """
+        annodoc_dir = Path(self.configs['annodoc_detailed_dir'])
+        if annodoc_dir.exists():
+            shutil.rmtree(annodoc_dir, ignore_errors=True)
+        annodoc_dir.mkdir()
+        for k, v in self.summary.representation_trees.items():
+            path = hashlib.sha1(k.encode('utf-8')).hexdigest()
+            annodoc_path = Path(self.configs['annodoc_detailed_dir'], path) # calculate hash?
+            if not annodoc_path.exists():
+                with open(annodoc_path, "w", newline="",
+                          encoding="utf-8") as wf:
+                    for s in v['sentence']:
+                        wf.write(f'{str(s[0])}\t{str(s[2][1])}\n')
 
     @staticmethod
     def get_keyness(abs_freq_A, abs_freq_B, count_A, count_B):
