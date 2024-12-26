@@ -95,7 +95,7 @@ class Writer(object):
         if self.configs['annodoc_example_dir'] and (self.configs['detailed_results_file'] or self.configs['example']):
             self.write_annodoc_files()
 
-        if self.configs['annodoc_example_dir'] and self.configs['detailed_results_file']:
+        if self.configs['annodoc_detailed_dir'] and self.configs['detailed_results_file']:
             self.write_annodoc_detailed_files()
 
         if self.filters['display_size_range'][-1]:
@@ -174,7 +174,7 @@ class Writer(object):
                 random_sentence_position = int(len(v['sentence']) * random.random())
                 row += [v['sentence'][random_sentence_position][1]]
             if self.filters['annodoc'] and (self.configs['detailed_results_file'] or self.filters['example']):
-                annodoc_dict = {'id': v['sentence'][random_sentence_position][0],'positions': v['sentence'][random_sentence_position][2][1]}
+                annodoc_dict = {'id': v['sentence'][random_sentence_position][0],'positions': v['sentence'][random_sentence_position][2][1],'subtree_hash': hashlib.sha1(k.encode('utf-8')).hexdigest()}
                 annodoc_json = json.dumps(annodoc_dict)
                 row += [annodoc_json]
             if self.filters['association_measures']:
