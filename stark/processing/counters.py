@@ -143,21 +143,24 @@ class Counter(object):
             key = key_raw + order_letters
         else:
             key = key_raw
+        sentence_size = len(sentence['tokens']) if 'tokens' in sentence else 10000
         if key in self.summary.representation_trees:
             if self.filters['detailed_results_file']:
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)
                 sentence_conll = (r.node.node.get_root().conll, subtree_node_positions) if self.filters['annodoc'] else None
+
                 self.summary.representation_trees[key]['sentence'].append((sentence['id'],
                                                                            recreated_sentence,
-                                                                           sentence_conll))
-            elif self.filters['example'] and random.random() < 1.0 - (
-                    self.summary.representation_trees[key]['number'] /
-                    (self.summary.representation_trees[key]['number'] + 1)):
+                                                                           sentence_conll,
+                                                                           sentence_size))
+            elif self.filters['example'] and self.summary.representation_trees[key]['sentence'][0][
+                3] >= 15 and self.summary.representation_trees[key]['sentence'][0][3] > sentence_size:
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)
                 sentence_conll = (r.node.node.get_root().conll, subtree_node_positions) if self.filters['annodoc'] else None
                 self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
                                                                        recreated_sentence,
-                                                                       sentence_conll)]
+                                                                       sentence_conll,
+                                                                       sentence_size)]
             self.summary.representation_trees[key]['number'] += 1
         else:
             self.summary.representation_trees[key] = {'number': 1, 'key': key_raw, 'word_array': word_array}
@@ -170,10 +173,11 @@ class Counter(object):
             if self.filters['example'] or self.filters['detailed_results_file']:
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)
                 sentence_conll = (r.node.node.get_root().conll, subtree_node_positions) if self.filters['annodoc'] else None
-
+                sentence_size = len(sentence['tokens']) if 'tokens' in sentence else 10000
                 self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
                                                                        recreated_sentence,
-                                                                       sentence_conll)]
+                                                                       sentence_conll,
+                                                                       sentence_size)]
             if self.filters['node_order']:
                 self.summary.representation_trees[key]['order_letters'] = order_letters
                 if self.configs['depsearch']:

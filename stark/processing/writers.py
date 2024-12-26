@@ -171,8 +171,19 @@ class Writer(object):
             if self.filters['print_root']:
                 row += [v['root_name']]
             if self.filters['example']:
-                random_sentence_position = int(len(v['sentence']) * random.random())
-                row += [v['sentence'][random_sentence_position][1]]
+                random_sentence_position = 0
+                min_sentence_size = 100000
+                final_row = [v['sentence'][random_sentence_position][1]]
+                for i, s in enumerate(v['sentence']):
+                    if s[3] < 15:
+                        final_row = [s[1]]
+                        random_sentence_position = i
+                        break
+                    elif s[3] < min_sentence_size:
+                        final_row = [s[1]]
+                        random_sentence_position = i
+                        min_sentence_size = s[3]
+                row += final_row
             if self.filters['annodoc'] and (self.configs['detailed_results_file'] or self.filters['example']):
                 annodoc_dict = {'id': v['sentence'][random_sentence_position][0],'positions': v['sentence'][random_sentence_position][2][1],'subtree_hash': hashlib.sha1(k.encode('utf-8')).hexdigest()}
                 annodoc_json = json.dumps(annodoc_dict)

@@ -1,65 +1,65 @@
 Tree	Node A-upos	Node B-upos	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	Example	MI	MI3	Dice	logDice	t-score	simple-LL
-ADJ <amod NOUN	ADJ	NOUN	551	20792.5	AB	2	NOUN	A da se ne boste prestrašili - Strašnice niso A[strašne] B[pesmi], ampak le strašno lepe pesmi, kratke in hitro zapomljive, tako da jih bo hitro znal vsak navihan malček. 	-0.21	18.00	0.13	11.02	-3.70	103.55
-NOUN >nmod NOUN	NOUN	NOUN	409	15434.0	AB	2	NOUN	A[Uvrščanje] B[ljudi] v prevladujoči tip glede na teorijo petih elementov temelji na opazovanju, spraševanju, poslušanju, pregledovanju in tipanju človeka. 	-1.63	15.72	0.07	10.18	-42.33	1310.98
-PUNCT <punct NOUN	PUNCT	NOUN	193	7283.0	AB	2	NOUN	Večerja: krožnik enolončnice iz mešane zelenjave (1 KDP); 50 g parmezana (1 KDP); 250 g špargljev, kuhanih na pari (1 KDP); 50 g kruha (1 KDP); 150 g sadne solate brez dodanega sladkorja A[(]1 B[KDP]); kozarec vina (1 KDP) 	-2.08	13.10	0.04	9.37	-45.01	1008.35
-NOUN >punct PUNCT	NOUN	PUNCT	168	6339.6	AB	2	NOUN	Njeni starši so aktivni A[člani] lokalne republikanske politične strankeB[.] 	-2.28	12.50	0.04	9.17	-50.17	1069.47
-AUX <cop NOUN	AUX	NOUN	148	5584.9	AB	2	NOUN	Dobra ponazoritev nove ureditve A[je] B[primerjava] med dvema največjima gospodarskima silama na svetu. 	-1.23	13.19	0.04	9.36	-16.44	290.18
-DET <det NOUN	DET	NOUN	112	4226.4	AB	2	NOUN	Dve vrstici v Praški deklaraciji, ki se nanašata na ustanovitev pododbora za kmetijstvo, vlivata upanje, da je A[to] B[spoznanje] končno dozorelo v vseh članicah Cefte. 	-0.76	12.86	0.03	9.11	-7.32	103.74
-NOUN >nmod PROPN	NOUN	PROPN	104	3924.5	AB	2	NOUN	"Pri tem velja poudariti, da spremembe v omrežnih skupinah ne bodo imele nobenega vpliva na organizacijsko shemo Telekoma,"" je povedal A[podpredsednik] uprave Telekoma Slovenije B[Miran] Kramberger. "	-1.19	12.21	0.03	8.95	-13.00	190.99
-NOUN >conj NOUN	NOUN	NOUN	97	3660.4	AB	2	NOUN	Napadajo torej območja, kjer se nahaja keratin, to pa so rožena A[plast] kože, B[nohti] in lasje. 	-3.71	9.49	0.02	8.10	-118.60	2119.74
-NOUN >acl VERB	NOUN	VERB	86	3245.3	AB	2	NOUN	IRC je odprt A[protokol], ki B[uporablja] TCP in včasih tudi TLS. 	-2.59	10.26	0.02	8.43	-46.73	732.38
-CCONJ <cc NOUN	CCONJ	NOUN	78	2943.4	AB	2	NOUN	A da se ne boste prestrašili - Strašnice niso strašne pesmi, A[ampak] le strašno lepe B[pesmi], kratke in hitro zapomljive, tako da jih bo hitro znal vsak navihan malček. 	-1.68	10.89	0.02	8.53	-19.52	265.76
-NOUN <nsubj NOUN	NOUN	NOUN	61	2301.9	AB	2	NOUN	A[Aceton] in fenol sta B[surovini] za sintezo mnogo drugih pomembnih spojin. 	-4.37	7.49	0.01	7.43	-154.16	2247.47
-PART <advmod NOUN	PART	NOUN	57	2150.9	AB	2	NOUN	"""Resnično odporen pa je proti grafitom A[le] poseben zaščitni B[premaz], ki preprečuje pronicanje barve v globino."" "	-1.59	10.07	0.02	8.15	-15.25	175.61
-SCONJ <mark NOUN	SCONJ	NOUN	41	1547.2	AB	2	NOUN	Ob tem naj omenimo še dejstvo, A[da] sezone sploh še ni B[konec]. 	-2.27	8.45	0.01	7.65	-24.48	257.44
-NUM <nummod NOUN	NUM	NOUN	40	1509.4	AB	2	NOUN	Parno programiranje je agilna metoda razvoja programske opreme, kjer A[dva] B[programerja] delata skupaj na eni delovni postaji. 	-1.62	9.03	0.01	7.69	-13.09	126.61
+ADJ <amod NOUN	ADJ	NOUN	551	20792.5	AB	2	NOUN	Škoda je, da A[slovenski] B[uporabniki] iščejo informacije na tujih straneh. 	-0.21	18.00	0.13	11.02	-3.70	103.55
+NOUN >nmod NOUN	NOUN	NOUN	409	15434.0	AB	2	NOUN	Zakonodaja in A[trg] delovne B[sile] sta med seboj tesno povezana. 	-1.63	15.72	0.07	10.18	-42.33	1310.98
+PUNCT <punct NOUN	PUNCT	NOUN	193	7283.0	AB	2	NOUN	"To je ""energija"" bitiA[,] se pravi B[energija] lastne identitete. "	-2.08	13.10	0.04	9.37	-45.01	1008.35
+NOUN >punct PUNCT	NOUN	PUNCT	168	6339.6	AB	2	NOUN	A[Škoda] je, da slovenski uporabniki iščejo informacije na tujih stranehB[.] 	-2.28	12.50	0.04	9.17	-50.17	1069.47
+AUX <cop NOUN	AUX	NOUN	148	5584.9	AB	2	NOUN	"Toda kaj A[je] B[energija] ""nacionalizma""? "	-1.23	13.19	0.04	9.36	-16.44	290.18
+DET <det NOUN	DET	NOUN	112	4226.4	AB	2	NOUN	In A[njun] B[pristop] je za zdaj edini odraz resnične vladne politike. 	-0.76	12.86	0.03	9.11	-7.32	103.74
+NOUN >nmod PROPN	NOUN	PROPN	104	3924.5	AB	2	NOUN	Njihovo gospodarsko in politično situacijo je predstavil A[veleposlanik] B[Daut] Gumeni. 	-1.19	12.21	0.03	8.95	-13.00	190.99
+NOUN >conj NOUN	NOUN	NOUN	97	3660.4	AB	2	NOUN	A[Zakonodaja] in B[trg] delovne sile sta med seboj tesno povezana. 	-3.71	9.49	0.02	8.10	-118.60	2119.74
+NOUN >acl VERB	NOUN	VERB	86	3245.3	AB	2	NOUN	Saj država ni nekakšen A[moloh], ki nemo B[gleda] na ta narod. 	-2.59	10.26	0.02	8.43	-46.73	732.38
+CCONJ <cc NOUN	CCONJ	NOUN	78	2943.4	AB	2	NOUN	Zakonodaja A[in] B[trg] delovne sile sta med seboj tesno povezana. 	-1.68	10.89	0.02	8.53	-19.52	265.76
+NOUN <nsubj NOUN	NOUN	NOUN	61	2301.9	AB	2	NOUN	In njun A[pristop] je za zdaj edini B[odraz] resnične vladne politike. 	-4.37	7.49	0.01	7.43	-154.16	2247.47
+PART <advmod NOUN	PART	NOUN	57	2150.9	AB	2	NOUN	Nadzor naj bi opravili uslužbenci notranjega ministrstva in A[ne] B[policisti]. 	-1.59	10.07	0.02	8.15	-15.25	175.61
+SCONJ <mark NOUN	SCONJ	NOUN	41	1547.2	AB	2	NOUN	Starši lahko s pobotanjem otroku pokažejo, A[da] življenje ni ena sama B[idila] 	-2.27	8.45	0.01	7.65	-24.48	257.44
+NUM <nummod NOUN	NUM	NOUN	40	1509.4	AB	2	NOUN	Starši lahko s pobotanjem otroku pokažejo, da življenje ni A[ena] sama B[idila] 	-1.62	9.03	0.01	7.69	-13.09	126.61
 NOUN >appos NOUN	NOUN	NOUN	36	1358.5	AB	2	NOUN	"To je ""A[energija]"" biti, se pravi B[energija] lastne identitete. "	-5.14	5.20	0.01	6.67	-204.84	2346.82
-AUX <aux NOUN	AUX	NOUN	24	905.7	AB	2	NOUN	Kone A[je] bil resnično zadnji B[človek], o katerem se mi je ljubilo pogovarjati. 	-3.86	5.31	0.01	6.73	-66.15	592.36
-SCONJ <case NOUN	SCONJ	NOUN	23	867.9	AB	2	NOUN	A[Kot] B[poslanec] tega Državnega zbora in kot vsak državljan te države pričakujem - te preiskovalne komisije so bile iz kriminalistične policije in kriminalistične službe - da boste imeli toliko koordinacije v Vladi, da bo notranji minister vam te podatke dal. 	-3.10	5.94	0.01	6.81	-36.43	306.49
-PROPN <nsubj NOUN	PROPN	NOUN	21	792.5	AB	2	NOUN	"A[Nubijci] so bili prva B[tarča] organizirane gonje, s katero želi Kartum islamizirati oziroma ""civilizirati"" celotno državo. "	-3.49	5.29	0.01	6.65	-47.05	387.07
-NOUN <obl NOUN	NOUN	NOUN	18	679.2	AB	2	NOUN	A[Leta] 1994 je bila Lizbona evropska B[prestolnica] kulture. 	-6.14	2.20	0.00	5.67	-293.93	2427.63
-ADV <advmod NOUN	ADV	NOUN	17	641.5	AB	2	NOUN	A[Tako] bodo igralci neke vrste B[vodiči], gledalci pa popotniki skozi lasten spomin, ki v njih porojeva najrazličnejše zgodbe. 	-3.91	4.27	0.00	6.32	-57.72	435.97
-NOUN >amod ADJ	NOUN	ADJ	17	641.5	AB	2	NOUN	V vsakem jeziku drugače zveni A[slava] B[božja], pravijo verniki; vsak narod ima samosvojo poezijo, ki je neprevedljiva v drug jezik vsak prevod je že prepesnitev v drug jezikovni in duhovni, kulturni horizont. 	-5.23	2.95	0.00	6.00	-150.56	1188.02
-NOUN >appos PROPN	NOUN	PROPN	16	603.8	AB	2	NOUN	Nova povojna A[vojska], B[Reichswehr], je bila ustanovljena 23. marca 1921. 	-3.89	4.11	0.00	6.25	-55.16	403.81
-NOUN >parataxis VERB	NOUN	VERB	16	603.8	AB	2	NOUN	"Resda je privatizacija A[stvar] lastnikov, še kako res pa B[je] tudi, da je Nova KBM ""državna"" banka, torej smo lastniki vsi in imamo tudi pravico, da se kot državljani - lastniki tudi obnašamo. "	-5.02	2.98	0.00	6.00	-125.84	958.34
-DET <nsubj NOUN	DET	NOUN	15	566.0	AB	2	NOUN	Na ameriškem touru ELPGA je ob koncu novembra na turnirju v West Palm Beachu svojo osmo zmago vpisala najboljša na svetu Annika Sorenstam, ki ji je bila A[to] hkrati letošnja osma B[zmaga] oz. 56. v karieri. 	-3.66	4.16	0.00	6.21	-45.04	315.82
+AUX <aux NOUN	AUX	NOUN	24	905.7	AB	2	NOUN	Leta 1994 A[je] bila Lizbona evropska B[prestolnica] kulture. 	-3.86	5.31	0.01	6.73	-66.15	592.36
+SCONJ <case NOUN	SCONJ	NOUN	23	867.9	AB	2	NOUN	Zato bi bila primernejša drugačna oblika nadzora A[kot] interna B[komisija] notranjega ministrstva. 	-3.10	5.94	0.01	6.81	-36.43	306.49
+PROPN <nsubj NOUN	PROPN	NOUN	21	792.5	AB	2	NOUN	A[Dolly] Parton je B[pevka], glavna zanimivost newyorškega nočnega kluba Rhinestone. 	-3.49	5.29	0.01	6.65	-47.05	387.07
+NOUN <obl NOUN	NOUN	NOUN	18	679.2	AB	2	NOUN	Od A[zrna] do kruha je dolga, toda še kako zanimiva B[pot] 	-6.14	2.20	0.00	5.67	-293.93	2427.63
+ADV <advmod NOUN	ADV	NOUN	17	641.5	AB	2	NOUN	In njun pristop je za A[zdaj] edini B[odraz] resnične vladne politike. 	-3.91	4.27	0.00	6.32	-57.72	435.97
+NOUN >amod ADJ	NOUN	ADJ	17	641.5	AB	2	NOUN	A[Človek], B[rojen] v znamenju Opice, je ena sama utelešena improvizacija. 	-5.23	2.95	0.00	6.00	-150.56	1188.02
+NOUN >appos PROPN	NOUN	PROPN	16	603.8	AB	2	NOUN	(kg/ A[foto]: B[Luka] Cjuha) 	-3.89	4.11	0.00	6.25	-55.16	403.81
+NOUN >parataxis VERB	NOUN	VERB	16	603.8	AB	2	NOUN	Osnovni A[nasvet]: Nihče drug vam ne B[piše] urnika, samo vi sami. 	-5.02	2.98	0.00	6.00	-125.84	958.34
+DET <nsubj NOUN	DET	NOUN	15	566.0	AB	2	NOUN	"A[To] je ""B[energija]"" biti, se pravi energija lastne identitete. "	-3.66	4.16	0.00	6.21	-45.04	315.82
 NOUN >cop AUX	NOUN	AUX	15	566.0	AB	2	NOUN	A[Škoda] B[je], da slovenski uporabniki iščejo informacije na tujih straneh. 	-4.54	3.28	0.00	6.06	-85.99	625.14
-NOUN >nummod NUM	NOUN	NUM	11	415.1	AB	2	NOUN	A[Foto] B[2]: Gimnazijska frizura in E-dur za blues na šolskem izletu. 	-3.48	3.44	0.00	5.83	-33.71	200.53
-NOUN >nmod PRON	NOUN	PRON	10	377.4	AB	2	NOUN	"Tako sta, ko je bil govor o projektu ""Vse na enem mestu"" ter o pospeševalni mreži, Petrinova in Mešlova poudarili, da država ne želi vzpostavljati ""še ene mreže"" in tudi ne predpisovati, kje bodo ""vstopne A[točke]"" B[vanjo]. "	-4.23	2.41	0.00	5.62	-56.26	330.33
-CCONJ <advmod NOUN	CCONJ	NOUN	9	339.6	AB	2	NOUN	Sicer A[pa] je te dni glavna zgodba, povezana z evropskimi trgi, B[poskus] prevzema Londonske borze s strani Euronexta in Deutsche boerse. 	-4.80	1.54	0.00	5.41	-80.46	456.78
-NOUN >acl ADJ	NOUN	ADJ	9	339.6	AB	2	NOUN	V ministrstvu za promet in zveze so jim odgovorili, da novo A[oštevilčenje], ki je B[usklajeno] z operaterji, nima nikakršnega vpliva na notranjo organizacijo Telekoma. 	-6.15	0.19	0.00	5.08	-209.59	1224.24
-NOUN >csubj VERB	NOUN	VERB	8	301.9	AB	2	NOUN	Pospravljali smo ta arhiv in moja A[nerodnost] je bila, da sem B[prosil] tehnično službo Petrola, da nam pomaga. 	-6.02	-0.02	0.00	5.00	-180.79	993.71
-NOUN >list NOUN	NOUN	NOUN	8	301.9	AB	2	NOUN	Večerja: A[krožnik] enolončnice iz mešane zelenjave (1 KDP); 50 g parmezana (1 KDP); 250 B[g] špargljev, kuhanih na pari (1 KDP); 50 g kruha (1 KDP); 150 g sadne solate brez dodanega sladkorja (1 KDP); kozarec vina (1 KDP) 	-7.30	-1.30	0.00	4.50	-444.44	2478.94
-NOUN >acl NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	Jasno je, da med eno in drugo pojavno obliko situacijske komedije obstajajo številna, bistvena A[razhajanja], ki so B[posledica] razlik v naravi obeh medijev ali drugačnih pristopov k oblikovanju in pripovedi zgodbe. 	-7.50	-1.88	0.00	4.31	-475.50	2484.52
-NOUN >conj VERB	NOUN	VERB	7	264.2	AB	2	NOUN	/ slika/ Levo: Rodgersija (Rodgersia pinnata) je prava vlagoljubna A[rastlina] in B[potrebuje] stalno vlažna tla. 	-6.21	-0.60	0.00	4.81	-193.65	998.52
-NOUN >parataxis NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	A[Govedo] in prašiči Cena za živo maso B[Cena] za meso 	-7.50	-1.88	0.00	4.31	-475.50	2484.52
-NOUN <nmod NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	Nekaj denarja se splača vložiti tudi v kompostnik z deževniki, kjer se bodo razkrajali kuhinjski odpadki, ki ne sodijo v običajni kompostnik (A[sosednja] B[stran]). 	-7.72	-2.55	0.00	4.09	-514.01	2490.23
-NOUN <orphan NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	Ljubljana - Sonce se te dni upira prihodu jeseni, a bližajoči se uvodni hokejski dogodek sezone pri nas (od četrtka do A[nedelje] tradicionalni blejski B[turnir]) jasno naznanja začetek panog, značilnih za zimsko športno obdobje. 	-7.72	-2.55	0.00	4.09	-514.01	2490.23
+NOUN >nummod NUM	NOUN	NUM	11	415.1	AB	2	NOUN	(A[Družina], B[15.] 7. 1990, 1) 	-3.48	3.44	0.00	5.83	-33.71	200.53
+NOUN >nmod PRON	NOUN	PRON	10	377.4	AB	2	NOUN	Zahtevali so njuno izpustitev, saj naj bi bile A[obtožbe] zoper B[njiju] zlagane. 	-4.23	2.41	0.00	5.62	-56.26	330.33
+CCONJ <advmod NOUN	CCONJ	NOUN	9	339.6	AB	2	NOUN	"""Kdo A[pa] je afriška B[osebnost] stoletja?"" je spraševal dalje. "	-4.80	1.54	0.00	5.41	-80.46	456.78
+NOUN >acl ADJ	NOUN	ADJ	9	339.6	AB	2	NOUN	Bolj verjetno je, da je to A[dan], ko je bil B[pokopan]. 	-6.15	0.19	0.00	5.08	-209.59	1224.24
+NOUN >csubj VERB	NOUN	VERB	8	301.9	AB	2	NOUN	A[Škoda] je, da slovenski uporabniki B[iščejo] informacije na tujih straneh. 	-6.02	-0.02	0.00	5.00	-180.79	993.71
+NOUN >list NOUN	NOUN	NOUN	8	301.9	AB	2	NOUN	En kos: približno 340 A[kcal], B[beljakovine]: 4 g, maščobe: 20 g, ogljikovi hidrati: 37 g 	-7.30	-1.30	0.00	4.50	-444.44	2478.94
+NOUN >acl NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	Zdaj velja popolna prepoved uživanja alkohola, vključno s prosenim pivom A[marissa], ki je osnovni B[del] tradicionalne prehrane. 	-7.50	-1.88	0.00	4.31	-475.50	2484.52
+NOUN >conj VERB	NOUN	VERB	7	264.2	AB	2	NOUN	Jeza je pri otrocih pogostejše A[čustvo] kot strah, saj B[je] dražljajev, ki jo sprožajo, več. 	-6.21	-0.60	0.00	4.81	-193.65	998.52
+NOUN >parataxis NOUN	NOUN	NOUN	7	264.2	AB	2	NOUN	A[Govedo] in prašiči B[Cena] za živo maso Cena za meso 	-7.50	-1.88	0.00	4.31	-475.50	2484.52
+NOUN <nmod NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	Torej morajo biti A[H] II B[regije] območja, v katerih se rojevajo zvezde. 	-7.72	-2.55	0.00	4.09	-514.01	2490.23
+NOUN <orphan NOUN	NOUN	NOUN	6	226.4	AB	2	NOUN	Nubijci visoko cenijo telesno lepoto in moč, zato jim prepoved rokoborbe pomeni isto kot A[kristjanu] porušena B[cerkev]. 	-7.72	-2.55	0.00	4.09	-514.01	2490.23
 PRON <nsubj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	"Toda A[kaj] je B[energija] ""nacionalizma""? "	-4.97	0.20	0.00	4.89	-74.26	345.85
-PRON <obj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	Vsakodnevna družinska in osebna molitev pa naj A[nam] bo najmočnejša B[spodbuda] za sprejemanje odgovornosti, ki jih imamo kot krščanska družina. 	-4.97	0.20	0.00	4.89	-74.26	345.85
-ADV <orphan NOUN	ADV	NOUN	5	188.7	AB	2	NOUN	Nadškof Anton Bonaventura Jeglič je bil goreč častilec in apostol Marijinega Srca, prav A[tako] tudi B[škof] Janez Gnidovec. 	-5.67	-1.03	0.00	4.56	-111.79	482.88
-NOUN >conj ADJ	NOUN	ADJ	4	150.9	AB	2	NOUN	V glavnem mestu je shod potekal pod geslom Vaša A[vojna], naši B[mrtvi]! v organizaciji Protivojne koalicije, udeležilo pa se ga je približno dvesto ljudi. 	-7.32	-3.32	0.00	3.91	-316.89	1249.93
-NOUN >nmod DET	NOUN	DET	4	150.9	AB	2	NOUN	A[Posledica] B[tega] je bila, da so jo za tekstopisko najeli pevci, kot so Britney Spears, New Kids on the Block, Fergie in Pussycat Dolls. 	-5.57	-1.57	0.00	4.30	-92.72	357.46
-NOUN >nsubj NOUN	NOUN	NOUN	4	150.9	AB	2	NOUN	Edina A[izjema] so B[opore] iz prožnih vej z obrezanih grmovnic, s katerimi zagotovimo zelnatim trajnicam pokončno rast. 	-8.30	-4.30	0.00	3.50	-630.53	2502.12
+PRON <obj NOUN	PRON	NOUN	6	226.4	AB	2	NOUN	Razen seveda, če A[vam] je vožnja že v štartu B[muka]. 	-4.97	0.20	0.00	4.89	-74.26	345.85
+ADV <orphan NOUN	ADV	NOUN	5	188.7	AB	2	NOUN	"Ne energija ""biti vse ali nič"", ampak A[preprosto] B[energija] biti. "	-5.67	-1.03	0.00	4.56	-111.79	482.88
+NOUN >conj ADJ	NOUN	ADJ	4	150.9	AB	2	NOUN	Kraljico je ranil njen bivši A[častnik] in verjetno psihično B[nezdrav] Robert Pate. 	-7.32	-3.32	0.00	3.91	-316.89	1249.93
+NOUN >nmod DET	NOUN	DET	4	150.9	AB	2	NOUN	A[Primer] B[tega] je programski jezik Java. 	-5.57	-1.57	0.00	4.30	-92.72	357.46
+NOUN >nsubj NOUN	NOUN	NOUN	4	150.9	AB	2	NOUN	A[Primer] tega je programski B[jezik] Java. 	-8.30	-4.30	0.00	3.50	-630.53	2502.12
 VERB <advcl NOUN	VERB	NOUN	4	150.9	AB	2	NOUN	Erica cinerea je ena izmed množice lepih res, ki so potem, ko se A[zakoreninijo], zelo nezahtevne vrtne B[rastline]. 	-7.02	-3.02	0.00	4.00	-257.68	1013.80
-ADP <case NOUN	ADP	NOUN	3	113.2	AB	2	NOUN	Pri njih so našli in zasegli eno tableto mamila ecstasy, zavojček kokaina, štiri zavojčke heroina, 30 tablet heptanona in ponarejen bankovec A[za] 200 B[DEM]. 	-7.53	-4.36	0.00	3.56	-318.05	1088.15
-CCONJ <orphan NOUN	CCONJ	NOUN	3	113.2	AB	2	NOUN	29. avgust - 56 let bo star trener juda Alfonz HOSTNIK Iz Domžal, 35 let A[pa] alpski B[smučar] Stojan PIHALJ iz Maribora. 	-6.38	-3.21	0.00	3.83	-142.83	483.25
+ADP <case NOUN	ADP	NOUN	3	113.2	AB	2	NOUN	Do 12 tednov lahko shranjujejo sladki komarček v kontrolirani atmosferi A[pri] 0 B[oC], 3% O2 in 3% CO2. 	-7.53	-4.36	0.00	3.56	-318.05	1088.15
+CCONJ <orphan NOUN	CCONJ	NOUN	3	113.2	AB	2	NOUN	Glavni povzročitelj obeh vrst obolenja je Escherichia coli, v redkih primerih A[pa] tudi druge B[bakterije], virusi ali glive. 	-6.38	-3.21	0.00	3.83	-142.83	483.25
 NOUN >advmod ADV	NOUN	ADV	3	113.2	AB	2	NOUN	No, mogoče so še, nekje globoko v Amazoniji ali v Novi Gvineji, toda če jih želiš obiskati, moraš biti pustolovec in še A[športnik] B[povrhu]. 	-6.41	-3.24	0.00	3.82	-145.48	492.38
 NOUN >aux AUX	NOUN	AUX	3	113.2	AB	2	NOUN	Še en A[dirigent], ki je nanj naredil močan vtis, B[je] bil Hans Knappertsbusch. 	-6.86	-3.69	0.00	3.73	-199.22	677.72
-NOUN >list X	NOUN	X	3	113.2	AB	2	NOUN	2 A[Zbirka] odločb civilnega oddelka Vrhovnega sodišča Republike Slovenije 2000, GV, Ljubljana 2001, B[št.] 37, str. 240. 	-3.50	-0.33	0.00	4.05	-17.82	55.42
+NOUN >list X	NOUN	X	3	113.2	AB	2	NOUN	Pravilnik o ocenjevanju zdravstvene sposobnosti vojaških obveznikov za vojaško službo (Vojaški uradni A[list] SFRJ, B[št.] 5/ 1991) 	-3.50	-0.33	0.00	4.05	-17.82	55.42
 NOUN >nmod X	NOUN	X	3	113.2	AB	2	NOUN	Fizik z Berkeleyja, A[profesor] B[J.] Robert Oppenheimer, je bil leta 1942 imenovan na mesto znanstvenega vodje projekta Manhattan. 	-3.50	-0.33	0.00	4.05	-17.82	55.42
-NOUN >parataxis ADJ	NOUN	ADJ	3	113.2	AB	2	NOUN	Ker nimamo referenčnega obdobja, bo skupni A[znesek] plačil t. i. ovojnica, izračunana na podlagi izpogajanih baznih površin in pravic za premije, iz česar bodo B[izračunana] enotna plačila na hektar. 	-7.73	-4.56	0.00	3.50	-366.49	1255.58
+NOUN >parataxis ADJ	NOUN	ADJ	3	113.2	AB	2	NOUN	1 je najboljša A[ocena], 6 pa B[najslabša]. 	-7.73	-4.56	0.00	3.50	-366.49	1255.58
 NOUN >advcl VERB	NOUN	VERB	2	75.5	AB	2	NOUN	In to je A[način] našega informiranja, da B[vemo], kako je z nami. 	-8.02	-6.02	0.00	3.00	-365.82	1025.05
 NOUN >advmod PART	NOUN	PART	2	75.5	AB	2	NOUN	Prava A[dilema] je B[seveda], ali si bo Janša jeseni upal slediti Damijanovim idejam, kar bi najverjetneje pomenilo resno ogroziti možnost zmage na prihodnjih volitvah. 	-6.43	-4.43	0.00	3.32	-120.33	332.60
-NOUN >appos NUM	NOUN	NUM	2	75.5	AB	2	NOUN	Slomar D. O. O., Smrekarjeva 47, 6310 Izola, Tel.: 05/ 6418 242, A[Faks]: B[05]/ 6418 242, Sahir Abdelkbir 	-5.94	-3.94	0.00	3.37	-85.41	234.43
+NOUN >appos NUM	NOUN	NUM	2	75.5	AB	2	NOUN	Datum začetka trgovanja s povečanim številom navadnih delnic DOBR v borzni kotaciji A je A[torek], B[9.] 2. 1999. 	-5.94	-3.94	0.00	3.37	-85.41	234.43
 NOUN >appos X	NOUN	X	2	75.5	AB	2	NOUN	Njihov drugi glasbeni A[album], B[A] Year Without Rain, je izšel 17. septembra 2010. 	-4.08	-2.08	0.00	3.46	-22.53	58.82
 NOUN >conj PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	Preloženo tekmo je Pionir v Ljutomeru nesrečno izgubil - V petek jim proti Olimpiji sreča ni obrnila hrbta - Dober A[servis], napad in B[Dolja] z druge linije 	-6.89	-4.89	0.00	3.25	-165.91	460.96
-NOUN >conj SYM	NOUN	SYM	2	75.5	AB	2	NOUN	Do 12 tednov lahko shranjujejo sladki komarček v kontrolirani atmosferi pri 0 A[oC], 3% O2 in 3B[%] CO2. 	0.39	2.39	0.00	3.50	0.33	-0.48
-NOUN >list PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	2 A[Zbirka] odločb civilnega oddelka Vrhovnega sodišča Republike Slovenije 2000, GV, B[Ljubljana] 2001, št. 37, str. 240. 	-6.89	-4.89	0.00	3.25	-165.91	460.96
-NOUN >nmod NUM	NOUN	NUM	2	75.5	AB	2	NOUN	Tekmo je vodil Franco Foda, drugi graški trener, A[poraz] z B[1:3] proti novincu v ligi je boleče odjeknil med privrženci graških črno-belih, ki so z velikim transparentom (»Nočemo ostati še brez drugega Ivice«; vrzeli po Vastićevem odhodu na Japonsko se Sturmu zelo vidno poznajo) jasno dali vedeti, da se njihovi ljubljenci lahko vrnejo na zeleno vejo le pod Osimovo dirigentsko palico. 	-5.94	-3.94	0.00	3.37	-85.41	234.43
-NOUN >orphan NOUN	NOUN	NOUN	2	75.5	AB	2	NOUN	Veterinarji Veterinarske bolnice Maribor, d. o. o., Šentiljska cesta 109, za velike živali, so dosegljivi na številki 228-37, nočno A[dežurstvo] na B[številki] 0609 638-781; veterinarji, specializirani za male živali, so dosegljivi na številki 22-837, nočno dežurstvo na 0609 656-320, v ambulanti Hoče 611-801 in v veterinarski posvetovalnici na telefonski številki 211-244. 	-9.30	-7.30	0.00	2.50	-893.12	2514.92
+NOUN >conj SYM	NOUN	SYM	2	75.5	AB	2	NOUN	Do 12 tednov lahko shranjujejo sladki komarček v kontrolirani atmosferi pri 0 A[oC], 3B[%] O2 in 3% CO2. 	0.39	2.39	0.00	3.50	0.33	-0.48
+NOUN >list PROPN	NOUN	PROPN	2	75.5	AB	2	NOUN	2 A[Zbirka] odločb civilnega oddelka Vrhovnega sodišča Republike Slovenije 2000, B[GV], Ljubljana 2001, št. 37, str. 240. 	-6.89	-4.89	0.00	3.25	-165.91	460.96
+NOUN >nmod NUM	NOUN	NUM	2	75.5	AB	2	NOUN	Nekaj takih univerzalnih čitalcev (A[cena] za B[enega] je menda le okrog 20000 SIT) je pri nas že. 	-5.94	-3.94	0.00	3.37	-85.41	234.43
+NOUN >orphan NOUN	NOUN	NOUN	2	75.5	AB	2	NOUN	Nekaj je zasluga njegove fantovske pustolovske žilice, A[večina] pa najverjetneje B[krvi], ki se pretaka po njegovih žilah. 	-9.30	-7.30	0.00	2.50	-893.12	2514.92
 PROPN <obl NOUN	PROPN	NOUN	2	75.5	AB	2	NOUN	Tudi Bill Gates ima samo 9,5 odstotka Microsofta, pa je njegova beseda za A[Microsoft] B[zakon]. 	-6.89	-4.89	0.00	3.25	-165.91	460.96
-VERB <csubj NOUN	VERB	NOUN	2	75.5	AB	2	NOUN	A[Pokazali] pa ni dober B[izraz]: v predstavi gre namreč za medsebojno učinkovanje igralcev (imenujejo se tudi »prebivalci labirinta« ali »izzivalci«) in gledalcev. 	-8.02	-6.02	0.00	3.00	-365.82	1025.05
+VERB <csubj NOUN	VERB	NOUN	2	75.5	AB	2	NOUN	Seveda pa A[dobiti] podpis ni lahka B[stvar]. 	-8.02	-6.02	0.00	3.00	-365.82	1025.05
 ADJ <nsubj NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	A[Prva] je dosledno B[vztrajanje] pri načelu legalitete v vsem procesu osamosvajanja. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
 ADJ <obj NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	In če je A[drugim] vodilo čim večji B[dobiček], mora biti nam tudi čim uspešnejši razvoj mesta, in ne dovolimo več, da bi o naši usodi odločali (samo) drugi. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
 ADJ <obl NOUN	ADJ	NOUN	1	37.7	AB	2	NOUN	Številne države jih uporabljajo kot uradno valuto, v mnogih A[drugih] pa je de facto B[valuta]. 	-9.32	-9.32	0.00	1.91	-636.77	1267.94
