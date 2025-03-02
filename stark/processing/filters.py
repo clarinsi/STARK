@@ -78,7 +78,7 @@ def read_filters(configs):
         'nodes_number': configs['nodes_number'],
         'frequency_threshold': configs['frequency_threshold'],
         'lines_threshold': configs['lines_threshold'],
-        'print_root': configs['print_root']
+        'head_info': configs['head_info']
     }
 
     if configs['root_whitelist']:

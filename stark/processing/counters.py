@@ -182,7 +182,7 @@ class Counter(object):
                 self.summary.representation_trees[key]['order_letters'] = order_letters
                 if self.configs['depsearch']:
                     self.summary.representation_trees[key]['key_sorted'] = r.get_key_sorted(self.filters)[1:-1]
-            if self.filters['print_root']:
+            if self.filters['head_info']:
                 self.summary.representation_trees[key]['root_name'] = r.node.name
             if self.configs['greedy_counter'] and self.summary.max_tree_size < r.tree_size:
                 self.summary.max_tree_size = r.tree_size

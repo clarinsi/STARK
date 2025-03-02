@@ -121,7 +121,7 @@ class Writer(object):
             header += ['Depsearch tree query']
         if self.filters['nodes_number']:
             header += ['Number of nodes']
-        if self.filters['print_root']:
+        if self.filters['head_info']:
             header += ['Head node']
         if self.filters['example']:
             header += ['Example']
@@ -168,7 +168,7 @@ class Writer(object):
                 row += [v['key_sorted']]
             if self.filters['nodes_number']:
                 row += ['%d' % len(word_array)]
-            if self.filters['print_root']:
+            if self.filters['head_info']:
                 row += [v['root_name']]
             if self.filters['example']:
                 random_sentence_position = 0
