@@ -8,8 +8,8 @@ Below is a list of customizable settings that can be used to define the type of 
 | [input](#--input) | [node_type](#--node_type) | [size](#--size) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
 | [output](#--output) | [labeled](#--labeled) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
 |  | [label_subtypes](#--label_subtypes) | [ignored_labels](#--ignored_labels)| | [depsearch](#--depsearch) | |
-|  | [fixed](#--fixed) | [allowed_labels](#--allowed_labels)  |  |  |  |
-|  |  |  [query](#--query)|  |  |  |
+|  | [fixed](#--fixed) | [allowed_labels](#--allowed_labels)  |  | [node_info](#--node_info) |  |
+|  |  |  [query](#--query)|  | [head_info](#--head_info) |  |
 
 
 
@@ -120,7 +120,7 @@ If a tree occurring in the first treebank is absent from the second treebank (i.
 
 ## Alternative visualisation and examples
 
-In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the easy-to-read dep\_search query language (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree, which also enable the users to visualize specific instances of the trees in the related treebank-browsing services.
+In addition to the [default description of the trees](README.md#description-of-tree-structure) featured in the first column of the output, which is based on the easy-to-read dep\_search query language (e.g. 'ADJ <amod NOUN'), STARK can also produce two alternative ways of describing a tree, which also enable the users to visualize specific instances of the trees in the related treebank-browsing services. Other options are available to facilitate the interpretation and exploration of the output trees.
 
 ### `--grew_match`
 **Values:** _yes, no_
@@ -137,7 +137,15 @@ Second, the optional `--depsearch` parameter (value _yes_) produces trees in acc
 ### `--example`
 **Values:** _yes, no_
 
-Additionaly, using the `--example` parameter (value _yes_) produces an additional column with one random sentence containing the tree, in which the nodes of the tree are explicitely marked, e.g. a sentence _We went to see \[the\]<sub>A</sub> \[new\]<sub>B</sub> \[trains\]<sub>C</sub>._, for a tree of the type 'DET < ADJ < NOUN'.
+Using the `--example` parameter (value _yes_) produces an additional column with one random sentence containing the tree, in which the nodes of the tree are explicitely marked, e.g. a sentence _We went to see \[the\]<sub>A</sub> \[new\]<sub>B</sub> \[trains\]<sub>C</sub>._, for a tree of the type 'DET < ADJ < NOUN'.
+
+### `--node_info`
+**Values:** _yes, no_
+The `--node_info` parameter (value _yes_) splits the tree structure into individual nodes, displaying each node in a seperate column (e.g. Node-A, Node-B, Node-C). This is particularly useful for filtering the output trees based on specific nodes.
+
+### `--head_info`
+**Values:** _yes, no_
+The `--head_info` parameter (value _yes_) displays the head node in a seperate column, which is particularly useful for filtering the output trees based on the highest-level (head) node.
 
 ## Threshold settings
 
