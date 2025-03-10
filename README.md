@@ -76,15 +76,15 @@ For a detailed explanation of these and many other settings, see the [settings d
 
 STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](/sample/output.tsv) below, which show the 5-most frequent trees occurring in the sample `en_ewt-ud-dev.conllu` treebank.
 
-The description of the tree is given in the first column, while subsequent columns include additional information on individual nodes, the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the head. For adding other types of information to the output, such as other useful statistics and links to visualized examples, see the list of settings above or the [detailed settings documentation here](settings.md).
+The description of the tree is given in the first column, while subsequent columns additional information on the absolute and relative frequencies, the surface node order, the number of the nodes in the tree and the head node. For adding other types of information to the output, such as other useful statistics, examples and links to visualized trees, see the list of settings above or the [detailed settings documentation here](settings.md).
 
-|Tree | Node A | Node B | Node C | A-Freq | R-Freq | Order | N | Head |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DET <det NOUN | DET | NOUN |   | 320 | 12644.6 | AB | 2 | NOUN
-| ADP <case DET <det NOUN | ADP | DET | NOUN |  183 | 7276.6 | ABC | 3 | NOUN
-| ADP <case PROPN | ADP | PROPN |   | 175 | 6958.5 | AB | 2 | PROPN
-| ADP <case NOUN | ADP | NOUN |   | 163 | 6481.4 | AB | 2 | NOUN
-| ADJ <amod NOUN | ADJ | NOUN |   | 117 | 4652.3 | AB | 2 | NOUN
+|Tree | Abs-Freq | Rel-Freq | Order | N | Head
+| --- | --- | --- | --- | --- | --- | 
+| DET <det NOUN | 320 | 12644.6 | AB | 2 | NOUN
+| ADP <case DET <det NOUN | 183 | 7276.6 | ABC | 3 | NOUN
+| ADP <case PROPN | 175 | 6958.5 | AB | 2 | PROPN
+| ADP <case NOUN | 163 | 6481.4 | AB | 2 | NOUN
+| ADJ <amod NOUN | 117 | 4652.3 | AB | 2 | NOUN
 
 ### Description of tree structure
 The description of the trees given in the first column of the output is based on the [dep_search](https://fginter.github.io/dep_search/) query language (archived [here](https://orodja.cjvt.si/drevesnik/help/en/)), which is simple to learn and easy to read:
