@@ -1,5 +1,7 @@
-# STARK: A Tool for Bottom-Up Treebank Analysis
-STARK is a highly customizable tool designed for extracting different types of syntactic structures (trees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its significance (keyness) in comparison to another treebank. 
+# STARK: A Tool for Bottom-up Treebank Analysis
+STARK (Syntactic Tree Analysis and Retrieval Kit) is a highly customizable tool designed for extracting different types of syntactic structures (trees and subtrees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its significance (keyness) in comparison to another treebank. 
+
+In contrast to other available tools for treebank analysis, which primarily support top-down, query-based investigations (e.g., retrieving instances of a specific syntactic structure), STARK also enables a more inductive, bottom-up approach, facilitating the discovery of syntactic patterns and relationships that might otherwise go unnoticed (e.g., extracting all observed syntactic structures without much predefined criteria).
 
 STARK is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the CONLL-U format as input. 
 
