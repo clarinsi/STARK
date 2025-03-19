@@ -16,7 +16,7 @@ from stark.utils import create_output_string_lemma
 
 
 class Tree(object):
-    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, document, summary):
+    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, misc, document, summary):
 
         feats_dict = summary.feats_dict
 
@@ -49,6 +49,9 @@ class Tree(object):
                 feats_dict)[feat][next(iter(feats_detailed[feat]))]
 
         self.feats = {k: list(v.keys())[0] for k, v in self.feats_detailed.items()}
+        if misc not in document.misc_dict:
+            document.misc_dict[misc] = misc
+        self.misc = document.misc_dict[misc]
 
         self.parent = head
         self.children = []

@@ -75,3 +75,7 @@ def create_output_string_none(tree):
 
 def create_output_string_feats(tree):
     return '|'.join([f'{k}={list(v.keys())[0]}' for k, v in tree.feats_detailed.items()])
+
+
+def create_output_string_misc(tree):
+    return tree.misc

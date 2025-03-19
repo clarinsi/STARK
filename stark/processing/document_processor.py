@@ -42,9 +42,22 @@ class DocumentProcessor(object):
         """
         return self.cache.create_trees(summary, configs)
 
+    @staticmethod
+    def _reform_misc(misc):
+        """
+        Uses pyconll to reform misc column from dict created by the same library
+
+        :param misc:
+        :return:
+        """
+        return pyconll.unit.token._dict_mixed_conll_map(misc, '_', '|',
+                                                 '=', ',',
+                                                 lambda pair: pair[0].lower())
+
     def create_trees(self, summary, configs):
         """
         Creates trees based on configs and stores them in Document object.
+        :param configs:
         :param summary:
         :return:
         """
@@ -52,7 +65,6 @@ class DocumentProcessor(object):
 
         logger.info("Reading file: " + self.path)
         train = pyconll.load_from_file(self.path)
-
         for sentence in train:
             token_nodes = []
             tokens = []
@@ -61,14 +73,15 @@ class DocumentProcessor(object):
                     continue
 
                 token_form = token.form if token.form is not None else '_'
+                token_misc = self._reform_misc(token.misc) if token.misc else '_'
                 token_deprel = token.deprel if self.processor.configs['label_subtypes'] \
                     else token.deprel.split(':')[0]
                 if self.processor.configs['greedy_counter']:
                     node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
-                                      token.head, token.feats, document, summary)
+                                      token.head, token.feats, token_misc, document, summary)
                 else:
                     node = QueryTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
-                                     token.head, token.feats, document, summary)
+                                     token.head, token.feats, token_misc, document, summary)
                 token_nodes.append(node)
                 space_after = token.misc[
                                   'SpaceAfter'].pop() != 'No' if token.misc is not None and 'SpaceAfter' in token.misc \

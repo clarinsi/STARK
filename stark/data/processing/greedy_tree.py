@@ -19,8 +19,8 @@ from stark.processing.filters import Filter
 
 
 class GreedyTree(Tree):
-    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, document, summary):
-        super().__init__(index, form, lemma, upos, xpos, deprel, head, feats_detailed, document, summary)
+    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, token_misc, document, summary):
+        super().__init__(index, form, lemma, upos, xpos, deprel, head, feats_detailed, token_misc, document, summary)
 
     @staticmethod
     def _processing_filter(combinations, child_active_tree, filters):

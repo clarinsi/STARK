@@ -21,13 +21,14 @@ class Document(object):
         self.upos_dict = {}
         self.xpos_dict = {}
         self.deprel_dict = {}
+        self.misc_dict = {}
 
     def get_document_data(self):
-        return [self.trees, self.form_dict, self.lemma_dict, self.upos_dict, self.xpos_dict, self.deprel_dict,
+        return [self.trees, self.form_dict, self.lemma_dict, self.upos_dict, self.xpos_dict, self.deprel_dict, self.misc_dict,
                 self.sentence_statistics]
 
     @classmethod
     def create_document_from_cache(cls, doc_data):
         d = cls()
-        d.trees, d.form_dict, d.lemma_dict, d.upos_dict, d.xpos_dict, d.deprel_dict, d.sentence_statistics = doc_data
+        d.trees, d.form_dict, d.lemma_dict, d.upos_dict, d.xpos_dict, d.deprel_dict, d.misc_dict, d.sentence_statistics = doc_data
         return d

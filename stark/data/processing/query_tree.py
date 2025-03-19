@@ -21,8 +21,8 @@ from stark.processing.filters import Filter
 
 
 class QueryTree(Tree):
-    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, document, summary):
-        super().__init__(index, form, lemma, upos, xpos, deprel, head, feats_detailed, document, summary)
+    def __init__(self, index, form, lemma, upos, xpos, deprel, head, feats_detailed, token_misc, document, summary):
+        super().__init__(index, form, lemma, upos, xpos, deprel, head, feats_detailed, token_misc, document, summary)
 
     def get_subtrees(self, permanent_query_trees, temporary_query_trees, filters):
         """
@@ -100,7 +100,7 @@ class QueryTree(Tree):
 
     def _fits_permanent_requirements(self, filters):
         return Filter.check_root_whitelist(self.form, self.lemma, self.upos,
-                                           self.feats, self.deprel, filters)
+                                           self.feats, self.deprel, self.misc, filters)
 
     def _fits_temporary_requirements(self, filters):
         return Filter.check_label_whitelist(self.deprel, filters)

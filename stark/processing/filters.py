@@ -13,9 +13,10 @@
 # limitations under the License.
 
 from stark.utils import create_output_string_deprel, create_output_string_lemma, create_output_string_upos, \
-    create_output_string_xpos, create_output_string_feats, create_output_string_form, create_output_string_none
+    create_output_string_xpos, create_output_string_feats, create_output_string_form, create_output_string_none, \
+    create_output_string_misc
 
-ROOT_WHITELIST_OPTIONS = ['deprel', 'feats', 'form', 'lemma', 'upos']
+ROOT_WHITELIST_OPTIONS = ['deprel', 'feats', 'form', 'lemma', 'upos', 'misc']
 
 
 def read_filters(configs):
@@ -38,7 +39,7 @@ def read_filters(configs):
         node_types = node_type.split('+')
         create_output_string_functs = []
         for node_type in node_types:
-            assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats'], \
+            assert node_type in ['deprel', 'lemma', 'upos', 'xpos', 'form', 'feats', 'misc'], \
                 '"node_type" is not set up correctly'
             if node_type == 'deprel':
                 create_output_string_funct = create_output_string_deprel
@@ -50,6 +51,8 @@ def read_filters(configs):
                 create_output_string_funct = create_output_string_xpos
             elif node_type == 'feats':
                 create_output_string_funct = create_output_string_feats
+            elif node_type == 'misc':
+                create_output_string_funct = create_output_string_misc
             else:
                 create_output_string_funct = create_output_string_form
             create_output_string_functs.append(create_output_string_funct)
@@ -88,6 +91,7 @@ def read_filters(configs):
             attribute_dict = {}
             for attribute in option.split('&'):
                 value = attribute.split('=')
+                value[1] = '='.join(attribute.split('=')[1:])
                 # look for negation sign, if there is only one character - ! it will search for form ! instead
                 if value[0][0] == '!' and len(value[0]) > 1:
                     negation = True
@@ -117,7 +121,7 @@ class Filter(object):
         return (
                 Filter.check_tree_size(tree.tree_size, filters)
                 and Filter.check_root_whitelist(tree.node.node.form, tree.node.node.lemma, tree.node.node.upos,
-                                                tree.node.node.feats, tree.node.node.deprel, filters)
+                                                tree.node.node.feats, tree.node.node.deprel, tree.node.node.misc, filters)
         )
 
     @staticmethod
@@ -188,7 +192,7 @@ class Filter(object):
         return filters['tree_size_range'][0] <= size <= filters['tree_size_range'][-1]
 
     @staticmethod
-    def check_root_whitelist(form, lemma, upos, feats, deprel, filters):
+    def check_root_whitelist(form, lemma, upos, feats, deprel, misc, filters):
         """
         When root whitelist exists checks if element parameters are acceptable.
         :param form:
@@ -222,7 +226,8 @@ class Filter(object):
                 ('deprel' not in option or (option['deprel'][1] == deprel) == (not option['deprel'][0])) and \
                 ('form' not in option or (option['form'][1] == form) == (not option['form'][0])) and \
                 ('lemma' not in option or (option['lemma'][1] == lemma) == (not option['lemma'][0])) and \
-                ('upos' not in option or (option['upos'][1] == upos) == (not option['upos'][0]))
+                ('upos' not in option or (option['upos'][1] == upos) == (not option['upos'][0])) and \
+                ('misc' not in option or (option['misc'][1] == misc) == (not option['misc'][0]))
 
             if filter_passed:
                 return True
