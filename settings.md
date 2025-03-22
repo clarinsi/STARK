@@ -35,7 +35,7 @@ STARK produces a single tab-separated file (.tsv) as output, the name and the lo
 ### `--node_type`
 **Values:** _form, lemma, upos, xpos, feats, deprel_
 
-The `--node_type` parameter specifies which characteristics of the tokens should be considered when extracting and counting the trees: word form (value _form_, e.g. 'went'), lemma (_lemma_, e.g. 'go'), part-of-speech tag (_upos_, e.g. 'VERB'), morphological features (_feats_, e.g. 'Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin'), language-specific tag (_xpos_, e.g. 'VBD'), dependency role (_deprel_, e.g. 'obj'). You can also combine these values using the '+' operator (e.g. _lemma+upos_). If you do not want to differentiate your trees based on their nodes, simply comment the '--node_type' parameter to get trees with underscores as nodes.
+The `--node_type` parameter specifies which characteristics of the tokens should be considered when extracting and counting the trees: word form (value _form_, e.g. 'went'), lemma (_lemma_, e.g. 'go'), part-of-speech tag (_upos_, e.g. 'VERB'), morphological features (_feats_, e.g. 'Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin'), language-specific tag (_xpos_, e.g. 'VBD'), dependency role (_deprel_, e.g. 'obj'), or even anything found in the miscellaneous column (_misc_, e.g. 'NER=LOC'). You can also combine these values using the '+' operator (e.g. _lemma+upos_). If you do not want to differentiate your trees based on their nodes, simply comment the '--node_type' parameter to get trees with underscores as nodes.
 
 For example, specifying the option _form_ returns trees of the type 'Mary <nsubj went', while specifying the option _upos_ returns trees of the type 'PROPN <nsubj VERB'. If this parameter is not specified, the trees are returned in the form '_ nsubj _'.
 
@@ -78,7 +78,7 @@ The obligatory `--size` parameter allows the users to define the size of the tre
 
 The optional `--head` parameter allows the users to define specific constraints on the head node (i.e. the word that all other words in the (sub-)tree depend on) in the form of attribute-value pairs specifying its lexical or grammatical features. 
 
-For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR),  '&' (AND) and '!' (NOT) operators, e.g. specifying _lemma=chair&upos=NOUN|lemma=bank&upos=VERB_ to extract trees spanning from the verb or noun 'chair'. 
+For example, _upos=NOUN_ would only return trees with nouns as heads (nominal phrases) and discard trees spanning from words belonging to other part-of-speech categories. Several restrictions on the head node can be introduced by using the '|' (OR),  '&' (AND) and '!' (NOT) operators, e.g. specifying _lemma=chair&upos=NOUN|lemma=bank&upos=VERB_ to extract trees spanning from the verb or noun 'chair'. In the unlikely event that this setting is used to filter based on information in the MISC column, please ensure that the column's contents do not include these special operators (e.g. _misc=keep-it-simple_).
 
 ### `--ignored_labels`
 **Value:** _\<list of dependency relations to be ignored\>_
