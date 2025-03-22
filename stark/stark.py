@@ -20,6 +20,7 @@ from pathlib import Path
 import sys
 import logging
 
+from stark.data.representation.empty_namespace import EmptyNamespace
 # from pympler import asizeof
 
 from stark.data.summary import Summary
@@ -115,7 +116,7 @@ def count_subtrees(configs, filters):
     return summary
 
 
-def read_configs(config, args):
+def read_configs(config, args=EmptyNamespace()):
     """
     Merges concrete settings from config files with arguments. When arguments are given, they override settings from
     configuration file. Look into documentation for which parameters in config file are required.
@@ -251,7 +252,7 @@ def read_configs(config, args):
     return configs
 
 
-def read_settings(config_file, args):
+def read_settings(config_file, args=EmptyNamespace()):
     """
     Reads configuration file and merges it with arguments.
     :param config_file: string pointing to config file.
