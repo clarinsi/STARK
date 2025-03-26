@@ -1,14 +1,14 @@
-# STARK: A Tool for Bottom-up Treebank Analysis
-STARK (Syntactic Tree Analysis and Retrieval Kit) is a highly customizable tool designed for extracting different types of syntactic structures (trees and subtrees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its significance (keyness) in comparison to another treebank. 
+# STARK: A Tool for Dependency Tree Extraction and Comparison
 
-In contrast to other available tools for treebank analysis, which primarily support top-down, query-based investigations (e.g., retrieving instances of a specific syntactic structure), STARK also enables a more inductive, bottom-up approach, facilitating the discovery of syntactic patterns and relationships that might otherwise go unnoticed (e.g., extracting all observed syntactic structures without much predefined criteria).
+**A bottom-up tool for discovering syntactic patterns in parsed corpora — no predefined queries needed.**
+
+![stark-demo](https://github.com/user-attachments/assets/40ae50b2-8797-4e5a-948b-a2ade7bb8bd0)
+
+STARK is a highly customizable tool designed for extracting different types of syntactic structures (trees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its statistical significance in comparison to another treebank. 
 
 STARK is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the CONLL-U format as input. 
 
-
-[<img src="https://github.com/user-attachments/assets/cf2516f3-3b91-4099-98e2-dd648b43ee8b">](https://orodja.cjvt.si/stark/)
-
-For an online demonstration of the tool (with reduced set of features), please visit https://orodja.cjvt.si/stark/.
+For an online demonstration of the tool (with reduced set of features), please visit [https://orodja.cjvt.si/stark/](https://orodja.cjvt.si/stark/).
 
 
 ## Installation and execution
@@ -75,6 +75,8 @@ Additional visualization:
 For a detailed explanation of these and many other settings, see the [settings documentation here](settings.md).
 
 ## Output
+
+[<img src="https://github.com/user-attachments/assets/cf2516f3-3b91-4099-98e2-dd648b43ee8b" alt="Input-output flow">](https://orodja.cjvt.si/stark/)
 
 STARK produces a tab-separated (.tsv) file with a list of all the trees matching the input criteria sorted by descending frequency, as illustrated by the first few lines of the default [sample output](/sample/output.tsv) below, which show the 5-most frequent trees occurring in the sample `en_ewt-ud-dev.conllu` treebank.
 
