@@ -2,7 +2,8 @@
 
 **A bottom-up tool for discovering syntactic patterns in parsed corpora — no predefined queries needed.**
 
-![stark-demo](https://github.com/user-attachments/assets/40ae50b2-8797-4e5a-948b-a2ade7bb8bd0)
+![STARK_demonstration_once](https://github.com/user-attachments/assets/750f4c54-a33d-4236-9dcd-aa7869d2deb6)
+
 
 STARK is a highly customizable tool designed for extracting different types of syntactic structures (trees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its statistical significance in comparison to another treebank. 
 
