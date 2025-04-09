@@ -73,14 +73,17 @@ class DocumentProcessor(object):
                     continue
 
                 token_form = token.form if token.form is not None else '_'
+                token_lemma = token.lemma if token.lemma is not None else '_'
+                token_upos = token.upos if token.upos is not None else '_'
+                token_xpos = token.xpos if token.xpos is not None else '_'
                 token_misc = self._reform_misc(token.misc) if token.misc else '_'
                 token_deprel = token.deprel if self.processor.configs['label_subtypes'] \
                     else token.deprel.split(':')[0]
                 if self.processor.configs['greedy_counter']:
-                    node = GreedyTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
+                    node = GreedyTree(int(token.id), token_form, token_lemma, token_upos, token_xpos, token_deprel,
                                       token.head, token.feats, token_misc, document, summary)
                 else:
-                    node = QueryTree(int(token.id), token_form, token.lemma, token.upos, token.xpos, token_deprel,
+                    node = QueryTree(int(token.id), token_form, token_lemma, token_upos, token_xpos, token_deprel,
                                      token.head, token.feats, token_misc, document, summary)
                 token_nodes.append(node)
                 space_after = token.misc[

@@ -22,4 +22,9 @@ setup(name='stark',
     'networkx>=3.3',
     'tqdm>=4.66.4'
   ],
+  entry_points={
+      "console_scripts": [
+      "stark=stark.cli:main",  # This maps `stark` to `stark.cli.main()`
+    ],
+  },
 )

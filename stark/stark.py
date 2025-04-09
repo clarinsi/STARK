@@ -81,7 +81,7 @@ def parse_args(args):
     parser.add_argument("--annodoc_detailed_dir", default=None, type=str,
                         help="Path to a directory where annodoc detailed files are stored (js library for visualization).")
 
-    parser.add_argument("--max_lines", default=None, type=str, help="Maximum number of trees in the output.")
+    parser.add_argument("--max_lines", default=None, type=int, help="Maximum number of trees in the output.")
     parser.add_argument("--node_info", default=None, type=str, help="Information about nodes in separate columns.")
     parser.add_argument("--head_info", default=None, type=str, help="Information about head in separate columns.")
     parser.add_argument("--frequency_threshold", default=None, type=int, help="Frequency threshold.")
@@ -255,7 +255,7 @@ def read_configs(config, args=EmptyNamespace()):
 def read_settings(config_file, args=EmptyNamespace()):
     """
     Reads configuration file and merges it with arguments.
-    :param config_file: string pointing to config file.
+    :param config_file: path to config file.
     :param args: Namespace object
     :return:
     """
