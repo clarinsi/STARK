@@ -23,7 +23,15 @@ By default, STARK uses a single processor to execute. The optional `--cpu_core` 
 ### `--greedy_counter`
 **Values:** _yes, no_
 
-The obligatory `--greedy_counter` parameter defines the way trees are extracted from the input treebank. The default is to use the so-called greedy counter (value _yes_), which searches the trees through a bottom-up approach based on the trees observed in the treebank. This is the recommended option for most use cases, especially if one is interested in longer trees as well. The alternative is using the so-called query counter (value _no_), which produces faster results when extracting trees based on [queries](settings.md#--query).
+The obligatory `--greedy_counter` parameter defines the way trees are extracted from the input treebank. The default is to use the so-called greedy counter (value _yes_), which searches the trees through a bottom-up approach based on the trees observed in the treebank. This is the recommended option for most use cases, especially if one is interested in longer trees as well. The alternative is using the so-called query counter (value _no_), which produces faster results when extracting trees based on [queries](settings.md#--query). 
+
+The diagrams below illustrate the two processing types used in STARK: the overall architecture (left), the greedy counter approach (center), and the query counter approach (right).
+
+<img src="https://github.com/user-attachments/assets/f5894baa-faaf-448e-9619-e397d4654426" height="400" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/user-attachments/assets/4f141177-dba6-4001-b680-b6170e765f53" height="400" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/user-attachments/assets/7ce9bb85-e771-4958-9b12-7f1531403b0a" height="400" /> 
+
+
 
 
 ## Extracting incomplete trees
