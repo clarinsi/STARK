@@ -20,13 +20,12 @@ Install Python 3 on your system https://www.python.org/downloads/.
 Install pip and other libraries required by the program, by running the following commands in the terminal:
 ```bash
 sudo apt install python3-pip
-cd <PATH TO PROJECT DIRECTORY>
-pip3 install -r requirements.txt
+pip3 install stark-trees
 ```
 
 Execute extraction by first moving to the project directory and executing the script with:
 ```bash
-python3 stark.py 
+stark --config_file <PATH TO my-settings.ini FILE>
 ```
 
 ### Windows users

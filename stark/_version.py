@@ -1,3 +1,3 @@
 """ Single source of truth for version number """
 
-__stark_version__ = '2.1.1'
+__stark_version__ = '0.0.2'

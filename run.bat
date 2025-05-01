@@ -1,2 +1,2 @@
-py -3 stark.py --config_file=config.ini &
+py -3 -m stark --config_file=config.ini &
 @pause

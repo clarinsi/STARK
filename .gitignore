@@ -16,3 +16,4 @@ stark.egg-info
 *.pypirc
 *.spec
 *.sage.py
+*.egg-info/
