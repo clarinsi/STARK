@@ -1,4 +1,4 @@
-# STARK: A Tool for Dependency Tree Extraction and Comparison
+# STARK: A Tool for Dependency (Sub)Tree Extraction and Comparison
 
 **A bottom-up tool for discovering syntactic patterns in parsed corpora — no predefined queries needed.**
 
@@ -6,11 +6,11 @@
 ![STARK_demonstration_loop](https://github.com/user-attachments/assets/6e6947bd-0db0-401f-bc69-59d9fc960e14)
 
 
-STARK is a highly customizable tool designed for extracting different types of syntactic structures (trees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its statistical significance in comparison to another treebank. 
+STARK is a highly customizable tool designed for extracting different types of syntactic structures (trees and subtrees) from parsed corpora (treebanks). It quantifies these structures with respect to frequency and provides other useful corpus-linguistic statistics, such as the strength of association between the nodes of a tree or its statistical significance in comparison to another treebank. 
 
 STARK is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the CONLL-U format as input. 
 
-For an online demonstration of the tool (with reduced set of features), please visit [https://orodja.cjvt.si/stark/](https://orodja.cjvt.si/stark/).
+For an online demonstration of the tool (with a slightly reduced set of features), please visit [https://orodja.cjvt.si/stark/](https://orodja.cjvt.si/stark/).
 
 
 ## Installation and execution
