@@ -12,6 +12,12 @@ VERSION = re.compile('__stark_version__ = \'(.*)\'').search(version_file_content
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
   long_description = f.read()
 
+long_description = re.sub(
+    r'\[([^\]]+)\]\((?!http)([^)]+)\)',
+    r'[\1](https://github.com/clarinsi/STARK/blob/master/\2)',
+    long_description
+)
+
 setup(name='stark-trees',
   version=VERSION,
   description=u"Parser for dependency trees",
@@ -19,6 +25,8 @@ setup(name='stark-trees',
   long_description_content_type="text/markdown",
   author='CLARIN.SI',
   author_email='info@clarin.si',
+  # The project's main homepage.
+  url='https://github.com/clarinsi/STARK.git',
   license='Apache 2.0',
   packages=find_packages(),
   include_package_data=True,
@@ -63,6 +71,6 @@ setup(name='stark-trees',
   ],
   python_requires='>=3.6',
   # What does your project relate to?
-  keywords='natural-language-processing nlp natural-language-understanding dependency-trees extraction comparison clarinsi',
+  keywords='universal-dependencies dependency-parsing dependency-trees subtree-extraction treebank syntactic-analysis corpus-linguistics computational-linguistics text-analysis syntax extraction comparison natural-language-processing nlp natural-language-understanding clarinsi',
 
 )
