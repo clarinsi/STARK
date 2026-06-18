@@ -10,6 +10,11 @@ STARK is a highly customizable tool designed for extracting different types of s
 
 STARK is primarily aimed at processing treebanks based on the [Universal Dependencies](https://universaldependencies.org/) annotation scheme, but it also takes any other dependency treebank in the CONLL-U format as input. 
 
+## Read the paper
+
+Luka Krsnik and Kaja Dobrovoljc. 2025. [STARK: A Toolkit for Dependency (Sub)Tree Extraction and Analysis](https://aclanthology.org/2025.tlt-1.5/). In Proceedings of the 23rd International Workshop on Treebanks and Linguistic Theories (TLT, SyntaxFest 2025), pages 44–51, Ljubljana, Slovenia. Association for Computational Linguistics.
+
+## Test it online
 For an online demonstration of the tool (with a slightly reduced set of features), please visit [https://orodja.cjvt.si/stark/](https://orodja.cjvt.si/stark/).
 
 
@@ -127,7 +132,7 @@ If you use STARK in your research, please cite:
 ```
 
 ## Acknowledgment
-This tool was developed by Luka Krsnik in collaboration with Kaja Dobrovoljc and Marko Robnik Šikonja. Financial and infrastructural support was provided by Slovenian Research and Innovation Agency, CLARIN.SI and CJVT UL as part of the research projects [SPOT: A Treebank-Driven Approach to the Study of Spoken Slovenian](https://spot.ff.uni-lj.si/) (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the 2019 and 2024 _CLARIN.SI Resource and Service Development_ grants.
+This tool was developed by Kaja Dobrovoljc and Luka Krsnik in collaboration with Marko Robnik Šikonja. Financial and infrastructural support was provided by Slovenian Research and Innovation Agency, CLARIN.SI and CJVT UL as part of the research projects [SPOT: A Treebank-Driven Approach to the Study of Spoken Slovenian](https://spot.ff.uni-lj.si/) (Z6-4617) and _Language Resources and Technologies for Slovene_ (P6-0411), as well as through the 2019 and 2024 _CLARIN.SI Resource and Service Development_ grants.
 
 <p align="center">
 <a href="http://www.clarin.si/info/about/"><img src="https://raw.githubusercontent.com/clarinsi/STARK/master/logos/CLARIN.png" alt="drawing" height="90"/></a>
