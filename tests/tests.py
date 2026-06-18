@@ -168,6 +168,35 @@ def test_internal_storage2():
                                                                                            'out_internal_storage2.tsv'))
 
 
+def test_complexity():
+    """
+    Test complexity_measures: MDD-mean/MDD-structure/Max depth are always computed,
+    NDD-mean/NDD-structure/N clauses/N T-units fall back to 'n/a' unless the matched
+    subtree's root is the sentence root (deprel == 'root').
+    :return:
+    """
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_complexity.ini')
+    settings = read_settings(config_file, parse_args(['--detailed_results_file',
+                                                       'test_data/output/detailed_results_file_complexity.tsv']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_complexity.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                     'out_complexity.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file_complexity.tsv'),
+                       os.path.join(CORRECT_OUTPUT_DIR, 'detailed_results_file_complexity.tsv'))
+
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_complexity.ini')
+    settings = read_settings(config_file, parse_args(['--detailed_results_file',
+                                                       'test_data/output/detailed_results_file_complexity_greedy.tsv',
+                                                       '--greedy_counter', 'yes']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_complexity.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                     'out_complexity.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file_complexity_greedy.tsv'),
+                       os.path.join(CORRECT_OUTPUT_DIR, 'detailed_results_file_complexity_greedy.tsv'))
+
+
 def test_output_settings():
     """
     Test complete=no and query.

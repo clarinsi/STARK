@@ -34,6 +34,10 @@ logging.basicConfig(level=logging.NOTSET)
 logger = logging.getLogger('stark')
 
 
+_COMPLEXITY_HEADER = ['MDD-mean', 'MDD-structure', 'NDD-mean', 'NDD-structure', 'Max depth', 'N clauses',
+                      'N T-units', 'Clauses/T-unit']
+
+
 class Writer(object):
     """
     A class used for writing results.
@@ -130,7 +134,7 @@ class Writer(object):
         if self.filters['association_measures']:
             header += ['MI', 'MI3', 'Dice', 'logDice', 't-score', 'simple-LL']
         if self.configs['complexity_measures']:
-            header += ['MDD', 'NDD', 'Max depth', 'N clauses', 'N T-units', 'Clauses/T-unit']
+            header += _COMPLEXITY_HEADER
         if self.configs['compare']:
             header += ['Absolute frequency in second treebank', 'Relative frequency in second treebank', 'Ratio', 'LL',
                        'BIC', 'Log ratio', 'OR', '%DIFF']
@@ -222,9 +226,16 @@ class Writer(object):
         if os.path.exists(self.configs['detailed_results_file']):
             os.remove(self.configs['detailed_results_file'])
         with open(self.configs['detailed_results_file'], "a", newline="", encoding="utf-8") as wf:
+            header = ['Tree', 'Sentence_id', 'Sentence']
+            if self.configs['complexity_measures']:
+                header += _COMPLEXITY_HEADER
+            wf.write('\t'.join(header) + '\n')
             for k, v in self.summary.representation_trees.items():
                 for s in v['sentence']:
-                    wf.write(k + '\t' + s[0] + '\t' + s[1] + '\n')
+                    line = k + '\t' + s[0] + '\t' + s[1]
+                    if self.configs['complexity_measures']:
+                        line += '\t' + '\t'.join(Writer.format_single_complexity(s[4]))
+                    wf.write(line + '\n')
 
     def write_annodoc_files(self):
         """
@@ -406,21 +417,58 @@ class Writer(object):
         """
         Formats per-pattern complexity metrics for output.
         Metrics were accumulated as running sums during counting and are averaged here.
+
+        mdd_mean/mdd_structure/max_depth are averaged over all occurrences ('number').
+        ndd_mean/ndd_structure/n_clauses/n_t_units are only defined for occurrences whose
+        subtree root is the sentence root, so they're averaged over 'count_root' instead,
+        falling back to 'n/a' when no occurrence qualified.
         :param v: representation_trees entry dict (must contain 'complexity_sum' and 'number')
-        :return: list of 6 formatted strings
+        :return: list of 8 formatted strings
         """
         if 'complexity_sum' not in v:
-            return ['n/a'] * 6
+            return ['n/a'] * 8
         count = v['number']
         s = v['complexity_sum']
-        mdd = s['mdd'] / count
-        ndd = s['ndd'] / count
+        mdd_mean = s['mdd_mean'] / count
+        mdd_structure = s['mdd_structure'] / count
         max_depth = round(s['max_depth'] / count)   # fixed per topology; rounding removes float noise
-        n_cls = s['n_clauses'] / count
-        n_tus = s['n_t_units'] / count
-        cpt = ('%.2f' % (n_cls / n_tus)) if n_tus > 0 else 'n/a'
-        return ['%.2f' % mdd, '%.2f' % ndd, str(max_depth),
-                '%.2f' % n_cls, '%.2f' % n_tus, cpt]
+
+        count_root = s['count_root']
+        if count_root:
+            ndd_mean = '%.2f' % (s['ndd_mean'] / count_root)
+            ndd_structure = '%.2f' % (s['ndd_structure'] / count_root)
+            n_cls = s['n_clauses'] / count_root
+            n_tus = s['n_t_units'] / count_root
+            n_cls_str = '%.2f' % n_cls
+            n_tus_str = '%.2f' % n_tus
+            cpt = ('%.2f' % (n_cls / n_tus)) if n_tus > 0 else 'n/a'
+        else:
+            ndd_mean = ndd_structure = n_cls_str = n_tus_str = cpt = 'n/a'
+
+        return ['%.2f' % mdd_mean, '%.2f' % mdd_structure, ndd_mean, ndd_structure, str(max_depth),
+                n_cls_str, n_tus_str, cpt]
+
+    @staticmethod
+    def format_single_complexity(complexity):
+        """
+        Formats one occurrence's raw complexity dict (from get_complexity_data) for
+        the detailed results file — same 8-column shape as get_complexity_measures,
+        but no averaging since there's only one occurrence per row.
+        :param complexity: dict returned by complexity.get_complexity_data
+        :return: list of 8 formatted strings
+        """
+        if complexity['is_root']:
+            ndd_mean = '%.2f' % complexity['ndd_mean']
+            ndd_structure = '%.2f' % complexity['ndd_structure']
+            n_cls_str = str(complexity['n_clauses'])
+            n_tus_str = str(complexity['n_t_units'])
+            cpt = ('%.2f' % (complexity['n_clauses'] / complexity['n_t_units'])) if complexity['n_t_units'] > 0 \
+                else 'n/a'
+        else:
+            ndd_mean = ndd_structure = n_cls_str = n_tus_str = cpt = 'n/a'
+
+        return ['%.2f' % complexity['mdd_mean'], '%.2f' % complexity['mdd_structure'], ndd_mean, ndd_structure,
+                str(complexity['max_depth']), n_cls_str, n_tus_str, cpt]
 
 
 class TSVWriter(Writer):

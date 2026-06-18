@@ -17,7 +17,7 @@ from abc import abstractmethod
 from multiprocessing import Pool
 from tqdm import tqdm
 
-from stark.processing.complexity import get_complexity_data
+from stark.processing.complexity import get_complexity_data, init_complexity_sum, accumulate_complexity_sum
 
 
 class Counter(object):
@@ -146,15 +146,16 @@ class Counter(object):
         else:
             key = key_raw
         sentence_size = len(sentence['tokens']) if 'tokens' in sentence else 10000
+        complexity = get_complexity_data(r) if self.filters['complexity_measures'] else None
         if key in self.summary.representation_trees:
             if self.filters['detailed_results_file']:
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)
                 sentence_conll = (r.node.node.get_root().conll, subtree_node_positions) if self.filters['annodoc'] else None
 
-                self.summary.representation_trees[key]['sentence'].append((sentence['id'],
-                                                                           recreated_sentence,
-                                                                           sentence_conll,
-                                                                           sentence_size))
+                sentence_tuple = (sentence['id'], recreated_sentence, sentence_conll, sentence_size)
+                if complexity is not None:
+                    sentence_tuple += (complexity,)
+                self.summary.representation_trees[key]['sentence'].append(sentence_tuple)
             elif self.filters['example'] and self.summary.representation_trees[key]['sentence'][0][
                 3] >= 15 and self.summary.representation_trees[key]['sentence'][0][3] > sentence_size:
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)
@@ -164,15 +165,14 @@ class Counter(object):
                                                                        sentence_conll,
                                                                        sentence_size)]
             self.summary.representation_trees[key]['number'] += 1
-            if self.filters['complexity_measures']:
-                complexity = get_complexity_data(r)
-                for metric, val in complexity.items():
-                    self.summary.representation_trees[key]['complexity_sum'][metric] += val
+            if complexity is not None:
+                accumulate_complexity_sum(self.summary.representation_trees[key]['complexity_sum'], complexity)
         else:
             self.summary.representation_trees[key] = {'number': 1, 'key': key_raw, 'word_array': word_array}
 
-            if self.filters['complexity_measures']:
-                self.summary.representation_trees[key]['complexity_sum'] = get_complexity_data(r)
+            if complexity is not None:
+                self.summary.representation_trees[key]['complexity_sum'] = init_complexity_sum()
+                accumulate_complexity_sum(self.summary.representation_trees[key]['complexity_sum'], complexity)
 
             if self.configs['grew_match']:
                 self.summary.representation_trees[key]['grew'] = r.get_grew()
@@ -183,10 +183,10 @@ class Counter(object):
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)
                 sentence_conll = (r.node.node.get_root().conll, subtree_node_positions) if self.filters['annodoc'] else None
                 sentence_size = len(sentence['tokens']) if 'tokens' in sentence else 10000
-                self.summary.representation_trees[key]['sentence'] = [(sentence['id'],
-                                                                       recreated_sentence,
-                                                                       sentence_conll,
-                                                                       sentence_size)]
+                sentence_tuple = (sentence['id'], recreated_sentence, sentence_conll, sentence_size)
+                if complexity is not None and self.filters['detailed_results_file']:
+                    sentence_tuple += (complexity,)
+                self.summary.representation_trees[key]['sentence'] = [sentence_tuple]
             if self.filters['node_order']:
                 self.summary.representation_trees[key]['order_letters'] = order_letters
                 if self.configs['depsearch']:
