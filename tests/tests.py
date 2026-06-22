@@ -197,6 +197,35 @@ def test_complexity():
                        os.path.join(CORRECT_OUTPUT_DIR, 'detailed_results_file_complexity_greedy.tsv'))
 
 
+def test_complexity_extended():
+    """
+    Test complexity_measures = extended: same root-gating as test_complexity, but with
+    the full 8-column output (Max depth, MDD, MDD-mean, NDD, NDD-mean, N clauses, N T-units,
+    Clauses/T-unit) instead of the 3-column 'yes' output.
+    :return:
+    """
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_complexity_extended.ini')
+    settings = read_settings(config_file, parse_args(['--detailed_results_file',
+                                                       'test_data/output/detailed_results_file_complexity_extended.tsv']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_complexity_extended.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                              'out_complexity_extended.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file_complexity_extended.tsv'),
+                       os.path.join(CORRECT_OUTPUT_DIR, 'detailed_results_file_complexity_extended.tsv'))
+
+    random.seed(12)
+    config_file = os.path.join(CONFIGS_DIR, 'config_complexity_extended.ini')
+    settings = read_settings(config_file, parse_args(['--detailed_results_file',
+                                                       'test_data/output/detailed_results_file_complexity_extended_greedy.tsv',
+                                                       '--greedy_counter', 'yes']))
+    stark.run(settings)
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_complexity_extended.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
+                                                                                              'out_complexity_extended.tsv'))
+    assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'detailed_results_file_complexity_extended_greedy.tsv'),
+                       os.path.join(CORRECT_OUTPUT_DIR, 'detailed_results_file_complexity_extended_greedy.tsv'))
+
+
 def test_output_settings():
     """
     Test complete=no and query.

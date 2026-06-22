@@ -146,7 +146,7 @@ class Counter(object):
         else:
             key = key_raw
         sentence_size = len(sentence['tokens']) if 'tokens' in sentence else 10000
-        complexity = get_complexity_data(r) if self.filters['complexity_measures'] else None
+        complexity = get_complexity_data(r) if self.filters['complexity_measures'] != 'no' else None
         if key in self.summary.representation_trees:
             if self.filters['detailed_results_file']:
                 recreated_sentence, subtree_node_positions = self.recreate_sentence(sentence, r)

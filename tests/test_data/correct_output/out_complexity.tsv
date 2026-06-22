@@ -1,194 +1,194 @@
-Tree	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	MDD-mean	MDD-structure	NDD-mean	NDD-structure	Max depth	N clauses	N T-units	Clauses/T-unit
-ADP <case NOUN	437	16490.6	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ <amod NOUN	387	14603.8	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case ADJ <amod NOUN	298	11245.3	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-DET <det NOUN	159	6000.0	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case PROPN	150	5660.4	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc NOUN	110	4150.9	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case DET <det NOUN	95	3584.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADP <case DET	93	3509.4	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case NOUN >nmod NOUN	86	3245.3	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod NOUN	80	3018.9	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc ADJ	77	2905.7	AB	2	ADJ	1.03	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct NOUN	72	2717.0	AB	2	NOUN	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case PRON	71	2679.2	AB	2	PRON	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ <amod ADJ <amod NOUN	67	2528.3	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-PROPN >flat PROPN	67	2528.3	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV <advmod ADJ	65	2452.8	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ >conj (CCONJ <cc ADJ)	50	1886.8	ABC	3	ADJ	1.54	1.50	n/a	n/a	3	n/a	n/a	n/a
-NUM <nummod NOUN	49	1849.1	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case ADJ	43	1622.6	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (ADJ <amod NOUN)	42	1584.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-ADP <case NUM <nummod NOUN	41	1547.2	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-DET <det ADJ <amod NOUN	39	1471.7	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADV <advmod ADV	35	1320.8	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc ADJ <amod NOUN	34	1283.0	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (ADP <case NOUN)	34	1283.0	ABC	3	NOUN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-PUNCT <punct PROPN	34	1283.0	AB	2	PROPN	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod PROPN	33	1245.3	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nummod NUM	33	1245.3	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod ADV	32	1207.5	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADJ	29	1094.3	AB	2	ADJ	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PROPN >nummod NUM	29	1094.3	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ <amod NOUN >nmod NOUN	26	981.1	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case NOUN >nmod PROPN	25	943.4	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct NUM	25	943.4	AB	2	NUM	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case NUM	23	867.9	AB	2	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >conj (CCONJ <cc NOUN)	21	792.5	ABC	3	NOUN	1.81	1.50	n/a	n/a	3	n/a	n/a	n/a
-CCONJ <cc PROPN	18	679.2	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PROPN >flat PROPN	18	679.2	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADJ <amod NOUN	17	641.5	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-(ADV <advmod ADJ) <amod NOUN	16	603.8	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-ADJ <amod NOUN >nmod PROPN	14	528.3	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ >conj (PUNCT <punct ADJ)	14	528.3	ABC	3	ADJ	2.00	2.00	n/a	n/a	3	n/a	n/a	n/a
-CCONJ <cc ADV	14	528.3	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NUM >conj (PUNCT <punct NUM)	14	528.3	ABC	3	NUM	2.00	2.00	n/a	n/a	3	n/a	n/a	n/a
-CCONJ <cc NOUN >nmod NOUN	13	490.6	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc VERB	13	490.6	AB	2	VERB	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (DET <det NOUN)	13	490.6	ABC	3	NOUN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-ADP <case NOUN >nummod NUM	12	452.8	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct X	12	452.8	AB	2	X	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case ADV	11	415.1	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV >punct PUNCT >fixed SCONJ	11	415.1	ABC	3	ADV	2.00	2.00	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod ADJ	11	415.1	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >nmod PROPN	11	415.1	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ >fixed SCONJ	10	377.4	AB	2	CCONJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (ADP <case PROPN)	10	377.4	ABC	3	NOUN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-SCONJ <case ADJ <amod NOUN	10	377.4	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADJ <amod PROPN	9	339.6	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV <advmod NUM	9	339.6	AB	2	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV >conj (CCONJ <cc ADV)	9	339.6	ABC	3	ADV	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-CCONJ <cc ADP <case NOUN	9	339.6	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc NUM	9	339.6	AB	2	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ >fixed CCONJ	9	339.6	AB	2	CCONJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct NOUN >nmod NOUN	9	339.6	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct NOUN >punct PUNCT	9	339.6	ABC	3	NOUN	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc DET <det NOUN	8	301.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-NUM <nummod NOUN >nummod NUM	8	301.9	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod ADJ <amod NOUN	8	301.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADP >fixed NOUN	7	264.2	AB	2	ADP	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV <advmod ADP <case NOUN	7	264.2	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc ADV <advmod ADJ	7	264.2	ABC	3	ADJ	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod NUM	7	264.2	AB	2	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PART >fixed PART	7	264.2	AB	2	PART	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PART >fixed SCONJ	7	264.2	AB	2	PART	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >flat PROPN >flat PROPN	7	264.2	ABC	3	PROPN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADJ >punct PUNCT	7	264.2	ABC	3	ADJ	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PROPN >punct PUNCT	7	264.2	ABC	3	PROPN	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-SCONJ <case NOUN	7	264.2	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NUM <nummod ADJ <amod NOUN	6	226.4	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod DET	6	226.4	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >conj (CCONJ <cc PROPN)	6	226.4	ABC	3	PROPN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-PUNCT <punct NUM <nummod NOUN	6	226.4	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PART >punct PUNCT	6	226.4	ABC	3	PART	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-SCONJ >fixed SCONJ	6	226.4	AB	2	SCONJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case ADJ <amod PROPN	5	188.7	ABC	3	PROPN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADV <advmod DET	5	188.7	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV >fixed SCONJ	5	188.7	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc PROPN >flat PROPN	5	188.7	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ >fixed PART	5	188.7	AB	2	CCONJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <det NOUN >nmod NOUN	5	188.7	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET >fixed SCONJ	5	188.7	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >amod ADJ	5	188.7	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (NOUN >nmod NOUN)	5	188.7	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-NOUN >nmod (NOUN >nmod PROPN)	5	188.7	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-NOUN >nmod (PROPN >flat PROPN)	5	188.7	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-NUM <nummod NOUN >nmod NOUN	5	188.7	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NUM <nummod PUNCT <punct ADJ	5	188.7	ABC	3	ADJ	2.00	2.00	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod ADP <case NOUN	5	188.7	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-PART >fixed ADV	5	188.7	AB	2	PART	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PRON <obj VERB	5	188.7	AB	2	VERB	2.60	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >nummod NUM	5	188.7	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADP <case PROPN	5	188.7	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct X >punct PUNCT	5	188.7	ABC	3	X	0.00	0.00	0.00	0.00	2	1.00	1.00	1.00
-ADP <case NOUN <nmod NOUN	4	150.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADV >fixed PART	4	150.9	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc ADP <case PRON	4	150.9	ABC	3	PRON	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-CCONJ >fixed DET	4	150.9	AB	2	CCONJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <det DET <det NOUN	4	150.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (ADP <case PRON)	4	150.9	ABC	3	NOUN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-NUM >conj (ADP <case NUM)	4	150.9	ABC	3	NUM	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-NUM >conj (CCONJ <cc NUM)	4	150.9	ABC	3	NUM	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-PART <advmod NOUN	4	150.9	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PART >punct PUNCT	4	150.9	AB	2	PART	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PRON >acl ADJ	4	150.9	AB	2	PRON	2.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PRON >amod ADJ	4	150.9	AB	2	PRON	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PRON >fixed VERB	4	150.9	AB	2	PRON	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >punct PUNCT	4	150.9	AB	2	PROPN	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADP <case NOUN	4	150.9	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADV <advmod ADJ	4	150.9	ABC	3	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-X >fixed X	4	150.9	AB	2	X	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-(ADV <advmod NUM) <nummod NOUN	3	113.2	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-(PART <advmod ADV) <advmod ADJ	3	113.2	ABC	3	ADJ	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-ADP <case NOUN >amod ADJ	3	113.2	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case PROPN <nmod PROPN	3	113.2	ABC	3	PROPN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADP <case PROPN >nmod PROPN	3	113.2	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc NUM <nummod NOUN	3	113.2	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-DET <advmod ADV	3	113.2	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <advmod DET	3	113.2	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <advmod NUM	3	113.2	AB	2	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <det NUM <nummod NOUN	3	113.2	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-NOUN <obj VERB	3	113.2	AB	2	VERB	3.33	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (ADJ <amod PROPN)	3	113.2	ABC	3	NOUN	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-NOUN >punct PUNCT	3	113.2	AB	2	NOUN	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PART <advmod NOUN >nmod NOUN	3	113.2	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN <nmod PROPN	3	113.2	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >flat X >flat PROPN	3	113.2	ABC	3	PROPN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADJ >nummod NUM	3	113.2	ABC	3	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct ADV >punct PUNCT	3	113.2	ABC	3	ADV	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PROPN >nmod PROPN	3	113.2	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct VERB	3	113.2	AB	2	VERB	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct X >nummod NUM	3	113.2	ABC	3	X	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-SCONJ <case ADP <case NOUN	3	113.2	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-SCONJ <case ADV	3	113.2	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-VERB >obj NOUN	3	113.2	AB	2	VERB	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-X >flat X	3	113.2	AB	2	X	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-(ADP <case NOUN) <nmod ADJ	2	75.5	ABC	3	ADJ	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-(ADV <advmod DET) <det NOUN	2	75.5	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-(PART <advmod ADV) <advmod ADV	2	75.5	ABC	3	ADV	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-ADJ <amod NOUN >punct PUNCT	2	75.5	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ <amod NUM <nummod NOUN	2	75.5	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADJ <amod PROPN >punct PUNCT	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ >expl PRON	2	75.5	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADJ >nmod (ADP <case PRON)	2	75.5	ABC	3	ADJ	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-ADP <case DET <det PROPN	2	75.5	ABC	3	PROPN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-ADP <case NOUN >nmod DET	2	75.5	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case NUM >flat NUM	2	75.5	ABC	3	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADP <case PROPN >flat PROPN	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV <advmod NOUN	2	75.5	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-ADV >conj (CCONJ <cc ADJ)	2	75.5	ABC	3	ADV	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-ADV >nmod (ADP <case NOUN)	2	75.5	ABC	3	ADV	1.50	1.50	n/a	n/a	3	n/a	n/a	n/a
-ADV >punct PUNCT	2	75.5	AB	2	ADV	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc ADP <case PROPN	2	75.5	ABC	3	PROPN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc ADV >punct PUNCT	2	75.5	ABC	3	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc DET	2	75.5	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc PART <advmod NOUN	2	75.5	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc PRON <obj VERB	2	75.5	ABC	3	VERB	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-CCONJ <cc VERB >obj NOUN	2	75.5	ABC	3	VERB	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-CCONJ >punct PUNCT	2	75.5	AB	2	CCONJ	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-DET <advmod ADJ	2	75.5	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <det ADJ	2	75.5	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET <det NOUN >nmod PROPN	2	75.5	ABC	3	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-DET >advmod ADV	2	75.5	AB	2	DET	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN <nmod ADV	2	75.5	AB	2	ADV	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN <nmod NOUN	2	75.5	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >advmod ADV	2	75.5	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nmod (PROPN >nmod PROPN)	2	75.5	ABC	3	NOUN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-NOUN >nmod PRON	2	75.5	AB	2	NOUN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-NOUN >nummod (PUNCT <punct NUM)	2	75.5	ABC	3	NOUN	2.00	2.00	n/a	n/a	3	n/a	n/a	n/a
-NUM >flat NUM	2	75.5	AB	2	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PART >fixed CCONJ	2	75.5	AB	2	PART	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PRON <nmod ADJ	2	75.5	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PRON >nmod DET	2	75.5	AB	2	PRON	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >conj (PUNCT <punct PROPN)	2	75.5	ABC	3	PROPN	2.00	2.00	n/a	n/a	3	n/a	n/a	n/a
-PROPN >flat PROPN >punct PUNCT	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PROPN >nmod (PROPN >flat PROPN)	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	3	n/a	n/a	n/a
-PUNCT <punct DET	2	75.5	AB	2	DET	0.00	0.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct NUM <nummod PROPN	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct NUM >flat NUM	2	75.5	ABC	3	NUM	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PRON <obj VERB	2	75.5	ABC	3	VERB	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-PUNCT <punct PROPN <nmod PROPN	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-SCONJ <case ADJ	2	75.5	AB	2	ADJ	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-SCONJ <case DET <det NOUN	2	75.5	ABC	3	NOUN	1.50	1.50	n/a	n/a	2	n/a	n/a	n/a
-X <nmod PROPN >flat PROPN	2	75.5	ABC	3	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
-X <nmod PROPN	2	75.5	AB	2	PROPN	1.00	1.00	n/a	n/a	2	n/a	n/a	n/a
+Tree	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	Max depth	MDD	MDD-mean
+ADP <case NOUN	437	16490.6	AB	2	NOUN	2	1.00	1.00
+ADJ <amod NOUN	387	14603.8	AB	2	NOUN	2	1.00	1.00
+ADP <case ADJ <amod NOUN	298	11245.3	ABC	3	NOUN	2	1.50	1.50
+DET <det NOUN	159	6000.0	AB	2	NOUN	2	1.00	1.00
+ADP <case PROPN	150	5660.4	AB	2	PROPN	2	1.00	1.00
+CCONJ <cc NOUN	110	4150.9	AB	2	NOUN	2	1.00	1.00
+ADP <case DET <det NOUN	95	3584.9	ABC	3	NOUN	2	1.50	1.50
+ADP <case DET	93	3509.4	AB	2	DET	2	1.00	1.00
+ADP <case NOUN >nmod NOUN	86	3245.3	ABC	3	NOUN	2	1.00	1.00
+NOUN >nmod NOUN	80	3018.9	AB	2	NOUN	2	1.00	1.00
+CCONJ <cc ADJ	77	2905.7	AB	2	ADJ	2	1.00	1.03
+PUNCT <punct NOUN	72	2717.0	AB	2	NOUN	2	0.00	0.00
+ADP <case PRON	71	2679.2	AB	2	PRON	2	1.00	1.00
+ADJ <amod ADJ <amod NOUN	67	2528.3	ABC	3	NOUN	2	1.50	1.50
+PROPN >flat PROPN	67	2528.3	AB	2	PROPN	2	1.00	1.00
+ADV <advmod ADJ	65	2452.8	AB	2	ADJ	2	1.00	1.00
+ADJ >conj (CCONJ <cc ADJ)	50	1886.8	ABC	3	ADJ	3	1.50	1.54
+NUM <nummod NOUN	49	1849.1	AB	2	NOUN	2	1.00	1.00
+ADP <case ADJ	43	1622.6	AB	2	ADJ	2	1.00	1.00
+NOUN >nmod (ADJ <amod NOUN)	42	1584.9	ABC	3	NOUN	3	1.50	1.50
+ADP <case NUM <nummod NOUN	41	1547.2	ABC	3	NOUN	2	1.50	1.50
+DET <det ADJ <amod NOUN	39	1471.7	ABC	3	NOUN	2	1.50	1.50
+ADV <advmod ADV	35	1320.8	AB	2	ADV	2	1.00	1.00
+CCONJ <cc ADJ <amod NOUN	34	1283.0	ABC	3	NOUN	2	1.50	1.50
+NOUN >nmod (ADP <case NOUN)	34	1283.0	ABC	3	NOUN	3	1.50	1.50
+PUNCT <punct PROPN	34	1283.0	AB	2	PROPN	2	0.00	0.00
+NOUN >nmod PROPN	33	1245.3	AB	2	NOUN	2	1.00	1.00
+NOUN >nummod NUM	33	1245.3	AB	2	NOUN	2	1.00	1.00
+PART <advmod ADV	32	1207.5	AB	2	ADV	2	1.00	1.00
+PUNCT <punct ADJ	29	1094.3	AB	2	ADJ	2	0.00	0.00
+PUNCT <punct PROPN >nummod NUM	29	1094.3	ABC	3	PROPN	2	1.00	1.00
+ADJ <amod NOUN >nmod NOUN	26	981.1	ABC	3	NOUN	2	1.00	1.00
+ADP <case NOUN >nmod PROPN	25	943.4	ABC	3	NOUN	2	1.00	1.00
+PUNCT <punct NUM	25	943.4	AB	2	NUM	2	0.00	0.00
+ADP <case NUM	23	867.9	AB	2	NUM	2	1.00	1.00
+NOUN >conj (CCONJ <cc NOUN)	21	792.5	ABC	3	NOUN	3	1.50	1.81
+CCONJ <cc PROPN	18	679.2	AB	2	PROPN	2	1.00	1.00
+PUNCT <punct PROPN >flat PROPN	18	679.2	ABC	3	PROPN	2	1.00	1.00
+PUNCT <punct ADJ <amod NOUN	17	641.5	ABC	3	NOUN	2	1.00	1.00
+(ADV <advmod ADJ) <amod NOUN	16	603.8	ABC	3	NOUN	3	1.00	1.00
+ADJ <amod NOUN >nmod PROPN	14	528.3	ABC	3	NOUN	2	1.00	1.00
+ADJ >conj (PUNCT <punct ADJ)	14	528.3	ABC	3	ADJ	3	2.00	2.00
+CCONJ <cc ADV	14	528.3	AB	2	ADV	2	1.00	1.00
+NUM >conj (PUNCT <punct NUM)	14	528.3	ABC	3	NUM	3	2.00	2.00
+CCONJ <cc NOUN >nmod NOUN	13	490.6	ABC	3	NOUN	2	1.00	1.00
+CCONJ <cc VERB	13	490.6	AB	2	VERB	2	1.00	1.00
+NOUN >nmod (DET <det NOUN)	13	490.6	ABC	3	NOUN	3	1.50	1.50
+ADP <case NOUN >nummod NUM	12	452.8	ABC	3	NOUN	2	1.00	1.00
+PUNCT <punct X	12	452.8	AB	2	X	2	0.00	0.00
+ADP <case ADV	11	415.1	AB	2	ADV	2	1.00	1.00
+ADV >punct PUNCT >fixed SCONJ	11	415.1	ABC	3	ADV	2	2.00	2.00
+PART <advmod ADJ	11	415.1	AB	2	ADJ	2	1.00	1.00
+PROPN >nmod PROPN	11	415.1	AB	2	PROPN	2	1.00	1.00
+CCONJ >fixed SCONJ	10	377.4	AB	2	CCONJ	2	1.00	1.00
+NOUN >nmod (ADP <case PROPN)	10	377.4	ABC	3	NOUN	3	1.50	1.50
+SCONJ <case ADJ <amod NOUN	10	377.4	ABC	3	NOUN	2	1.50	1.50
+ADJ <amod PROPN	9	339.6	AB	2	PROPN	2	1.00	1.00
+ADV <advmod NUM	9	339.6	AB	2	NUM	2	1.00	1.00
+ADV >conj (CCONJ <cc ADV)	9	339.6	ABC	3	ADV	3	1.50	1.50
+CCONJ <cc ADP <case NOUN	9	339.6	ABC	3	NOUN	2	1.50	1.50
+CCONJ <cc NUM	9	339.6	AB	2	NUM	2	1.00	1.00
+CCONJ >fixed CCONJ	9	339.6	AB	2	CCONJ	2	1.00	1.00
+PUNCT <punct NOUN >nmod NOUN	9	339.6	ABC	3	NOUN	2	1.00	1.00
+PUNCT <punct NOUN >punct PUNCT	9	339.6	ABC	3	NOUN	2	0.00	0.00
+CCONJ <cc DET <det NOUN	8	301.9	ABC	3	NOUN	2	1.50	1.50
+NUM <nummod NOUN >nummod NUM	8	301.9	ABC	3	NOUN	2	1.00	1.00
+PART <advmod ADJ <amod NOUN	8	301.9	ABC	3	NOUN	2	1.50	1.50
+ADP >fixed NOUN	7	264.2	AB	2	ADP	2	1.00	1.00
+ADV <advmod ADP <case NOUN	7	264.2	ABC	3	NOUN	2	1.50	1.50
+CCONJ <cc ADV <advmod ADJ	7	264.2	ABC	3	ADJ	2	1.50	1.50
+PART <advmod NUM	7	264.2	AB	2	NUM	2	1.00	1.00
+PART >fixed PART	7	264.2	AB	2	PART	2	1.00	1.00
+PART >fixed SCONJ	7	264.2	AB	2	PART	2	1.00	1.00
+PROPN >flat PROPN >flat PROPN	7	264.2	ABC	3	PROPN	2	1.50	1.50
+PUNCT <punct ADJ >punct PUNCT	7	264.2	ABC	3	ADJ	2	0.00	0.00
+PUNCT <punct PROPN >punct PUNCT	7	264.2	ABC	3	PROPN	2	0.00	0.00
+SCONJ <case NOUN	7	264.2	AB	2	NOUN	2	1.00	1.00
+NUM <nummod ADJ <amod NOUN	6	226.4	ABC	3	NOUN	2	1.50	1.50
+PART <advmod DET	6	226.4	AB	2	DET	2	1.00	1.00
+PROPN >conj (CCONJ <cc PROPN)	6	226.4	ABC	3	PROPN	3	1.50	1.50
+PUNCT <punct NUM <nummod NOUN	6	226.4	ABC	3	NOUN	2	1.00	1.00
+PUNCT <punct PART >punct PUNCT	6	226.4	ABC	3	PART	2	0.00	0.00
+SCONJ >fixed SCONJ	6	226.4	AB	2	SCONJ	2	1.00	1.00
+ADP <case ADJ <amod PROPN	5	188.7	ABC	3	PROPN	2	1.50	1.50
+ADV <advmod DET	5	188.7	AB	2	DET	2	1.00	1.00
+ADV >fixed SCONJ	5	188.7	AB	2	ADV	2	1.00	1.00
+CCONJ <cc PROPN >flat PROPN	5	188.7	ABC	3	PROPN	2	1.00	1.00
+CCONJ >fixed PART	5	188.7	AB	2	CCONJ	2	1.00	1.00
+DET <det NOUN >nmod NOUN	5	188.7	ABC	3	NOUN	2	1.00	1.00
+DET >fixed SCONJ	5	188.7	AB	2	DET	2	1.00	1.00
+NOUN >amod ADJ	5	188.7	AB	2	NOUN	2	1.00	1.00
+NOUN >nmod (NOUN >nmod NOUN)	5	188.7	ABC	3	NOUN	3	1.00	1.00
+NOUN >nmod (NOUN >nmod PROPN)	5	188.7	ABC	3	NOUN	3	1.00	1.00
+NOUN >nmod (PROPN >flat PROPN)	5	188.7	ABC	3	NOUN	3	1.00	1.00
+NUM <nummod NOUN >nmod NOUN	5	188.7	ABC	3	NOUN	2	1.00	1.00
+NUM <nummod PUNCT <punct ADJ	5	188.7	ABC	3	ADJ	2	2.00	2.00
+PART <advmod ADP <case NOUN	5	188.7	ABC	3	NOUN	2	1.50	1.50
+PART >fixed ADV	5	188.7	AB	2	PART	2	1.00	1.00
+PRON <obj VERB	5	188.7	AB	2	VERB	2	1.00	2.60
+PROPN >nummod NUM	5	188.7	AB	2	PROPN	2	1.00	1.00
+PUNCT <punct ADP <case PROPN	5	188.7	ABC	3	PROPN	2	1.00	1.00
+PUNCT <punct X >punct PUNCT	5	188.7	ABC	3	X	2	0.00	0.00
+ADP <case NOUN <nmod NOUN	4	150.9	ABC	3	NOUN	2	1.50	1.50
+ADV >fixed PART	4	150.9	AB	2	ADV	2	1.00	1.00
+CCONJ <cc ADP <case PRON	4	150.9	ABC	3	PRON	2	1.50	1.50
+CCONJ >fixed DET	4	150.9	AB	2	CCONJ	2	1.00	1.00
+DET <det DET <det NOUN	4	150.9	ABC	3	NOUN	2	1.50	1.50
+NOUN >nmod (ADP <case PRON)	4	150.9	ABC	3	NOUN	3	1.50	1.50
+NUM >conj (ADP <case NUM)	4	150.9	ABC	3	NUM	3	1.50	1.50
+NUM >conj (CCONJ <cc NUM)	4	150.9	ABC	3	NUM	3	1.50	1.50
+PART <advmod NOUN	4	150.9	AB	2	NOUN	2	1.00	1.00
+PART >punct PUNCT	4	150.9	AB	2	PART	2	0.00	0.00
+PRON >acl ADJ	4	150.9	AB	2	PRON	2	1.00	2.00
+PRON >amod ADJ	4	150.9	AB	2	PRON	2	1.00	1.00
+PRON >fixed VERB	4	150.9	AB	2	PRON	2	1.00	1.00
+PROPN >punct PUNCT	4	150.9	AB	2	PROPN	2	0.00	0.00
+PUNCT <punct ADP <case NOUN	4	150.9	ABC	3	NOUN	2	1.00	1.00
+PUNCT <punct ADV <advmod ADJ	4	150.9	ABC	3	ADJ	2	1.00	1.00
+X >fixed X	4	150.9	AB	2	X	2	1.00	1.00
+(ADV <advmod NUM) <nummod NOUN	3	113.2	ABC	3	NOUN	3	1.00	1.00
+(PART <advmod ADV) <advmod ADJ	3	113.2	ABC	3	ADJ	3	1.00	1.00
+ADP <case NOUN >amod ADJ	3	113.2	ABC	3	NOUN	2	1.00	1.00
+ADP <case PROPN <nmod PROPN	3	113.2	ABC	3	PROPN	2	1.50	1.50
+ADP <case PROPN >nmod PROPN	3	113.2	ABC	3	PROPN	2	1.00	1.00
+CCONJ <cc NUM <nummod NOUN	3	113.2	ABC	3	NOUN	2	1.50	1.50
+DET <advmod ADV	3	113.2	AB	2	ADV	2	1.00	1.00
+DET <advmod DET	3	113.2	AB	2	DET	2	1.00	1.00
+DET <advmod NUM	3	113.2	AB	2	NUM	2	1.00	1.00
+DET <det NUM <nummod NOUN	3	113.2	ABC	3	NOUN	2	1.50	1.50
+NOUN <obj VERB	3	113.2	AB	2	VERB	2	1.00	3.33
+NOUN >nmod (ADJ <amod PROPN)	3	113.2	ABC	3	NOUN	3	1.50	1.50
+NOUN >punct PUNCT	3	113.2	AB	2	NOUN	2	0.00	0.00
+PART <advmod NOUN >nmod NOUN	3	113.2	ABC	3	NOUN	2	1.00	1.00
+PROPN <nmod PROPN	3	113.2	AB	2	PROPN	2	1.00	1.00
+PROPN >flat X >flat PROPN	3	113.2	ABC	3	PROPN	2	1.50	1.50
+PUNCT <punct ADJ >nummod NUM	3	113.2	ABC	3	ADJ	2	1.00	1.00
+PUNCT <punct ADV >punct PUNCT	3	113.2	ABC	3	ADV	2	0.00	0.00
+PUNCT <punct PROPN >nmod PROPN	3	113.2	ABC	3	PROPN	2	1.00	1.00
+PUNCT <punct VERB	3	113.2	AB	2	VERB	2	0.00	0.00
+PUNCT <punct X >nummod NUM	3	113.2	ABC	3	X	2	1.00	1.00
+SCONJ <case ADP <case NOUN	3	113.2	ABC	3	NOUN	2	1.50	1.50
+SCONJ <case ADV	3	113.2	AB	2	ADV	2	1.00	1.00
+VERB >obj NOUN	3	113.2	AB	2	VERB	2	1.00	1.00
+X >flat X	3	113.2	AB	2	X	2	1.00	1.00
+(ADP <case NOUN) <nmod ADJ	2	75.5	ABC	3	ADJ	3	1.00	1.00
+(ADV <advmod DET) <det NOUN	2	75.5	ABC	3	NOUN	3	1.00	1.00
+(PART <advmod ADV) <advmod ADV	2	75.5	ABC	3	ADV	3	1.00	1.00
+ADJ <amod NOUN >punct PUNCT	2	75.5	ABC	3	NOUN	2	1.00	1.00
+ADJ <amod NUM <nummod NOUN	2	75.5	ABC	3	NOUN	2	1.50	1.50
+ADJ <amod PROPN >punct PUNCT	2	75.5	ABC	3	PROPN	2	1.00	1.00
+ADJ >expl PRON	2	75.5	AB	2	ADJ	2	1.00	1.00
+ADJ >nmod (ADP <case PRON)	2	75.5	ABC	3	ADJ	3	1.50	1.50
+ADP <case DET <det PROPN	2	75.5	ABC	3	PROPN	2	1.50	1.50
+ADP <case NOUN >nmod DET	2	75.5	ABC	3	NOUN	2	1.00	1.00
+ADP <case NUM >flat NUM	2	75.5	ABC	3	NUM	2	1.00	1.00
+ADP <case PROPN >flat PROPN	2	75.5	ABC	3	PROPN	2	1.00	1.00
+ADV <advmod NOUN	2	75.5	AB	2	NOUN	2	1.00	1.00
+ADV >conj (CCONJ <cc ADJ)	2	75.5	ABC	3	ADV	3	1.50	1.50
+ADV >nmod (ADP <case NOUN)	2	75.5	ABC	3	ADV	3	1.50	1.50
+ADV >punct PUNCT	2	75.5	AB	2	ADV	2	0.00	0.00
+CCONJ <cc ADP <case PROPN	2	75.5	ABC	3	PROPN	2	1.50	1.50
+CCONJ <cc ADV >punct PUNCT	2	75.5	ABC	3	ADV	2	1.00	1.00
+CCONJ <cc DET	2	75.5	AB	2	DET	2	1.00	1.00
+CCONJ <cc PART <advmod NOUN	2	75.5	ABC	3	NOUN	2	1.50	1.50
+CCONJ <cc PRON <obj VERB	2	75.5	ABC	3	VERB	2	1.50	1.50
+CCONJ <cc VERB >obj NOUN	2	75.5	ABC	3	VERB	2	1.00	1.00
+CCONJ >punct PUNCT	2	75.5	AB	2	CCONJ	2	0.00	0.00
+DET <advmod ADJ	2	75.5	AB	2	ADJ	2	1.00	1.00
+DET <det ADJ	2	75.5	AB	2	ADJ	2	1.00	1.00
+DET <det NOUN >nmod PROPN	2	75.5	ABC	3	NOUN	2	1.00	1.00
+DET >advmod ADV	2	75.5	AB	2	DET	2	1.00	1.00
+NOUN <nmod ADV	2	75.5	AB	2	ADV	2	1.00	1.00
+NOUN <nmod NOUN	2	75.5	AB	2	NOUN	2	1.00	1.00
+NOUN >advmod ADV	2	75.5	AB	2	NOUN	2	1.00	1.00
+NOUN >nmod (PROPN >nmod PROPN)	2	75.5	ABC	3	NOUN	3	1.00	1.00
+NOUN >nmod PRON	2	75.5	AB	2	NOUN	2	1.00	1.00
+NOUN >nummod (PUNCT <punct NUM)	2	75.5	ABC	3	NOUN	3	2.00	2.00
+NUM >flat NUM	2	75.5	AB	2	NUM	2	1.00	1.00
+PART >fixed CCONJ	2	75.5	AB	2	PART	2	1.00	1.00
+PRON <nmod ADJ	2	75.5	AB	2	ADJ	2	1.00	1.00
+PRON >nmod DET	2	75.5	AB	2	PRON	2	1.00	1.00
+PROPN >conj (PUNCT <punct PROPN)	2	75.5	ABC	3	PROPN	3	2.00	2.00
+PROPN >flat PROPN >punct PUNCT	2	75.5	ABC	3	PROPN	2	1.00	1.00
+PROPN >nmod (PROPN >flat PROPN)	2	75.5	ABC	3	PROPN	3	1.00	1.00
+PUNCT <punct DET	2	75.5	AB	2	DET	2	0.00	0.00
+PUNCT <punct NUM <nummod PROPN	2	75.5	ABC	3	PROPN	2	1.00	1.00
+PUNCT <punct NUM >flat NUM	2	75.5	ABC	3	NUM	2	1.00	1.00
+PUNCT <punct PRON <obj VERB	2	75.5	ABC	3	VERB	2	1.00	1.00
+PUNCT <punct PROPN <nmod PROPN	2	75.5	ABC	3	PROPN	2	1.00	1.00
+SCONJ <case ADJ	2	75.5	AB	2	ADJ	2	1.00	1.00
+SCONJ <case DET <det NOUN	2	75.5	ABC	3	NOUN	2	1.50	1.50
+X <nmod PROPN >flat PROPN	2	75.5	ABC	3	PROPN	2	1.00	1.00
+X <nmod PROPN	2	75.5	AB	2	PROPN	2	1.00	1.00

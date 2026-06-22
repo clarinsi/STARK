@@ -156,8 +156,11 @@ def read_configs(config, args=EmptyNamespace()):
     configs['node_order'] = (config.getboolean('settings', 'fixed') if not args.fixed else args.fixed == 'yes')
     configs['association_measures'] = (config.getboolean('settings', 'association_measures')
                                        if not args.association_measures else args.association_measures == 'yes')
-    configs['complexity_measures'] = (config.getboolean('settings', 'complexity_measures', fallback=False)
-                                      if not args.complexity_measures else args.complexity_measures == 'yes')
+    configs['complexity_measures'] = (config.get('settings', 'complexity_measures', fallback='no')
+                                      if not args.complexity_measures else args.complexity_measures)
+    if configs['complexity_measures'] not in ('no', 'yes', 'extended'):
+        raise ValueError("complexity_measures must be 'no', 'yes', or 'extended', got %r" %
+                         configs['complexity_measures'])
     configs['node_info'] = (config.getboolean('settings', 'node_info')
                                        if not args.node_info else args.node_info == 'yes')
     configs['head_info'] = (config.getboolean('settings', 'head_info')
