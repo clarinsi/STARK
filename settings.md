@@ -7,7 +7,7 @@ Below is a list of customizable settings that can be used to define the type of 
 | --- | --- | --- | --- | --- |  --- | 
 | [input](#--input) | [node_type](#--node_type) | [size](#--size) | [association_measures](#--association_measures) | [example](#--example) | [max_lines](#--max_lines) |
 | [output](#--output) | [labeled](#--labeled) | [head](#--head) | [compare](#--compare) | [grew_match](#--grew_match) | [frequency_threshold](#--frequency_threshold) |
-|  | [label_subtypes](#--label_subtypes) | [ignored_labels](#--ignored_labels)| | [depsearch](#--depsearch) | |
+|  | [label_subtypes](#--label_subtypes) | [ignored_labels](#--ignored_labels)| [complexity_measures](#--complexity_measures) | [depsearch](#--depsearch) | |
 |  | [fixed](#--fixed) | [allowed_labels](#--allowed_labels)  |  | [node_info](#--node_info) |  |
 |  |  |  [query](#--query)|  | [head_info](#--head_info) |  |
 
@@ -104,7 +104,7 @@ For example, the query _upos=NOUN >amod (\_ >advmod \_)_ would return nouns that
 When `--query` is specified, the output takes into account [tree specification settings](#tree-specification), such as `--node_type`, but ignores all other [tree restriction settings](#restriction-to-specific-structure), such as `--size`.
 
 ## Statistics
-By default, STARK produces a list of trees with the absolute frequency (raw count) and the relative frequency (normalized count per million tokens) of the trees in the input treebank. In addition, two optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena.
+By default, STARK produces a list of trees with the absolute frequency (raw count) and the relative frequency (normalized count per million tokens) of the trees in the input treebank. In addition, three optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena.
 
 ### `--association_measures`
 **Values:** _yes, no_
@@ -117,6 +117,11 @@ The optional `--association_measures` parameter (value _yes_) produces informati
 In addition, STARK can also be used to identify key or statistically significant phenomena in the input treebank by comparing the frequency of the extracted trees to that of another, so-called reference treebank. This is triggered by using the optional `--compare` parameter which takes the name of the second, reference treebank as input (e.g. _sl_ssj-ud-dev.conllu_) to compute the frequencies in both treebanks and compare them using the simple ratio comparison and several common keyness scores (LL, BIC, log ratio, odds ratio and %DIFF). This feature is particularly useful for research on language- or genre-specific syntactic phenomena. 
 
 If a tree occurring in the first treebank is absent from the second treebank (i.e. its frequency is 0), one quadrillionth (0.000000000000000001) is used as a proxy for zero when computing the keyness scores to avoid complications arising from division with zero. When calculating the simple ratio, NaN value is given.
+
+### `--complexity_measures`
+**Values:** _no, yes, extended_
+
+The optional `--complexity_measures` parameter adds syntactic complexity measures of the extracted trees to the output. Value _yes_ adds the maximum depth and mean dependency distance (MDD, MDD-mean), while value _extended_ additionally adds the normalized dependency distance (NDD, NDD-mean), the number of clauses and T-units, and the number of clauses per T-unit. The values are averaged over all occurrences of the tree. See [complexity measures](statistics.md#complexity-measures) for details.
 
 ## Alternative visualisation and examples
 
