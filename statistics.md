@@ -1,6 +1,6 @@
 # Statistics explained
 
-By default, STARK produces a list of trees with the **absolute frequency** (raw count) and the **relative frequency** (normalized count per million tokens) of the trees in the input treebank. In addition, two optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena: **association measures** and **keyness measures**.
+By default, STARK produces a list of trees with the **absolute frequency** (raw count) and the **relative frequency** (normalized count per million tokens) of the trees in the input treebank. In addition, three optional types of statistics can also be computed in the output to help identify compelling syntactic phenomena: **association measures**, **keyness measures** and **complexity measures**.
 
 ## Association measures
 
@@ -68,3 +68,42 @@ $$ E_1 = \frac{c (a + b)}{c + d}, \quad E_2 = \frac{d (a + b)}{c + d} $$
 | $\text{Log Ratio}$ | $\displaystyle \text{Log Ratio} = \log_2 \left(\frac{\text{NFC}_1}{\text{NFC}_2}\right)$                                                                                                      |
 | $\text{OR}$        | $\displaystyle \text{OR} = \frac{\text{RFC}_1/(\text{C}_1 - \text{RFC}_1)}{\text{RFC}_2/(\text{C}_2 - \text{RFC}_2)}$                                                                                                                   |
 | $\\%\text{DIFF}$    | $\displaystyle \text{\\%DIFF} = \frac{(\text{NFC}_1 - \text{NFC}_2) \times 100}{\text{NFC}_2}$                                                                                              |
+
+## Complexity measures
+Syntactic complexity measures describe the structure of a tree, e.g. how deeply it is nested, how far apart related words are, and how many clauses it contains. They are enabled with `complexity_measures = yes` (basic measures) or `complexity_measures = extended` (all measures). Each measure is computed for every occurrence of a tree and then averaged over all its occurrences in the treebank; values for individual occurrences are given in the `detailed_results_file`, if specified.
+
+Note that all measures describe the **extracted tree**, not the whole sentence it occurs in. For example, the tree `reads > newspapers` extracted from *Mary reads old newspapers.* contains only two nodes and one dependency, regardless of the rest of the sentence. The measures correspond to sentence-level values only when the entire sentence tree is extracted (e.g. with `complete = yes` and a sufficiently large `size`).
+
+### Input data
+| **Notation**   | **Meaning**                                                                                                          | **Example** (tree `reads >obj newspapers` in *Mary reads old newspapers.*)    |
+|----------------|----------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| **$m$**        | Number of dependencies (arcs) in the tree, excluding punctuation (`punct`).                                         | $m = 1$ (`reads > newspapers`).                                               |
+| **$d_i$**      | Dependency distance of the $i$-th arc: the absolute difference between the positions of the head and the dependent. | - In the sentence: $d_1 = \lvert 2 - 4 \rvert = 2$.<br>- In the tree: $d_1 = \lvert 1 - 2 \rvert = 1$. |
+| **$r$**        | Position of the root node of the tree.                                                                               | - In the sentence: $r = 2$ (`reads`).<br>- In the tree: $r = 1$.             |
+
+Positions are counted in two ways: **in the sentence** (the original token positions) and **in the tree** (the nodes of the extracted tree renumbered 1, 2, 3, … in their surface order, ignoring the words that are not part of the tree). The first reflects how the tree is realized in the actual sentences, while the second depends only on the shape and word order of the tree itself. Punctuation arcs are not counted as dependencies, but punctuation nodes included in the tree still occupy a position.
+
+### Measures
+
+| **Measure**          | **Mode**     | **Definition**                                                                                                                                                         |
+|----------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Max depth**        | yes/extended | Number of levels in the tree, where the root is level 1 (e.g. `reads > newspapers` has depth 2, `reads > newspapers > old` has depth 3).                              |
+| **MDD**              | yes/extended | Mean dependency distance with positions counted **in the tree**: $\displaystyle \text{MDD} = \frac{1}{m}\sum_{i=1}^{m} d_i$                                          |
+| **MDD-mean**         | yes/extended | Mean dependency distance with positions counted **in the sentence** (same equation as above).                                                                          |
+| **NDD**              | extended     | Normalized dependency distance, adapted from Jiang & Liu (2015), with positions counted **in the tree**: $\displaystyle \text{NDD} = \left\lvert \ln\left(\frac{\text{MDD}}{\sqrt{r \times m}}\right) \right\rvert$ |
+| **NDD-mean**         | extended     | Normalized dependency distance with positions counted **in the sentence** (same equation as above, using MDD-mean).                                                    |
+| **N clauses**        | extended     | Number of clauses: 1 (the root) + the number of verbal dependents attached with `csubj`, `ccomp`, `xcomp`, `advcl`, `acl`, `conj` or `parataxis`.                    |
+| **N T-units**        | extended     | Number of T-units (main clauses with their dependent clauses): 1 (the root) + the number of verbal dependents attached with `conj` or `parataxis`.                    |
+| **Clauses/T-unit**   | extended     | Average number of clauses per T-unit: $\displaystyle \frac{\text{N clauses}}{\text{N T-units}}$                                                                       |
+
+A dependent is considered verbal if its UPOS tag is `VERB` or if it has a copula (`cop`) dependent within the extracted tree.
+
+The extended measures **NDD**, **NDD-mean**, **N clauses**, **N T-units** and **Clauses/T-unit** are only computed for occurrences where the root of the tree is also the root of the sentence (i.e. has the `root` relation), and are averaged over these occurrences only. If a tree never occurs in this position, these values are given as `n/a`.
+
+Example values (from STARK output) for trees extracted from *Mary reads old newspapers.*:
+
+| **Tree**                                     | **Max depth** | **MDD** | **MDD-mean** | **NDD** | **NDD-mean** | **N clauses** | **N T-units** |
+|----------------------------------------------|---------------|---------|--------------|---------|--------------|---------------|---------------|
+| `reads >obj newspapers`                      | 2             | 1.00    | 2.00         | 0.00    | 0.35         | 1.00          | 1.00          |
+| `Mary <nsubj reads >obj (old <amod newspapers)` | 3          | 1.33    | 1.33         | 0.61    | 0.61         | 1.00          | 1.00          |
+| `old <amod newspapers`                       | 2             | 1.00    | 1.00         | n/a     | n/a          | n/a           | n/a           |

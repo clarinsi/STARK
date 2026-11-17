@@ -73,6 +73,7 @@ Tree restrictions:
 Statistics: 
 -	`association_measures`: calculates the strength of association between nodes by MI, MI3, t-test, logDice, Dice and simple-LL scores (values *yes* or *no*)
 - `compare`: calculates the keyness of a tree in comparison to another treebank by LL, BIC, log ratio, odds ratio and %DIFF scores (reference treebank in _.conllu_)
+- `complexity_measures`: calculates syntactic complexity of a tree by max depth, MDD, NDD, number of clauses and T-units (values *no*, *yes* or *extended*)
 
 Additional visualization:
 - `example`: prints a random sentence containing the tree

@@ -13,7 +13,7 @@ configs/
 gui/designer/
 build
 dist
-stark.egg-info
+*.egg-info
 *.pypirc
 *.spec
 *.sage.py
