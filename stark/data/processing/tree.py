@@ -38,15 +38,17 @@ class Tree(object):
         if deprel not in document.deprel_dict:
             document.deprel_dict[deprel] = deprel
         self.deprel = document.deprel_dict[deprel]
-        for feat in feats_detailed.keys():
+        for feat, values in feats_detailed.items():
+            # pyconll parses multi-value features (e.g. PronType=Dem,Rel) into a set; keep all values as one
+            # comma-separated string, sorted alphabetically as prescribed by UD guidelines
+            value = ','.join(sorted(values))
             if feat not in feats_dict:
                 feats_dict[feat] = {}
-            if next(iter(feats_detailed[feat])) not in feats_dict[feat]:
-                feats_dict[feat][next(iter(feats_detailed[feat]))] = next(iter(feats_detailed[feat]))
+            if value not in feats_dict[feat]:
+                feats_dict[feat][value] = value
             if feat not in self.feats_detailed:
                 self.feats_detailed[feat] = {}
-            self.feats_detailed[feat][next(iter(feats_detailed[feat]))] = (
-                feats_dict)[feat][next(iter(feats_detailed[feat]))]
+            self.feats_detailed[feat][value] = feats_dict[feat][value]
 
         self.feats = {k: list(v.keys())[0] for k, v in self.feats_detailed.items()}
         if misc not in document.misc_dict:

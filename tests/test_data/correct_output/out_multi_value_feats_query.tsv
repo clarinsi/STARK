@@ -1,0 +1,3 @@
+Tree	Node A-form	Node B-form	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	Example	MI	MI3	Dice	logDice	t-score	simple-LL
+which <nsubj fell	which	fell	1	142857.1	AB	2	fell	that A[which] B[fell] 	2.81	2.81	1.00	14.00	0.86	-0.02
+who <nsubj came	who	came	1	142857.1	AB	2	came	the man A[who] B[came] 	2.81	2.81	1.00	14.00	0.86	-0.02

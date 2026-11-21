@@ -256,3 +256,25 @@ def test_output_settings():
                                                                                            'detailed_results_file_greedy.tsv'))
     assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'sentence_count_file_greedy.tsv'), os.path.join(CORRECT_OUTPUT_DIR,
                                                                                          'sentence_count_file_greedy.tsv'))
+
+
+def test_multi_value_feats():
+    """
+    Test multi-value features (e.g. PronType=Dem,Rel): values are kept whole and filters match any of them.
+    :return:
+    """
+    for greedy_counter in ['no', 'yes']:
+        random.seed(12)
+        config_file = os.path.join(CONFIGS_DIR, 'config_multi_value_feats.ini')
+        settings = read_settings(config_file, parse_args(['--greedy_counter', greedy_counter]))
+        stark.run(settings)
+        assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_multi_value_feats.tsv'),
+                           os.path.join(CORRECT_OUTPUT_DIR, 'out_multi_value_feats.tsv'))
+
+        # query with multiple features in one node and multi-value feature match
+        random.seed(12)
+        config_file = os.path.join(CONFIGS_DIR, 'config_multi_value_feats_query.ini')
+        settings = read_settings(config_file, parse_args(['--greedy_counter', greedy_counter]))
+        stark.run(settings)
+        assert filecmp.cmp(os.path.join(OUTPUT_DIR, 'out_multi_value_feats_query.tsv'),
+                           os.path.join(CORRECT_OUTPUT_DIR, 'out_multi_value_feats_query.tsv'))

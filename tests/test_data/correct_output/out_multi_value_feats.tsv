@@ -1,0 +1,4 @@
+Tree	Node A-upos	Node A-feats	Node B-upos	Node B-feats	Absolute frequency	Relative frequency	Order	Number of nodes	Head node	Example	MI	MI3	Dice	logDice	t-score	simple-LL
+PRON&PronType=Int,Rel	PRON	PronType=Int,Rel			2	285714.3	A	1	PRON&PronType=Int,Rel	the man A[who] came 	0.00	2.00	1.00	14.00	0.00	0.00
+PRON&PronType=Dem,Rel >acl VERB&Mood=Ind|Tense=Past	PRON	PronType=Dem,Rel	VERB	Mood=Ind|Tense=Past	1	142857.1	AB	2	PRON&PronType=Dem,Rel	A[that] which B[fell] 	1.81	1.81	0.67	13.42	0.71	-0.34
+PRON&PronType=Dem,Rel	PRON	PronType=Dem,Rel			1	142857.1	A	1	PRON&PronType=Dem,Rel	A[that] which fell 	0.00	0.00	1.00	14.00	0.00	0.00

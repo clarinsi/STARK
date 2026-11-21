@@ -110,6 +110,21 @@ def read_filters(configs):
     return filters
 
 
+def feat_value_matches(filter_value, token_value):
+    """
+    Checks if feature value from a filter matches token's feature value. Multi-value features (e.g. PronType=Dem,Rel)
+    match when all filter values are among token values, i.e. PronType=Rel and PronType=Dem,Rel both match Dem,Rel.
+    :param filter_value:
+    :param token_value:
+    :return:
+    """
+    if filter_value == token_value:
+        return True
+    if ',' not in token_value:
+        return False
+    return set(filter_value.split(',')) <= set(token_value.split(','))
+
+
 class Filter(object):
     @staticmethod
     def check_representation_tree(tree, filters):
@@ -176,9 +191,7 @@ class Filter(object):
             if feat not in feats:
                 if not option['feats_detailed'][feat][0]:
                     return False
-            elif option['feats_detailed'][feat][1] != feats[feat] and not option['feats_detailed'][feat][0]:
-                return False
-            elif option['feats_detailed'][feat][1] == feats[feat] and option['feats_detailed'][feat][0]:
+            elif feat_value_matches(option['feats_detailed'][feat][1], feats[feat]) == option['feats_detailed'][feat][0]:
                 return False
         return True
 
@@ -217,10 +230,8 @@ class Filter(object):
                         if not option[key][0]:
                             filter_passed = False
                     # key different, then in head and not negated
-                    elif option[key][1] != feats[key] and not option[key][0]:
-                        filter_passed = False
-                    # key equal, and negated
-                    elif option[key][1] == feats[key] and option[key][0]:
+                    # value (not) matching (see feat_value_matches) and (not) negated
+                    elif feat_value_matches(option[key][1], feats[key]) == option[key][0]:
                         filter_passed = False
 
             filter_passed = filter_passed and \

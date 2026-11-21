@@ -87,17 +87,6 @@ class QueryTree(Tree):
 
         return partial_answers, complete_answers
 
-    def _fits_static_requirements_feats(self, query_tree):
-        if 'feats_detailed' not in query_tree:
-            return True
-
-        for feat in query_tree['feats_detailed'].keys():
-            if (feat not in self.feats_detailed or
-                    query_tree['feats_detailed'][feat] != next(iter(self.feats_detailed[feat].values()))):
-                return False
-
-        return True
-
     def _fits_permanent_requirements(self, filters):
         return Filter.check_root_whitelist(self.form, self.lemma, self.upos,
                                            self.feats, self.deprel, self.misc, filters)

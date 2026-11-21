@@ -193,7 +193,7 @@ def decode_query(orig_query, dependency_type):
                     elif orig_query_split[0] == 'feats':
                         restriction['feats'] = (negation, orig_query_split[1])
                     elif orig_query_split[0] in UNIVERSAL_FEATURES:
-                        restriction['feats_detailed'] = {}
+                        restriction.setdefault('feats_detailed', {})
                         restriction['feats_detailed'][orig_query_split[0]] = (negation, orig_query_split[1])
                     elif not new_query:
                         raise Exception('Not supported yet!')
